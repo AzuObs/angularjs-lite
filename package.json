@@ -11,15 +11,17 @@
     "angularjs"
   ],
   "author": "Daniel Leaver",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/AzuObs/angularjs-lite/issues"
   },
   "homepage": "https://github.com/AzuObs/angularjs-lite",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-contrib-testem": "^0.5.22",
-    "grunt-jasmine": "^0.1.0",
-    "sinon": "^1.17.3"
-  }
+    "grunt-karma": "^0.12.1",
+    "jasmine": "^2.4.1",
+    "karma": "^0.13.21",
+    "karma-jasmine": "^0.3.7"
+  },
+  "dependencies": {}
 }

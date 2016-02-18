@@ -3,7 +3,7 @@
 
   describe("hello.js", function() {
     it("test", function() {
-      expect(hello()).toEqual("Hello, world!");
+      expect(hello("son")).toEqual("Hello, son!");
     });
   });
 

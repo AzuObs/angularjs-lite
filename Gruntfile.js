@@ -5,32 +5,20 @@
     grunt.initConfig({
       pkg: grunt.file.readJSON("package.json"),
 
-      testem: {
+      karma: {
+        options: {
+          configFile: "karma.conf.js"
+        },
         unit: {
-          options: {
-            framework: "jasmine2",
-            launch_in_dev: ["PhantomJS"],
-            serve_files: [
-              "node_modules/sinon/pkg/sinon.js",
-              "src/**/*.js",
-              "test/**/*.js"
-            ]
-          },
-          watch_files: [
-            "src/**/*.js",
-            "test/**/*.js"
-          ]
+          autoWatch: true,
         }
       }
     });
 
 
-    grunt.loadNpmTasks("grunt-contrib-testem");
+    grunt.loadNpmTasks("grunt-karma");
 
-
-    grunt.registerTask("test", [""]);
-
-
+    grunt.registerTask("unit-test", ["karma:unit"]);
   };
 
 })();
