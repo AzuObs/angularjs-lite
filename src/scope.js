@@ -21,6 +21,7 @@
       };
 
       this.$$watchers.push(watcher);
+      this.$$lastDirtyWatch = null;
     },
 
 
@@ -64,4 +65,4 @@
 
 })(this);
 
-//p15
+//p21

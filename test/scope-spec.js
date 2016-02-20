@@ -144,42 +144,47 @@
         expect(scope.counterB).toBeGreaterThan(10);
       });
 
-      it("ends the $digest loop when the last watch is clean", function() {
-        scope.array = _.range(100);
-        var iterations = 0;
+      it("stops the digest loop once it has gone a full loop since" +
+        "last time it came to the $$lastDirtyWatch",
+        function() {
+          scope.array = _.range(100);
+          var iterations = 0;
 
-        _.times(100, function(i) {
-          scope.$watch(function(scope) {
-            iterations++;
-            return scope.array[i];
+          _.times(100, function(i) {
+            scope.$watch(function(scope) {
+              iterations++;
+              return scope.array[i];
+            });
           });
+
+          scope.$digest();
+          expect(iterations).toEqual(200);
+
+          scope.array[0] = "a";
+          scope.$digest();
+          expect(iterations).toEqual(301);
         });
 
-        scope.$digest();
-        expect(iterations).toEqual(200);
+      it("resets $$lastDirtyWatch during each scope.$watch so that the $digest loop will not stop " +
+        "prematurely if a watcher is created during one of the listener functions triggered during" +
+        " the $digest loop",
+        function() {
+          scope.aValue = "abc";
+          scope.counter = 0;
 
-        scope.array[0] = "a";
-        scope.$digest();
-        expect(iterations).toEqual(301);
-      });
-
-      it("does not end $digest loop so that so new watches are run", function() {
-        scope.aValue = "abc";
-        scope.counter = 0;
-
-        scope.$watch(function(scope) {
-          return scope.aValue;
-        }, function(n, o, scope) {
           scope.$watch(function(scope) {
             return scope.aValue;
           }, function(n, o, scope) {
-            scope.counter++;
+            scope.$watch(function(scope) {
+              return scope.aValue;
+            }, function(n, o, scope) {
+              scope.counter++;
+            });
           });
-        });
 
-        scope.$digest();
-        expect(scope.counter).toBe(1);
-      });
+          scope.$digest();
+          expect(scope.counter).toBe(1);
+        });
 
     });
   });
