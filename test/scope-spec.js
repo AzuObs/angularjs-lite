@@ -9,12 +9,13 @@
     });
 
 
-    describe("digest", function() {
+    describe("$digest", function() {
       var scope;
 
       beforeEach(function() {
         scope = new Scope();
       });
+
 
       it("calls the listener function of a watch on the first $digest", function() {
         var watchFn = function() {
@@ -28,6 +29,7 @@
         expect(listenerFn).toHaveBeenCalled();
       });
 
+
       it("calls the watch function with the scope as the argument", function() {
         var watchFn = jasmine.createSpy();
         var listenerFn = function() {};
@@ -37,6 +39,7 @@
 
         expect(watchFn).toHaveBeenCalledWith(scope);
       });
+
 
       it("calls the listener fn after the watch value changes", function() {
         scope.someValue = "a";
@@ -82,6 +85,7 @@
         expect(oldValueGiven).toBe(123);
       });
 
+
       it("may have watchers that omit the listener function", function() {
         var watchFn = jasmine.createSpy();
 
@@ -123,6 +127,7 @@
         expect(scope.initial).toBe("B.");
       });
 
+
       it("gives up on $watches after 10 iterations", function() {
         scope.counterA = 0;
         scope.counterB = 0;
@@ -143,6 +148,7 @@
         expect(scope.counterA).toBeGreaterThan(10);
         expect(scope.counterB).toBeGreaterThan(10);
       });
+
 
       it("stops the digest loop once it has gone a full loop since" +
         "last time it came to the $$lastDirtyWatch",
@@ -165,6 +171,7 @@
           expect(iterations).toEqual(301);
         });
 
+
       it("resets $$lastDirtyWatch during each scope.$watch so that the $digest loop will not stop " +
         "prematurely if a watcher is created during one of the listener functions triggered during" +
         " the $digest loop",
@@ -186,6 +193,7 @@
           expect(scope.counter).toBe(1);
         });
 
+
       it("compares based on value if enabled", function() {
         scope.aValue = _.range(3);
         scope.counter = 0;
@@ -203,7 +211,55 @@
         scope.$digest();
         expect(scope.counter).toBe(2);
       });
+
+
+      it("correctly handles NaN", function() {
+        scope.number = 0 / 0; //NaN
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.number;
+        }, function(n, o, scope) { scope.counter++; });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+      });
     });
+
+
+    describe("$eval", function() {
+      var scope;
+
+      beforeEach(function() {
+        scope = new Scope();
+      });
+
+
+      it("executes the first argument and return the result", function() {
+        scope.aValue = 40;
+
+        scope.$eval(function(scope) {
+          return scope.aValue;
+        });
+
+        expect(scope.aValue).toBe(40);
+      });
+
+
+      it("passes the second $eval argument straight through", function() {
+        scope.aValue = 40;
+
+        var result = scope.$eval(function(scope, arg) {
+          return scope.aValue + arg;
+        }, 10);
+
+        expect(result).toBe(50);
+      });
+    });
+
   });
 
 })();

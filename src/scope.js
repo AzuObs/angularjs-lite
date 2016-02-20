@@ -13,6 +13,26 @@
 
   Scope.prototype = {
 
+    $digest: function() {
+      var dirty = false;
+      var ttl = 10;
+      this.$$lastDirtyWatch = null;
+
+      do {
+        dirty = this.$$digestOnce();
+        if (dirty && !(ttl--)) {
+          throw "10 digest iterations reached";
+        }
+      }
+      while (dirty);
+    },
+
+
+    $eval: function(expr, locals) {
+      return expr(this, locals);
+    },
+
+
     $watch: function(watchFn, listenerFn, valueEq) {
       var watcher = {
         watchFn: watchFn,
@@ -26,20 +46,14 @@
     },
 
 
-    $digest: function() {
-      var dirty = false;
-      var ttl = 10;
-      this.$$lastDirtyWatch = null;
-
-      do {
-        dirty = this.$$digestOnce();
-        if (dirty && !(ttl--)) {
-          throw "" + ttl + " digest iterations reached";
-        }
+    $$areEqual: function(newValue, oldValue, valueEq) {
+      if (valueEq) {
+        return _.isEqual(newValue, oldValue);
+      } else {
+        return (newValue === oldValue) ||
+          (typeof newValue === "number" && typeof oldValue === "number" && isNaN(newValue) && isNaN(oldValue));
       }
-      while (dirty);
     },
-
 
     $$digestOnce: function() {
       var self = this;
@@ -62,16 +76,9 @@
       });
 
       return dirty;
-    },
-
-
-    $$areEqual: function(newValue, oldValue, valueEq) {
-      if (valueEq) {
-        return _.isEqual(newValue, oldValue);
-      } else {
-        return newValue === oldValue;
-      }
     }
+
+
   };
 
 })(this);
