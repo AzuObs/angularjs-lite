@@ -83,16 +83,105 @@
       });
 
       it("may have watchers that omit the listener function", function() {
-        var watchFn = jasmine.createSpy().and.returnValue("something");
+        var watchFn = jasmine.createSpy();
 
         scope.$watch(watchFn);
         scope.$digest();
 
         expect(watchFn).toHaveBeenCalled();
       });
+
+
+      it("triggers chained watchers in the same digest", function() {
+        scope.name = "Jane";
+
+        var watchFn = function(scope) {
+          return scope.upperName;
+        };
+        var listenerFn = function(n, o, scope) {
+          if (n) {
+            scope.initial = n.slice(0, 1) + ".";
+          }
+        };
+        scope.$watch(watchFn, listenerFn);
+
+        watchFn = function(scope) {
+          return scope.name;
+        };
+        listenerFn = function(n, o, scope) {
+          if (n) {
+            scope.upperName = n.toUpperCase();
+          }
+        };
+        scope.$watch(watchFn, listenerFn);
+
+        scope.$digest();
+        expect(scope.initial).toBe("J.");
+
+        scope.name = "Bob";
+        scope.$digest();
+        expect(scope.initial).toBe("B.");
+      });
+
+      it("gives up on $watches after 10 iterations", function() {
+        scope.counterA = 0;
+        scope.counterB = 0;
+
+        var watchFn = function(scope) {
+          return scope.counterA;
+        };
+        var listenFn = function(n, o, scope) { scope.counterB++; };
+        scope.$watch(watchFn, listenFn);
+
+        watchFn = function(scope) {
+          return scope.counterB;
+        };
+        listenFn = function(n, o, scope) { scope.counterA++; };
+        scope.$watch(watchFn, listenFn);
+
+        expect(function() { scope.$digest(); }).toThrow();
+        expect(scope.counterA).toBeGreaterThan(10);
+        expect(scope.counterB).toBeGreaterThan(10);
+      });
+
+      it("ends the $digest loop when the last watch is clean", function() {
+        scope.array = _.range(100);
+        var iterations = 0;
+
+        _.times(100, function(i) {
+          scope.$watch(function(scope) {
+            iterations++;
+            return scope.array[i];
+          });
+        });
+
+        scope.$digest();
+        expect(iterations).toEqual(200);
+
+        scope.array[0] = "a";
+        scope.$digest();
+        expect(iterations).toEqual(301);
+      });
+
+      it("does not end $digest loop so that so new watches are run", function() {
+        scope.aValue = "abc";
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.$watch(function(scope) {
+            return scope.aValue;
+          }, function(n, o, scope) {
+            scope.counter++;
+          });
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+      });
+
     });
-
   });
-
 
 })();
