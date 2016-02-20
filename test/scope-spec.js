@@ -186,6 +186,23 @@
           expect(scope.counter).toBe(1);
         });
 
+      it("compares based on value if enabled", function() {
+        scope.aValue = _.range(3);
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.counter++;
+        }, true);
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+
+        scope.aValue[1] = 999;
+        scope.$digest();
+        expect(scope.counter).toBe(2);
+      });
     });
   });
 
