@@ -11,6 +11,7 @@
         "test/**/*.js"
       ],
       frameworks: ["jasmine"],
+      browsers: ["PhantomJS"],
       plugins: [
         'karma-jasmine'
       ],
