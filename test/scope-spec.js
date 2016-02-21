@@ -260,6 +260,32 @@
       });
     });
 
-  });
 
+    describe("$apply", function() {
+      var scope;
+
+      beforeEach(function() {
+        scope = new Scope();
+      });
+
+      it("executes the $apply'ed function and starts the $digest loop", function() {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) { scope.counter++; });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+
+
+        scope.$apply(function() {
+          scope.aValue = "someOtherValue";
+        });
+        expect(scope.counter).toBe(2);
+      });
+
+    });
+  });
 })();

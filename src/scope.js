@@ -13,39 +13,6 @@
 
   Scope.prototype = {
 
-    $digest: function() {
-      var dirty = false;
-      var ttl = 10;
-      this.$$lastDirtyWatch = null;
-
-      do {
-        dirty = this.$$digestOnce();
-        if (dirty && !(ttl--)) {
-          throw "10 digest iterations reached";
-        }
-      }
-      while (dirty);
-    },
-
-
-    $eval: function(expr, locals) {
-      return expr(this, locals);
-    },
-
-
-    $watch: function(watchFn, listenerFn, valueEq) {
-      var watcher = {
-        watchFn: watchFn,
-        listenerFn: listenerFn || function() {},
-        valueEq: !!valueEq, //compare by value (e.i. deep comparisson vs reference comparisson)
-        last: initWatchVal
-      };
-
-      this.$$watchers.push(watcher);
-      this.$$lastDirtyWatch = null;
-    },
-
-
     $$areEqual: function(newValue, oldValue, valueEq) {
       if (valueEq) {
         return _.isEqual(newValue, oldValue);
@@ -76,11 +43,49 @@
       });
 
       return dirty;
+    },
+
+    $apply: function(expr) {
+      try {
+        return this.$eval(expr);
+      } finally {
+        this.$digest();
+      }
+    },
+
+    $digest: function() {
+      var dirty = false;
+      var ttl = 10;
+      this.$$lastDirtyWatch = null;
+
+      do {
+        dirty = this.$$digestOnce();
+        if (dirty && !(ttl--)) {
+          throw "10 digest iterations reached";
+        }
+      }
+      while (dirty);
+    },
+
+
+    $eval: function(expr, locals) {
+      return expr(this, locals);
+    },
+
+
+    $watch: function(watchFn, listenerFn, valueEq) {
+      var watcher = {
+        watchFn: watchFn,
+        listenerFn: listenerFn || function() {},
+        valueEq: !!valueEq, //compare by value (e.i. deep comparisson vs reference comparisson)
+        last: initWatchVal
+      };
+
+      this.$$watchers.push(watcher);
+      this.$$lastDirtyWatch = null;
     }
-
-
   };
 
 })(this);
 
-//p21
+//p26
