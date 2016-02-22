@@ -11,6 +11,7 @@
     this.$$asyncQueue = [];
     this.$$lastDirtyWatch = null;
     this.$$phase = null;
+    this.$$postDigestQueue = [];
     this.$$watchers = [];
   };
 
@@ -49,6 +50,11 @@
       });
 
       return dirty;
+    },
+
+
+    $$postDigest: function(fn) {
+      this.$$postDigestQueue.push(fn);
     },
 
 
@@ -118,20 +124,25 @@
         this.$$flushApplyAsync();
       }
 
-      do {
-        while (this.$$asyncQueue.length) {
-          var asyncTask = this.$$asyncQueue.shift();
-          asyncTask.scope.$eval(asyncTask.expression);
-        }
+      traverseScopesLoop:
+        do {
+          while (this.$$asyncQueue.length) {
+            var asyncTask = this.$$asyncQueue.shift();
+            asyncTask.scope.$eval(asyncTask.expression);
+          }
 
-        dirty = this.$$digestOnce();
+          dirty = this.$$digestOnce();
 
-        if ((dirty || this.$$asyncQueue.length) && !(ttl--)) {
-          this.$clearPhase();
-          throw "10 digest iterations reached";
+          if ((dirty || this.$$asyncQueue.length) && !(ttl--)) {
+            this.$clearPhase();
+            throw "10 digest iterations reached";
+          }
         }
+        while (dirty || this.$$asyncQueue.length);
+
+      while (this.$$postDigestQueue.length) {
+        this.$$postDigestQueue.shift()();
       }
-      while (dirty || this.$$asyncQueue.length);
 
       this.$clearPhase();
     },
@@ -175,4 +186,4 @@
 
 })(this);
 
-//p36
+//p45

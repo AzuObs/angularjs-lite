@@ -498,6 +498,44 @@
           done();
         }, 0);
       });
+
+
+      it("runs a $$postDigest only once after the next $digest", function() {
+        scope.counter = 0;
+
+        scope.$$postDigest(function() {
+          scope.counter++;
+        });
+
+        expect(scope.counter).toBe(0);
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+      });
+
+
+      it("does not include $$postDigest in the $digest loop, it happens after", function() {
+        scope.aValue = "someValue";
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.watchedValue = n;
+        });
+
+        scope.$$postDigest(function() {
+          scope.aValue = "postDigestFn";
+        });
+
+        scope.$digest();
+        expect(scope.watchedValue).toBe("someValue");
+
+        scope.$digest();
+        expect(scope.watchedValue).toBe("postDigestFn");
+      });
     });
   });
 })();
