@@ -6,6 +6,8 @@
 
 
   exports.Scope = function() {
+    this.$$applyAsyncQueue = [];
+    this.$$applyAsyncId = null;
     this.$$asyncQueue = [];
     this.$$lastDirtyWatch = null;
     this.$$phase = null;
@@ -58,6 +60,28 @@
       finally {
         this.$clearPhase();
         this.$digest();
+      }
+    },
+
+
+    $applyAsync: function(expr) {
+      var self = this;
+
+      self.$$applyAsyncQueue.push(function() {
+        self.$eval(expr);
+      });
+
+      if (!self.$$applyAsyncId) {
+
+        self.$$applyAsyncId = setTimeout(function() {
+          self.$apply(function() {
+            while (self.$$applyAsyncQueue.length) {
+              self.$$applyAsyncQueue.shift()();
+            }
+          });
+
+          self.$$applyAsyncId = null;
+        }, 0);
       }
     },
 
@@ -144,4 +168,4 @@
 
 })(this);
 
-//p31
+//p36

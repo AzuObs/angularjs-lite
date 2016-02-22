@@ -397,6 +397,107 @@
           done();
         }, 0);
       });
+
+
+      it("allows $apply async with $applyAsync", function(done) {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.counter++;
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+
+        scope.$applyAsync(function() {
+          scope.aValue = "someDifferentValue";
+        });
+        expect(scope.counter).toBe(1);
+
+        setTimeout(function() {
+          expect(scope.counter).toBe(2);
+          done();
+        });
+      });
+
+
+      it("$applyAsync never applies its function in the same $digest", function(done) {
+        scope.aValue = [1, 2, 3];
+        scope.asyncApplied = false;
+        scope.$watch(
+          function(scope) {
+            return scope.aValue;
+          },
+          function(newValue, oldValue, scope) {
+            scope.$applyAsync(function(scope) {
+              scope.asyncApplied = true;
+            });
+          }
+        );
+        scope.$digest();
+        expect(scope.asyncApplied).toBe(false);
+        setTimeout(function() {
+          expect(scope.asyncApplied).toBe(true);
+          done();
+        }, 0);
+      });
+
+
+      it("combines many calls to $applyAsync", function(done) {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        scope.$watch(
+          function(scope) {
+            scope.counter++;
+            return scope.aValue;
+          });
+
+        scope.$applyAsync(function(scope) {
+          scope.aValue = 'abc';
+        });
+
+        scope.$applyAsync(function(scope) {
+          scope.aValue = 'def';
+        });
+
+        setTimeout(function() {
+          expect(scope.counter).toBe(2);
+          done();
+        }, 0);
+      });
+
+
+      it("cancels and flushes $applyAsync if digested first", function(done) {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        scope.$watch(
+          function(scope) {
+            scope.counter++;
+            return scope.aValue;
+          });
+
+        scope.$applyAsync(function(scope) {
+          scope.aValue = 'abc';
+        });
+
+        scope.$applyAsync(function(scope) {
+          scope.aValue = 'def';
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(2);
+        expect(scope.aValue).toEqual('def');
+
+        setTimeout(function() {
+          expect(scope.counter).toBe(2);
+          done();
+        }, 0);
+      });
     });
   });
 })();
