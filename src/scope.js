@@ -6,8 +6,10 @@
 
 
   exports.Scope = function() {
-    this.$$watchers = [];
+    this.$$asyncQueue = [];
     this.$$lastDirtyWatch = null;
+    this.$$phase = null;
+    this.$$watchers = [];
   };
 
 
@@ -16,11 +18,13 @@
     $$areEqual: function(newValue, oldValue, valueEq) {
       if (valueEq) {
         return _.isEqual(newValue, oldValue);
-      } else {
+      }
+      else {
         return (newValue === oldValue) ||
           (typeof newValue === "number" && typeof oldValue === "number" && isNaN(newValue) && isNaN(oldValue));
       }
     },
+
 
     $$digestOnce: function() {
       var self = this;
@@ -36,8 +40,8 @@
 
           watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
           watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), self);
-
-        } else if (self.$$lastDirtyWatch === watcher) {
+        }
+        else if (self.$$lastDirtyWatch === watcher) {
           return false;
         }
       });
@@ -45,31 +49,83 @@
       return dirty;
     },
 
+
     $apply: function(expr) {
       try {
+        this.$beginPhase("$apply");
         return this.$eval(expr);
-      } finally {
+      }
+      finally {
+        this.$clearPhase();
         this.$digest();
       }
     },
 
+
+    $beginPhase: function(phase) {
+      if (this.$$phase) {
+        throw "phase already in progress";
+      }
+
+      this.$$phase = phase;
+    },
+
+
+    $clearPhase: function() {
+      if (!this.$$phase) {
+        throw "phase was already cleared";
+      }
+
+      this.$$phase = null;
+    },
+
+
     $digest: function() {
+      this.$beginPhase("$digest");
+
       var dirty = false;
       var ttl = 10;
       this.$$lastDirtyWatch = null;
 
       do {
+        while (this.$$asyncQueue.length) {
+          var asyncTask = this.$$asyncQueue.shift();
+          asyncTask.scope.$eval(asyncTask.expression);
+        }
+
         dirty = this.$$digestOnce();
-        if (dirty && !(ttl--)) {
+
+        if ((dirty || this.$$asyncQueue.length) && !(ttl--)) {
+          this.$clearPhase();
           throw "10 digest iterations reached";
         }
       }
-      while (dirty);
+      while (dirty || this.$$asyncQueue.length);
+
+      this.$clearPhase();
     },
 
 
     $eval: function(expr, locals) {
       return expr(this, locals);
+    },
+
+
+    $evalAsync: function(expr) {
+      var self = this;
+
+      if (!self.$$phase && !self.$$asyncQueue.length) {
+        setTimeout(function() {
+          if (self.$$asyncQueue.length) {
+            self.$digest();
+          }
+        }, 0);
+      }
+
+      this.$$asyncQueue.push({
+        scope: this,
+        expression: expr
+      });
     },
 
 
@@ -88,4 +144,4 @@
 
 })(this);
 
-//p26
+//p31

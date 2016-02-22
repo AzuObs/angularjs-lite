@@ -13,7 +13,8 @@
       frameworks: ["jasmine"],
       browsers: ["PhantomJS"],
       plugins: [
-        'karma-jasmine'
+        "karma-jasmine",
+        "karma-phantomjs-launcher"
       ],
       port: 9876
     });
