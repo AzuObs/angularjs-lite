@@ -536,6 +536,104 @@
         scope.$digest();
         expect(scope.watchedValue).toBe("postDigestFn");
       });
+
+
+      it("catches the exception in $watch's watch function and continue", function() {
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          throw "error";
+        }, function(n, o, scope) {
+          scope.counter++;
+        });
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.counter++;
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+      });
+
+
+      it("catches the exception in $watch's listen fn and continue", function() {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          throw "error";
+        });
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.counter++;
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+      });
+
+
+      it("catches exceptions in $evalAsync", function(done) {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        scope.$watch(function(scope) {
+          return scope.aValue;
+        }, function() {
+          scope.counter++;
+        });
+
+        scope.$evalAsync(function(scope) {
+          throw "Error";
+        });
+
+        setTimeout(function() {
+          expect(scope.counter).toBe(1);
+          done();
+        }, 0);
+      });
+
+
+      it("catches exceptions in $applyAsync", function(done) {
+        scope.applied = false;
+
+        scope.$applyAsync(function(scope) {
+          throw "Error";
+        });
+
+        scope.$applyAsync(function(scope) {
+          throw "Error";
+        });
+
+        scope.$applyAsync(function(scope) {
+          scope.applied = true;
+        });
+
+        setTimeout(function() {
+          expect(scope.applied).toBe(true);
+          done();
+        }, 0);
+      });
+
+
+      it("catches exceptions in $$postDigest", function() {
+        scope.didRun = false;
+
+        scope.$$postDigest(function() {
+          throw "Error";
+        });
+
+        scope.$$postDigest(function() {
+          scope.didRun = true;
+        });
+
+        scope.$digest();
+        expect(scope.didRun).toBe(true);
+      });
     });
   });
 })();

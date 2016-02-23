@@ -33,21 +33,28 @@
       var self = this;
       var newValue, oldValue, dirty;
 
-      _.forEach(this.$$watchers, function(watcher) {
-        newValue = watcher.watchFn(self);
-        oldValue = watcher.last;
+      eachWatchLoop:
+        for (var i = 0; i < self.$$watchers.length; i++) {
+          try {
+            var watcher = self.$$watchers[i];
+            newValue = watcher.watchFn(self);
+            oldValue = watcher.last;
 
-        if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
-          dirty = true;
-          self.$$lastDirtyWatch = watcher;
+            if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
+              dirty = true;
+              self.$$lastDirtyWatch = watcher;
 
-          watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
-          watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), self);
+              watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
+              watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), self);
+            }
+            else if (self.$$lastDirtyWatch === watcher) {
+              return false;
+            }
+          }
+          catch (e) {
+            console.error(e);
+          }
         }
-        else if (self.$$lastDirtyWatch === watcher) {
-          return false;
-        }
-      });
 
       return dirty;
     },
@@ -60,7 +67,12 @@
 
     $$flushApplyAsync: function() {
       while (this.$$applyAsyncQueue.length) {
-        this.$$applyAsyncQueue.shift()();
+        try {
+          this.$$applyAsyncQueue.shift()();
+        }
+        catch (e) {
+          console.error(e);
+        }
       }
 
       this.$$applyAsyncId = null;
@@ -127,8 +139,13 @@
       traverseScopesLoop:
         do {
           while (this.$$asyncQueue.length) {
-            var asyncTask = this.$$asyncQueue.shift();
-            asyncTask.scope.$eval(asyncTask.expression);
+            try {
+              var asyncTask = this.$$asyncQueue.shift();
+              asyncTask.scope.$eval(asyncTask.expression);
+            }
+            catch (e) {
+              console.error(e);
+            }
           }
 
           dirty = this.$$digestOnce();
@@ -140,11 +157,17 @@
         }
         while (dirty || this.$$asyncQueue.length);
 
+      this.$clearPhase();
+
       while (this.$$postDigestQueue.length) {
-        this.$$postDigestQueue.shift()();
+        try {
+          this.$$postDigestQueue.shift()();
+        }
+        catch (e) {
+          console.error(e);
+        }
       }
 
-      this.$clearPhase();
     },
 
 
@@ -186,4 +209,4 @@
 
 })(this);
 
-//p45
+//p44-45
