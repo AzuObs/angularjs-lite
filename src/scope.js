@@ -33,10 +33,11 @@
       var self = this;
       var newValue, oldValue, dirty;
 
-      eachWatchLoop:
-        for (var i = 0; i < self.$$watchers.length; i++) {
+      var length = this.$$watchers.length;
+      traverseWatchersLoop:
+        while (length--) {
           try {
-            var watcher = self.$$watchers[i];
+            var watcher = this.$$watchers[length];
             newValue = watcher.watchFn(self);
             oldValue = watcher.last;
 
@@ -195,6 +196,8 @@
 
 
     $watch: function(watchFn, listenerFn, valueEq) {
+      var self = this;
+
       var watcher = {
         watchFn: watchFn,
         listenerFn: listenerFn || function() {},
@@ -202,11 +205,18 @@
         last: initWatchVal
       };
 
-      this.$$watchers.push(watcher);
+      this.$$watchers.unshift(watcher);
       this.$$lastDirtyWatch = null;
+
+      return function() {
+        var index = self.$$watchers.indexOf(watcher);
+        if (index >= 0) {
+          self.$$watchers.splice(index, 1);
+        }
+      };
     }
   };
 
 })(this);
 
-//p44-45
+//p52

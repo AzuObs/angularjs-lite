@@ -542,7 +542,7 @@
         scope.counter = 0;
 
         scope.$watch(function(scope) {
-          throw "error";
+          throw "Error";
         }, function(n, o, scope) {
           scope.counter++;
         });
@@ -564,7 +564,7 @@
         scope.$watch(function(scope) {
           return scope.aValue;
         }, function(n, o, scope) {
-          throw "error";
+          throw "Error";
         });
         scope.$watch(function(scope) {
           return scope.aValue;
@@ -633,6 +633,60 @@
 
         scope.$digest();
         expect(scope.didRun).toBe(true);
+      });
+
+
+      it("destroys the $watch with the returned function", function() {
+        scope.aValue = "someValue";
+        scope.counter = 0;
+
+        var destroyWatch = scope.$watch(function() {
+          return scope.aValue;
+        }, function(n, o, scope) {
+          scope.counter++;
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+
+        scope.aValue = "def1";
+        scope.$digest();
+        expect(scope.counter).toBe(2);
+
+        destroyWatch();
+        scope.aValue = "def2";
+        scope.$digest();
+        expect(scope.counter).toBe(2);
+      });
+
+
+      it("allows destroying a $watch during digest", function() {
+        scope.aValue = 'abc';
+        var watchCalls = [];
+
+        scope.$watch(
+          function(scope) {
+            watchCalls.push('first');
+            return scope.aValue;
+          }
+        );
+
+        var destroyWatch = scope.$watch(
+          function(scope) {
+            watchCalls.push('second');
+            destroyWatch();
+          }
+        );
+
+        scope.$watch(
+          function(scope) {
+            watchCalls.push('third');
+            return scope.aValue;
+          }
+        );
+
+        scope.$digest();
+        expect(watchCalls).toEqual(['first', 'second', 'third', 'first', 'third']);
       });
     });
   });
