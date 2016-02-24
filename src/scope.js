@@ -228,10 +228,17 @@
       var changeReactionScheduled = false;
 
       if (watchFns.length === 0) {
+        var shouldCall = true;
+
         self.$evalAsync(function() {
-          listenerFn(newValues, newValues, self);
+          if (shouldCall) {
+            listenerFn(newValues, newValues, self);
+          }
         });
-        return;
+
+        return function() {
+          shouldCall = false;
+        };
       }
 
       function watchGroupListener() {
@@ -245,34 +252,22 @@
         changeReactionScheduled = false;
       }
 
-      watchFns.forEach(function(watchFn, i, arr) {
-        self.$watch(watchFn, function(newValue, oldValue) {
-          newValues[i] = newValue;
-          oldValues[i] = oldValue;
-
-          if (!changeReactionScheduled) {
-            changeReactionScheduled = true;
-            self.$evalAsync(watchGroupListener);
-          }
-        });
-      });
-
-      var destroyFunctions = _.map(watchFns, function(watchFn, i) {
+      var destroyFunctions = watchFns.map(function(watchFn, i, arr) {
         return self.$watch(watchFn, function(newValue, oldValue) {
           newValues[i] = newValue;
           oldValues[i] = oldValue;
+
           if (!changeReactionScheduled) {
             changeReactionScheduled = true;
             self.$evalAsync(watchGroupListener);
           }
-
         });
       });
 
       return function() {
-        _.forEach(destroyFunctions, function(destroyFunction) {
-          destroyFunction();
-        });
+        for (var i = 0; i < destroyFunctions.length; i++) {
+          destroyFunctions[i]();
+        }
       };
 
     }
@@ -280,4 +275,4 @@
 
 })(this);
 
-//p52
+//p66
