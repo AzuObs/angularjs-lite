@@ -227,6 +227,13 @@
       var firstRun = true;
       var changeReactionScheduled = false;
 
+      if (watchFns.length === 0) {
+        self.$evalAsync(function() {
+          listenerFn(newValues, newValues, self);
+        });
+        return;
+      }
+
       function watchGroupListener() {
         if (firstRun) {
           firstRun = false;
@@ -249,6 +256,25 @@
           }
         });
       });
+
+      var destroyFunctions = _.map(watchFns, function(watchFn, i) {
+        return self.$watch(watchFn, function(newValue, oldValue) {
+          newValues[i] = newValue;
+          oldValues[i] = oldValue;
+          if (!changeReactionScheduled) {
+            changeReactionScheduled = true;
+            self.$evalAsync(watchGroupListener);
+          }
+
+        });
+      });
+
+      return function() {
+        _.forEach(destroyFunctions, function(destroyFunction) {
+          destroyFunction();
+        });
+      };
+
     }
   };
 
