@@ -38,18 +38,20 @@
         while (length--) {
           try {
             var watcher = this.$$watchers[length];
-            newValue = watcher.watchFn(self);
-            oldValue = watcher.last;
+            if (watcher) {
+              newValue = watcher.watchFn(self);
+              oldValue = watcher.last;
 
-            if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
-              dirty = true;
-              self.$$lastDirtyWatch = watcher;
+              if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
+                dirty = true;
+                self.$$lastDirtyWatch = watcher;
 
-              watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
-              watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), self);
-            }
-            else if (self.$$lastDirtyWatch === watcher) {
-              return false;
+                watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
+                watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), self);
+              }
+              else if (self.$$lastDirtyWatch === watcher) {
+                return false;
+              }
             }
           }
           catch (e) {
@@ -212,6 +214,7 @@
         var index = self.$$watchers.indexOf(watcher);
         if (index >= 0) {
           self.$$watchers.splice(index, 1);
+          self.$$lastDirtyWatch = null;
         }
       };
     }
