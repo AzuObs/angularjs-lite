@@ -170,7 +170,6 @@
           console.error(e);
         }
       }
-
     },
 
 
@@ -194,6 +193,15 @@
         scope: this,
         expression: expr
       });
+    },
+
+
+    $new: function() {
+      var ChildScope = function() {};
+      ChildScope.prototype = this;
+
+      var child = new ChildScope();
+      return child;
     },
 
 
