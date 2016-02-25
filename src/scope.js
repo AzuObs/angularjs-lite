@@ -201,6 +201,7 @@
       ChildScope.prototype = this;
 
       var child = new ChildScope();
+      child.$$watchers = [];
       return child;
     },
 
