@@ -1002,6 +1002,89 @@
         child.$digest();
         expect(child.aValueWas).toBeUndefined();
       });
+
+
+      it("keeps a record of its children", function() {
+        var parent = new Scope();
+        var child1 = parent.$new();
+        var child2 = parent.$new();
+        var child2_1 = child2.$new();
+
+        expect(parent.$$children.length).toBe(2);
+        expect(parent.$$children[0]).toBe(child1);
+        expect(parent.$$children[1]).toBe(child2);
+        expect(child1.$$children.length).toBe(0);
+        expect(child2.$$children.length).toBe(1);
+        expect(child2.$$children[0]).toBe(child2_1);
+      });
+
+
+      it("digests its children", function() {
+        var parent = new Scope();
+        var child = parent.$new();
+
+        parent.aValue = "abc";
+
+        child.$watch(
+          function(scope) {
+            return scope.aValue;
+          },
+          function(newValue, oldValue, scope) {
+            scope.aValueWas = newValue;
+          }
+        );
+
+        parent.$digest();
+        expect(child.aValueWas).toBe("abc");
+      });
+
+
+      it("digests from root on $apply", function() {
+        var parent = new Scope();
+        var child = parent.$new();
+        var child_child = child.$new();
+
+        parent.aValue = "abc";
+        parent.counter = 0;
+
+        parent.$watch(
+          function(scope) {
+            return scope.aValue;
+          },
+          function(newValue, oldValue, scope) {
+            scope.counter++;
+          }
+        );
+
+        child_child.$apply(function(scope) {});
+        expect(parent.counter).toBe(1);
+      });
+
+
+      it("schedules a digest from root on $evalAsync", function(done) {
+        var parent = new Scope();
+        var child = parent.$new();
+        var child_child = child.$new();
+
+        parent.aValue = "abc";
+        parent.counter = 0;
+
+        parent.$watch(
+          function(scope) {
+            return scope.aValue;
+          },
+          function(newValue, oldValue, scope) {
+            scope.counter++;
+          }
+        );
+
+        child_child.$evalAsync(function(scope) {});
+
+        setTimeout(function() {
+          expect(parent.counter).toBe(1);
+          done();
+        }, 50);
+      });
     });
   });
 })();

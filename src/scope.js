@@ -5,14 +5,16 @@
   function initWatchVal() {}
 
 
-  exports.Scope = function() {
+  var Scope = function() {
     this.$$applyAsyncQueue = [];
     this.$$applyAsyncId = null;
     this.$$asyncQueue = [];
+    this.$$children = [];
     this.$$lastDirtyWatch = null;
     this.$$phase = null;
     this.$$postDigestQueue = [];
     this.$$watchers = [];
+    this.$root = this;
   };
 
 
@@ -30,36 +32,55 @@
 
 
     $$digestOnce: function() {
+      var dirty;
+      var continueLoop = true;
       var self = this;
-      var newValue, oldValue, dirty;
 
-      var length = this.$$watchers.length;
-      traverseWatchersLoop:
-        while (length--) {
-          try {
-            var watcher = this.$$watchers[length];
-            if (watcher) {
-              newValue = watcher.watchFn(self);
-              oldValue = watcher.last;
+      this.$$everyScope(function(scope) {
+        var newValue, oldValue;
 
-              if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
-                dirty = true;
-                self.$$lastDirtyWatch = watcher;
+        var length = scope.$$watchers.length;
+        traverseWatchersLoop:
+          while (length--) {
+            try {
+              var watcher = scope.$$watchers[length];
+              if (watcher) {
+                newValue = watcher.watchFn(self);
+                oldValue = watcher.last;
 
-                watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
-                watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), self);
-              }
-              else if (self.$$lastDirtyWatch === watcher) {
-                return false;
+                if (!scope.$$areEqual(newValue, oldValue, watcher.valueEq)) {
+                  dirty = true;
+                  self.$root.$$lastDirtyWatch = watcher;
+
+                  watcher.last = (watcher.valueEq ? _.cloneDeep(newValue) : newValue);
+                  watcher.listenerFn(newValue, (oldValue === initWatchVal ? newValue : oldValue), scope);
+                }
+                else if (self.$root.$$lastDirtyWatch === watcher) {
+                  continueLoop = false;
+                  return false;
+                }
               }
             }
+            catch (e) {
+              console.error(e);
+            }
           }
-          catch (e) {
-            console.error(e);
-          }
-        }
 
+        return continueLoop;
+      });
       return dirty;
+    },
+
+
+    $$everyScope: function(fn) {
+      if (fn(this)) {
+        return this.$$children.every(function(child) {
+          return child.$$everyScope(fn);
+        });
+      }
+      else {
+        return false;
+      }
     },
 
 
@@ -89,7 +110,7 @@
       }
       finally {
         this.$clearPhase();
-        this.$digest();
+        this.$root.$digest();
       }
     },
 
@@ -132,7 +153,7 @@
 
       var dirty = false;
       var ttl = 10;
-      this.$$lastDirtyWatch = null;
+      this.$root.$$lastDirtyWatch = null;
 
       if (this.$$applyAsyncId) {
         clearTimeout(this.$$applyAsyncId);
@@ -184,7 +205,7 @@
       if (!self.$$phase && !self.$$asyncQueue.length) {
         setTimeout(function() {
           if (self.$$asyncQueue.length) {
-            self.$digest();
+            self.$root.$digest();
           }
         }, 0);
       }
@@ -201,7 +222,10 @@
       ChildScope.prototype = this;
 
       var child = new ChildScope();
+      this.$$children.push(child);
+
       child.$$watchers = [];
+      child.$$children = [];
       return child;
     },
 
@@ -217,13 +241,13 @@
       };
 
       this.$$watchers.unshift(watcher);
-      this.$$lastDirtyWatch = null;
+      this.$root.$$lastDirtyWatch = null;
 
       return function() {
         var index = self.$$watchers.indexOf(watcher);
         if (index >= 0) {
           self.$$watchers.splice(index, 1);
-          self.$$lastDirtyWatch = null;
+          self.$root.$$lastDirtyWatch = null;
         }
       };
     },
@@ -282,6 +306,8 @@
     }
   };
 
+
+  exports.Scope = Scope;
 })(this);
 
-//p66
+//p77
