@@ -45,7 +45,7 @@
             try {
               var watcher = scope.$$watchers[length];
               if (watcher) {
-                newValue = watcher.watchFn(self);
+                newValue = watcher.watchFn(scope);
                 oldValue = watcher.last;
 
                 if (!scope.$$areEqual(newValue, oldValue, watcher.valueEq)) {
@@ -217,13 +217,22 @@
     },
 
 
-    $new: function() {
-      var ChildScope = function() {};
-      ChildScope.prototype = this;
+    $new: function(isolated) {
+      var child;
 
-      var child = new ChildScope();
+      if (isolated) {
+        child = new Scope();
+        child.$root = this.$root;
+        child.$$asyncQueue = this.$$asyncQueue;
+        child.$$postDigestQueue = this.$$postDigestQueue;
+      }
+      else {
+        var ChildScope = function() {};
+        ChildScope.prototype = this;
+        child = new ChildScope();
+      }
+
       this.$$children.push(child);
-
       child.$$watchers = [];
       child.$$children = [];
       return child;
@@ -310,4 +319,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p77
+//p82
