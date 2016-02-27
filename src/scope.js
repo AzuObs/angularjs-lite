@@ -99,7 +99,7 @@
         }
       }
 
-      this.$$applyAsyncId = null;
+      this.$root.$$applyAsyncId = null;
     },
 
 
@@ -122,8 +122,8 @@
         self.$eval(expr);
       });
 
-      if (self.$$applyAsyncId === null) {
-        self.$$applyAsyncId = setTimeout(function() {
+      if (self.$root.$$applyAsyncId === null) {
+        self.$root.$$applyAsyncId = setTimeout(function() {
           self.$apply(self.$$flushApplyAsync.bind(self));
         }, 0);
       }
@@ -155,8 +155,8 @@
       var ttl = 10;
       this.$root.$$lastDirtyWatch = null;
 
-      if (this.$$applyAsyncId) {
-        clearTimeout(this.$$applyAsyncId);
+      if (this.$root.$$applyAsyncId) {
+        clearTimeout(this.$root.$$applyAsyncId);
         this.$$flushApplyAsync();
       }
 
@@ -225,6 +225,7 @@
         child.$root = this.$root;
         child.$$asyncQueue = this.$$asyncQueue;
         child.$$postDigestQueue = this.$$postDigestQueue;
+        child.$$applyAsyncQueue = this.$$applyAsyncQueue;
       }
       else {
         var ChildScope = function() {};
@@ -319,4 +320,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p82
+//p87
