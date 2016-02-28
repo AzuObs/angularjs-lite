@@ -1419,6 +1419,21 @@
         scope.$digest();
         expect(scope.counter).toBe(2);
       });
+
+
+      it("does not fail on NaNs in arrays", function() {
+        scope.arr = [2, NaN, 3];
+        scope.counter = 0;
+
+        scope.$watchCollection(function(scope) {
+          return scope.arr;
+        }, function(newValue, oldValue, scope) {
+          scope.counter++;
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+      });
     });
   });
 })();
