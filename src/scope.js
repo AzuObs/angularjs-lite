@@ -285,14 +285,28 @@
       var oldValue;
       var changeCount = 0;
 
-
       var internalWatchFn = function(scope) {
         newValue = watchFn(scope);
 
-        if (!self.$$areEqual(newValue, oldValue, false)) {
-          changeCount++;
+        if (newValue !== null && typeof newValue === "object") { //_.isObject(newValue)
+          if (Array.isArray(newValue)) { //_.isArray(newValue)
+            if (!Array.isArray(oldValue)) {
+              changeCount++;
+              oldValue = [];
+            }
+          }
+          else {
+
+          }
         }
-        oldValue = newValue;
+
+        else {
+          if (!self.$$areEqual(newValue, oldValue, false)) {
+            changeCount++;
+          }
+
+          oldValue = newValue;
+        }
 
         return changeCount;
       };
@@ -362,4 +376,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p94
+//p101
