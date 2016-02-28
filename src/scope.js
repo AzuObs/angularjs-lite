@@ -194,6 +194,20 @@
     },
 
 
+    $destroy: function() {
+      if (this.$parent) {
+        var siblings = this.$parent.$$children;
+        var indexOfThis = siblings.indexOf(this);
+
+        if (indexOfThis >= 0) {
+          siblings.splice(indexOfThis, 1);
+        }
+      }
+
+      this.$$watchers = null;
+    },
+
+
     $eval: function(expr, locals) {
       return expr(this, locals);
     },
@@ -217,15 +231,16 @@
     },
 
 
-    $new: function(isolated) {
+    $new: function(isolated, parent) {
       var child;
+      parent = parent || this;
 
       if (isolated) {
         child = new Scope();
-        child.$root = this.$root;
-        child.$$asyncQueue = this.$$asyncQueue;
-        child.$$postDigestQueue = this.$$postDigestQueue;
-        child.$$applyAsyncQueue = this.$$applyAsyncQueue;
+        child.$root = parent.$root;
+        child.$$asyncQueue = parent.$$asyncQueue;
+        child.$$postDigestQueue = parent.$$postDigestQueue;
+        child.$$applyAsyncQueue = parent.$$applyAsyncQueue;
       }
       else {
         var ChildScope = function() {};
@@ -233,9 +248,10 @@
         child = new ChildScope();
       }
 
-      this.$$children.push(child);
+      parent.$$children.push(child);
       child.$$watchers = [];
       child.$$children = [];
+      child.$parent = parent;
       return child;
     },
 
@@ -320,4 +336,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p87
+//p89
