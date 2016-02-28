@@ -15,6 +15,7 @@
       beforeEach(function() {
         scope = new Scope();
       });
+
       it("calls the listener function of a watch on the first $digest", function() {
         var watchFn = function() {
           return "foobar";
@@ -734,7 +735,6 @@
         scope = new Scope();
       });
 
-
       it("takes watches as an array and calls listener with arrays", function() {
         var gotNewValues, gotOldValues;
 
@@ -870,6 +870,7 @@
 
 
     describe("inheritance", function() {
+
       it("inherits a parent's properties", function() {
         var parent = new Scope();
         parent.aValue = "someValue";
@@ -1250,6 +1251,42 @@
 
         parent.$digest();
         expect(child.counter).toBe(2);
+      });
+    });
+
+
+    describe("$watchCollection", function() {
+      var scope;
+
+      beforeEach(function() {
+        scope = new Scope();
+      });
+
+      it("works like a normal watch for non-collections", function() {
+        var valueProvided;
+        scope.aValue = 42;
+        scope.counter = 0;
+
+        scope.$watchCollection(function(scope) {
+          return scope.aValue;
+        }, function(newValue, oldValue, scope) {
+          valueProvided = newValue;
+          scope.counter++;
+        });
+
+        scope.$digest();
+        expect(scope.counter).toBe(1);
+        expect(valueProvided).toBe(scope.aValue);
+
+        scope.aValue = 43;
+
+        scope.$digest();
+        expect(scope.counter).toBe(2);
+        expect(valueProvided).toBe(scope.aValue);
+
+        scope.$digest();
+        expect(scope.counter).toBe(2);
+        expect(valueProvided).toBe(scope.aValue);
       });
     });
   });
