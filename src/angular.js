@@ -8,6 +8,10 @@
       }
       var length = obj.length;
       return Number.isInteger(length);
+    },
+
+    isObjectLike: function(obj) {
+      return obj !== null && typeof obj === "object";
     }
   };
 

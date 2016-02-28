@@ -288,7 +288,7 @@
       var internalWatchFn = function(scope) {
         newValue = watchFn(scope);
 
-        if (newValue !== null && typeof newValue === "object") { //_.isObject(newValue)
+        if (mixin.isObjectLike(newValue)) {
           if (mixin.isArrayLike(newValue)) {
             if (!Array.isArray(oldValue)) {
               changeCount++;
@@ -308,11 +308,14 @@
             }
           }
           else {
-
+            if (!mixin.isObjectLike(oldValue) || mixin.isArrayLike(oldValue)) {
+              changeCount++;
+              oldValue = {};
+            }
           }
         }
 
-        else {
+        else { //newValue is not object like
           if (!self.$$areEqual(newValue, oldValue, false)) {
             changeCount++;
           }
@@ -380,7 +383,6 @@
           destroyFunctions[i]();
         }
       };
-
     }
   };
 
@@ -388,4 +390,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p109
+//p111
