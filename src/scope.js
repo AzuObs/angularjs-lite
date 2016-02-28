@@ -298,6 +298,12 @@
               changeCount++;
               oldValue.length = newValue.length;
             }
+            for (var i = 0; i < newValue.length; i++) {
+              if (newValue[i] !== oldValue[i]) {
+                oldValue[i] = newValue[i];
+                changeCount++;
+              }
+            }
           }
           else {
 
