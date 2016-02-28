@@ -289,7 +289,7 @@
         newValue = watchFn(scope);
 
         if (newValue !== null && typeof newValue === "object") { //_.isObject(newValue)
-          if (Array.isArray(newValue)) { //_.isArray(newValue)
+          if (mixin.isArrayLike(newValue)) {
             if (!Array.isArray(oldValue)) {
               changeCount++;
               oldValue = [];
@@ -299,7 +299,9 @@
               oldValue.length = newValue.length;
             }
             for (var i = 0; i < newValue.length; i++) {
-              if (!self.$$areEqual(newValue[i], oldValue[i])) {
+              var bothNaN = isNaN(newValue[i]) && isNaN(oldValue[i]);
+
+              if (!bothNaN && newValue[i] !== oldValue[i]) {
                 oldValue[i] = newValue[i];
                 changeCount++;
               }
@@ -386,4 +388,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p103
+//p109
