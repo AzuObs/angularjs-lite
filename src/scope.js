@@ -312,6 +312,13 @@
               changeCount++;
               oldValue = {};
             }
+
+            for (var key in newValue) {
+              if (newValue[key] !== oldValue[key]) {
+                changeCount++;
+                oldValue[key] = newValue[key];
+              }
+            }
           }
         }
 
@@ -390,4 +397,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p111
+//p115

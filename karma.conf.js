@@ -7,7 +7,8 @@
       files: [
         "bower_components/lodash/dist/lodash.js",
         "bower_components/jquery/dist/jquery.js",
-        "src/**/*.js",
+        "src/angular.js",
+        "src/scope.js",
         "test/**/*.js"
       ],
       frameworks: ["jasmine"],

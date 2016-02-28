@@ -7,6 +7,7 @@
         return false;
       }
       var length = obj.length;
+
       return Number.isInteger(length);
     },
 
