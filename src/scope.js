@@ -294,6 +294,10 @@
               changeCount++;
               oldValue = [];
             }
+            if (newValue.length !== oldValue.length) {
+              changeCount++;
+              oldValue.length = newValue.length;
+            }
           }
           else {
 
@@ -376,4 +380,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p101
+//p103
