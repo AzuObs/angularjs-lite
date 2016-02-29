@@ -283,9 +283,15 @@
       var self = this;
       var newValue;
       var oldValue;
+      var oldLength;
+      var veryOldValue;
+      //only track if the listenerFn needs (newValue, oldValue, ...);
+      var trackVeryOldValue = listenerFn.length > 1;
       var changeCount = 0;
+      var firstRun = true;
 
       var internalWatchFn = function(scope) {
+        var newLength;
         newValue = watchFn(scope);
 
         if (mixin.isObjectLike(newValue)) {
@@ -311,12 +317,33 @@
             if (!mixin.isObjectLike(oldValue) || mixin.isArrayLike(oldValue)) {
               changeCount++;
               oldValue = {};
+              oldLength = 0;
             }
 
+            newLength = 0;
             for (var key in newValue) {
-              if (newValue[key] !== oldValue[key]) {
+              newLength++;
+              if (oldValue.hasOwnProperty(key)) {
+                var areBothNaN = isNaN(newValue[key]) && isNaN(oldValue[key]);
+                if (!areBothNaN && newValue[key] !== oldValue[key]) {
+                  oldValue[key] = newValue[key];
+                  changeCount++;
+                }
+              }
+              else {
                 changeCount++;
+                oldLength++;
                 oldValue[key] = newValue[key];
+              }
+            }
+
+            if (oldLength > newLength) {
+              changeCount++;
+              for (key in oldValue) {
+                if (!newValue.hasOwnProperty(key)) {
+                  oldLength--;
+                  delete oldValue[key];
+                }
               }
             }
           }
@@ -334,7 +361,17 @@
       };
 
       var internalListenerFn = function(scope) {
-        listenerFn(newValue, oldValue, self);
+        if (firstRun) {
+          listenerFn(newValue, newValue, self);
+          firstRun = false;
+        }
+        else {
+          listenerFn(newValue, veryOldValue, self);
+        }
+
+        if (trackVeryOldValue) {
+          veryOldValue = _.clone(newValue);
+        }
       };
 
       return this.$watch(internalWatchFn, internalListenerFn);
@@ -397,4 +434,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p115
+//p123

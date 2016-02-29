@@ -12,10 +12,10 @@
         "test/**/*.js"
       ],
       frameworks: ["jasmine"],
-      browsers: ["PhantomJS"],
+      // browsers: ["PhantomJS"],
       plugins: [
-        "karma-jasmine",
-        "karma-phantomjs-launcher"
+        "karma-jasmine"
+        // "karma-phantomjs-launcher"
       ],
       port: 9876
     });

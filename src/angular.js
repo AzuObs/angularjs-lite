@@ -1,14 +1,14 @@
-(function() {
+(function(exports) {
   "use strict";
 
-  window.mixin = {
+  var myMixin = {
     isArrayLike: function(obj) {
       if (obj === null || obj === undefined) {
         return false;
       }
       var length = obj.length;
 
-      return Number.isInteger(length);
+      return length === 0 || (Number.isInteger(length) && length > 0 && (length - 1) in obj);
     },
 
     isObjectLike: function(obj) {
@@ -16,4 +16,6 @@
     }
   };
 
-})();
+  exports.mixin = myMixin;
+
+})(this);
