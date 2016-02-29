@@ -252,6 +252,7 @@
       parent.$$children.push(child);
       child.$$watchers = [];
       child.$$children = [];
+      child.$$listeners = {};
       child.$parent = parent;
       return child;
     },

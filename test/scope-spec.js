@@ -1734,6 +1734,27 @@
               someOtherEvent: [listener3]
             });
           });
+
+
+          it("registers different listeners for every scope", function() {
+            var listener1 = function() {};
+            var listener2 = function() {};
+            var listener3 = function() {};
+
+            scope.$on("someEvent", listener1);
+            child.$on("someEvent", listener2);
+            isolatedChild.$on("someEvent", listener3);
+
+            expect(scope.$$listeners).toEqual({
+              someEvent: [listener1]
+            });
+            expect(child.$$listeners).toEqual({
+              someEvent: [listener2]
+            });
+            expect(isolatedChild.$$listeners).toEqual({
+              someEvent: [listener3]
+            });
+          });
         });
       });
     });
