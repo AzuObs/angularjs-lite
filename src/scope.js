@@ -11,6 +11,7 @@
     this.$$asyncQueue = [];
     this.$$children = [];
     this.$$lastDirtyWatch = null;
+    this.$$listeners = {};
     this.$$phase = null;
     this.$$postDigestQueue = [];
     this.$$watchers = [];
@@ -256,6 +257,16 @@
     },
 
 
+    $on: function(eventName, listener) {
+      var listeners = this.$$listeners[eventName];
+      if (!listeners) {
+        this.$$listeners[eventName] = [];
+      }
+
+      listeners.push(listener);
+    },
+
+
     $watch: function(watchFn, listenerFn, valueEq) {
       var self = this;
 
@@ -434,4 +445,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p123
+//p126
