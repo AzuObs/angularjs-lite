@@ -160,12 +160,14 @@
 
     $broadcast: function(eventName) {
       var event = {
-        name: eventName
+        name: eventName,
+        targetScope: this
       };
       var rest = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
       var listenerArgs = [event].concat(rest);
 
       this.$$everyScope(function(scope) {
+        event.currentScope = scope;
         scope.$$fireEventOnScope(eventName, listenerArgs);
         return true;
       });
@@ -245,13 +247,15 @@
 
     $emit: function(eventName) {
       var event = {
-        name: eventName
+        name: eventName,
+        targetScope: this
       };
       var rest = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
       var listenerArgs = [event].concat(rest);
 
       var scope = this;
       do {
+        event.currentScope = scope;
         scope.$$fireEventOnScope(eventName, listenerArgs);
         scope = scope.$parent;
       } while (scope);
