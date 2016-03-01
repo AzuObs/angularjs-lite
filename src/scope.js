@@ -102,6 +102,8 @@
 
         listener.apply(null, listenerArgs);
       }
+
+      return event;
     },
 
 
@@ -157,7 +159,7 @@
 
     $broadcast: function(eventName) {
       var additionalArgs = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
-      this.$$fireEventOnScope(eventName, additionalArgs);
+      return this.$$fireEventOnScope(eventName, additionalArgs);
     },
 
 
@@ -233,7 +235,7 @@
     $emit: function(eventName) {
       // _.rest(arguments)
       var additionalArgs = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
-      this.$$fireEventOnScope(eventName, additionalArgs);
+      return this.$$fireEventOnScope(eventName, additionalArgs);
     },
 
 
