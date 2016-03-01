@@ -1758,10 +1758,11 @@
       });
 
 
-      var methods = ["$emit", "$broadcast"];
-      for (var i = 0; i < methods.length; i++) {
-        var method = methods[i];
+      // var methods = ["$emit", "$broadcast"];
+      // for (var i = 0; i < methods.length; i++) {
+      //   var method = methods[i];
 
+      _.forEach(["$emit", "$broadcast"], function(method) {
         it("calls the listeners of the matching event on " + method, function() {
           var listener1 = jasmine.createSpy();
           var listener2 = jasmine.createSpy();
@@ -1822,7 +1823,18 @@
           expect(returnedEvent).toBeDefined();
           expect(returnedEvent.name).toEqual("someEvent");
         });
-      }
+
+
+        it("can be deregistered " + method, function() {
+          var listener = jasmine.createSpy();
+          var deregister = scope.$on("someEvent", listener);
+
+          deregister();
+
+          scope[method]("someEvent");
+          expect(listener).not.toHaveBeenCalled();
+        });
+      }); //_.forEach end
     });
   });
 })();

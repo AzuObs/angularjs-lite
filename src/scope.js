@@ -295,6 +295,13 @@
       }
 
       listeners.push(listener);
+
+      return function() {
+        var indexOf = listeners.indexOf(listener);
+        if (indexOf >= 0) {
+          listeners.splice(indexOf, 1);
+        }
+      };
     },
 
 
