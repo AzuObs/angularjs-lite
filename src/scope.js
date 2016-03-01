@@ -90,6 +90,21 @@
     },
 
 
+    $$fireEventOnScope: function(eventName, additionalArgs) {
+      var event = {
+        name: eventName
+      };
+      var listeners = this.$$listeners[eventName] || [];
+      var listenerArgs = [event].concat(additionalArgs);
+
+      for (var i = 0; i < listeners.length; i++) {
+        var listener = listeners[i];
+
+        listener.apply(null, listenerArgs);
+      }
+    },
+
+
     $$flushApplyAsync: function() {
       while (this.$$applyAsyncQueue.length) {
         try {
@@ -141,13 +156,8 @@
 
 
     $broadcast: function(eventName) {
-      var listeners = this.$$listeners[eventName] || [];
-
-      for (var i = 0; i < listeners.length; i++) {
-        var listener = listeners[i];
-
-        listener();
-      }
+      var additionalArgs = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
+      this.$$fireEventOnScope(eventName, additionalArgs);
     },
 
 
@@ -221,13 +231,9 @@
 
 
     $emit: function(eventName) {
-      var listeners = this.$$listeners[eventName] || [];
-
-      for (var i = 0; i < listeners.length; i++) {
-        var listener = listeners[i];
-
-        listener();
-      }
+      // _.rest(arguments)
+      var additionalArgs = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
+      this.$$fireEventOnScope(eventName, additionalArgs);
     },
 
 
@@ -283,7 +289,7 @@
     $on: function(eventName, listener) {
       var listeners = this.$$listeners[eventName];
       if (!listeners) {
-        this.$$listeners[eventName] = [];
+        this.$$listeners[eventName] = listeners = [];
       }
 
       listeners.push(listener);
@@ -468,4 +474,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p132
+//p136
