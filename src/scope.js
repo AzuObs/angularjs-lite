@@ -165,9 +165,14 @@
       var rest = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
       var listenerArgs = [event].concat(rest);
 
-      this.$$fireEventOnScope(eventName, listenerArgs);
+      this.$$everyScope(function(scope) {
+        scope.$$fireEventOnScope(eventName, listenerArgs);
+        return true;
+      });
+
       return event;
     },
+
 
     $clearPhase: function() {
       if (!this.$$phase) {
