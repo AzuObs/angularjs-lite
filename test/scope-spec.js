@@ -1851,6 +1851,19 @@
           expect(nextListener).toHaveBeenCalled();
         });
       }); //_.forEach end
+
+
+      it("propagates up the scope hierarchy on $emit", function() {
+        var parentListener = jasmine.createSpy();
+        var scopeListener = jasmine.createSpy();
+
+        parent.$on("someEvent", parentListener);
+        scope.$on("someEvent", scopeListener);
+        scope.$emit("someEvent");
+
+        expect(scopeListener).toHaveBeenCalled();
+        expect(parentListener).toHaveBeenCalled();
+      });
     });
   });
 })();

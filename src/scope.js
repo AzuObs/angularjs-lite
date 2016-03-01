@@ -90,12 +90,8 @@
     },
 
 
-    $$fireEventOnScope: function(eventName, additionalArgs) {
-      var event = {
-        name: eventName
-      };
+    $$fireEventOnScope: function(eventName, listenerArgs) {
       var listeners = this.$$listeners[eventName] || [];
-      var listenerArgs = [event].concat(additionalArgs);
 
       var i = 0;
       while (i < listeners.length) {
@@ -163,10 +159,15 @@
 
 
     $broadcast: function(eventName) {
-      var additionalArgs = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
-      return this.$$fireEventOnScope(eventName, additionalArgs);
-    },
+      var event = {
+        name: eventName
+      };
+      var rest = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
+      var listenerArgs = [event].concat(rest);
 
+      this.$$fireEventOnScope(eventName, listenerArgs);
+      return event;
+    },
 
     $clearPhase: function() {
       if (!this.$$phase) {
@@ -238,9 +239,19 @@
 
 
     $emit: function(eventName) {
-      // _.rest(arguments)
-      var additionalArgs = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
-      return this.$$fireEventOnScope(eventName, additionalArgs);
+      var event = {
+        name: eventName
+      };
+      var rest = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
+      var listenerArgs = [event].concat(rest);
+
+      var scope = this;
+      do {
+        scope.$$fireEventOnScope(eventName, listenerArgs);
+        scope = scope.$parent;
+      } while (scope);
+
+      return event;
     },
 
 
@@ -488,4 +499,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p136
+//p139
