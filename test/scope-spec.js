@@ -1964,6 +1964,32 @@
         expect(currentScopeOnScope).toBe(scope);
         expect(currentScopeOnChild).toBe(child);
       });
+
+
+      it("sets currentScope to null after propagation on $emit", function() {
+        var event;
+        var scopeListener = function(evt) {
+          event = evt;
+        };
+
+        scope.$on("someEvent", scopeListener);
+        scope.$emit("someEvent");
+
+        expect(event.currentScope).toBe(null);
+      });
+
+
+      it("sets currentScope to null after propagation on $broadcast", function() {
+        var event;
+        var scopeListener = function(evt) {
+          event = evt;
+        };
+
+        scope.$on("someEvent", scopeListener);
+        scope.$broadcast("someEvent");
+
+        expect(event.currentScope).toBe(null);
+      });
     });
   });
 })();

@@ -172,6 +172,7 @@
         return true;
       });
 
+      event.currentScope = null;
       return event;
     },
 
@@ -260,6 +261,7 @@
         scope = scope.$parent;
       } while (scope);
 
+      event.currentScope = null;
       return event;
     },
 
@@ -508,4 +510,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p139
+//p147
