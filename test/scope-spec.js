@@ -1834,6 +1834,22 @@
           scope[method]("someEvent");
           expect(listener).not.toHaveBeenCalled();
         });
+
+
+        it("does not skip the next listener when removed on " + method, function() {
+          var deregister;
+          var listener = function() {
+            deregister();
+          };
+          var nextListener = jasmine.createSpy();
+
+          deregister = scope.$on("someEvent", listener);
+          scope.$on("someEvent", nextListener);
+
+          scope[method]("someEvent");
+
+          expect(nextListener).toHaveBeenCalled();
+        });
       }); //_.forEach end
     });
   });

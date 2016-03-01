@@ -97,10 +97,15 @@
       var listeners = this.$$listeners[eventName] || [];
       var listenerArgs = [event].concat(additionalArgs);
 
-      for (var i = 0; i < listeners.length; i++) {
-        var listener = listeners[i];
-
-        listener.apply(null, listenerArgs);
+      var i = 0;
+      while (i < listeners.length) {
+        if (listeners[i] === null) {
+          listeners.splice(i, 1);
+        }
+        else {
+          listeners[i].apply(null, listenerArgs);
+          i++;
+        }
       }
 
       return event;
@@ -299,7 +304,7 @@
       return function() {
         var indexOf = listeners.indexOf(listener);
         if (indexOf >= 0) {
-          listeners.splice(indexOf, 1);
+          listeners[indexOf] = null;
         }
       };
     },
