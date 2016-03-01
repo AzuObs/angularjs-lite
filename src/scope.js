@@ -140,6 +140,17 @@
     },
 
 
+    $broadcast: function(eventName) {
+      var listeners = this.$$listeners[eventName] || [];
+
+      for (var i = 0; i < listeners.length; i++) {
+        var listener = listeners[i];
+
+        listener();
+      }
+    },
+
+
     $clearPhase: function() {
       if (!this.$$phase) {
         throw "phase was already cleared";
@@ -206,6 +217,17 @@
       }
 
       this.$$watchers = null;
+    },
+
+
+    $emit: function(eventName) {
+      var listeners = this.$$listeners[eventName] || [];
+
+      for (var i = 0; i < listeners.length; i++) {
+        var listener = listeners[i];
+
+        listener();
+      }
     },
 
 
@@ -446,4 +468,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p126
+//p132
