@@ -99,8 +99,15 @@
           listeners.splice(i, 1);
         }
         else {
-          listeners[i].apply(null, listenerArgs);
-          i++;
+          try {
+            listeners[i].apply(null, listenerArgs);
+          }
+          catch (e) {
+            console.error(e);
+          }
+          finally {
+            i++;
+          }
         }
       }
 
@@ -202,6 +209,7 @@
       }
 
       this.$$watchers = null;
+      this.$$listeners = {};
     },
 
 
