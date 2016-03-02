@@ -2018,6 +2018,22 @@
       });
 
 
+      it("fires $destroy when destroyed", function() {
+        var listener = jasmine.createSpy();
+        scope.$on("$destroy", listener);
+
+        scope.$destroy();
+        expect(listener).toHaveBeenCalled();
+      });
+
+
+      it("fires $destroy on children destroyed", function() {
+        var listener = jasmine.createSpy();
+        child.$on("$destroy", listener);
+
+        scope.$destroy();
+        expect(listener).toHaveBeenCalled();
+      });
     });
   });
 })();

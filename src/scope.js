@@ -189,6 +189,22 @@
     },
 
 
+    $destroy: function() {
+      this.$broadcast('$destroy');
+
+      if (this.$parent) {
+        var siblings = this.$parent.$$children;
+        var indexOfThis = siblings.indexOf(this);
+
+        if (indexOfThis >= 0) {
+          siblings.splice(indexOfThis, 1);
+        }
+      }
+
+      this.$$watchers = null;
+    },
+
+
     $digest: function() {
       this.$beginPhase("$digest");
 
@@ -232,20 +248,6 @@
           console.error(e);
         }
       }
-    },
-
-
-    $destroy: function() {
-      if (this.$parent) {
-        var siblings = this.$parent.$$children;
-        var indexOfThis = siblings.indexOf(this);
-
-        if (indexOfThis >= 0) {
-          siblings.splice(indexOfThis, 1);
-        }
-      }
-
-      this.$$watchers = null;
     },
 
 
