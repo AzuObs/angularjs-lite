@@ -247,9 +247,13 @@
 
 
     $emit: function(eventName) {
+      var propagationStopped = false;
       var event = {
         name: eventName,
-        targetScope: this
+        targetScope: this,
+        stopPropagation: function() {
+          propagationStopped = true;
+        }
       };
       var rest = Array.prototype.splice.call(arguments, 1, arguments.length - 1);
       var listenerArgs = [event].concat(rest);
@@ -259,7 +263,7 @@
         event.currentScope = scope;
         scope.$$fireEventOnScope(eventName, listenerArgs);
         scope = scope.$parent;
-      } while (scope);
+      } while (scope && !propagationStopped);
 
       event.currentScope = null;
       return event;
@@ -510,4 +514,4 @@
   exports.Scope = Scope;
 })(this);
 
-//p147
+//p148

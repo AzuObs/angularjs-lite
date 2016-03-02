@@ -1990,6 +1990,20 @@
 
         expect(event.currentScope).toBe(null);
       });
+
+
+      it("does not propagate to parents when stopped", function() {
+        var scopeListener = function(event) {
+          event.stopPropagation();
+        };
+        var parentListener = jasmine.createSpy();
+
+        scope.$on("someEvent", scopeListener);
+        parent.$on("someEvent", parentListener);
+
+        scope.$emit("someEvent");
+        expect(parentListener).not.toHaveBeenCalled();
+      });
     });
   });
 })();
