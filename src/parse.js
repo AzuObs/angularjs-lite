@@ -41,7 +41,7 @@
         this.readNumber();
       }
       else if (this.ch === "\"" || this.ch === "'") {
-        this.readString();
+        this.readString(this.ch);
       }
       else {
         throw "Unexpected next character: " + this.ch;
@@ -105,14 +105,14 @@
   };
 
 
-  Lexer.prototype.readString = function() {
+  Lexer.prototype.readString = function(quote) {
     this.index++; // to avoid opening quotes "" or ''
     var string = "";
 
     while (this.index < this.text.length) {
       var ch = this.text.charAt(this.index);
 
-      if (ch === "'" || ch === "\"") {
+      if (ch === quote) {
         this.index++;
         this.tokens.push({
           text: string,
