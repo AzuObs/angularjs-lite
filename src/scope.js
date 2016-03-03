@@ -529,5 +529,3 @@
 
   exports.Scope = Scope;
 })(this);
-
-//p161

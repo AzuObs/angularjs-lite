@@ -7,9 +7,9 @@
       files: [
         "bower_components/lodash/dist/lodash.js",
         "bower_components/jquery/dist/jquery.js",
-        "src/angular.js",
-        "src/scope.js",
-        "test/**/*.js"
+        "src/**/*.js",
+        "test/scope-spec.js",
+        "test/parse-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],
