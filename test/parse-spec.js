@@ -61,5 +61,24 @@
         parse("42e-a");
       }).toThrow();
     });
+
+
+    it("can parse a string in single quotes", function() {
+      var fn = parse("'abc'");
+      expect(fn()).toEqual("abc");
+    });
+
+
+    it("can parse a string in double quotes", function() {
+      var fn = parse('"abc"');
+      expect(fn()).toEqual("abc");
+    });
+
+
+    it("will not parse a string with mismatching quotes", function() {
+      expect(function() {
+        parse("'abc\"");
+      }).toThrow();
+    });
   });
 })();

@@ -40,6 +40,9 @@
         (this.ch === "." && this.isNumber(this.peek()))) {
         this.readNumber();
       }
+      else if (this.ch === "\"" || this.ch === "'") {
+        this.readString();
+      }
       else {
         throw "Unexpected next character: " + this.ch;
       }
@@ -102,6 +105,32 @@
   };
 
 
+  Lexer.prototype.readString = function() {
+    this.index++; // to avoid opening quotes "" or ''
+    var string = "";
+
+    while (this.index < this.text.length) {
+      var ch = this.text.charAt(this.index);
+
+      if (ch === "'" || ch === "\"") {
+        this.index++;
+        this.tokens.push({
+          text: string,
+          value: string
+        });
+        return;
+      }
+      else {
+        string += ch;
+      }
+
+      this.index++;
+    }
+
+    throw "Unmatched quote";
+  };
+
+
   //
   // AST Builder
   // 
@@ -160,6 +189,16 @@
   };
 
 
+  ASTCompiler.prototype.escape = function(value) {
+    if (typeof value === "string") {
+      return "\"" + value + "\"";
+    }
+    else {
+      return value;
+    }
+  };
+
+
   ASTCompiler.prototype.recurse = function(ast) {
     switch (ast.type) {
       case AST.Program:
@@ -167,7 +206,7 @@
         break;
 
       case AST.Literal:
-        return ast.value;
+        return this.escape(ast.value);
 
       default:
         throw "Error the ast.type is not recognised";
@@ -175,4 +214,4 @@
   };
 })();
 
-//165
+//178
