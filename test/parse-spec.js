@@ -100,5 +100,12 @@
       var fn = parse("'\\u00A0'");
       expect(fn()).toEqual('\u00A0');
     });
+
+
+    it("will not parse a string with invalid unicode escapes", function() {
+      expect(function() {
+        parse("'\\u00T0'");
+      }).toThrow();
+    });
   });
 })();

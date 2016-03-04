@@ -127,6 +127,9 @@
       if (escape) {
         if (ch === "u") {
           var hex = this.text.substring(this.index + 1, this.index + 5);
+          if (!hex.match(/[0-9a-f]{4}/i)) {
+            throw "Invalid unicode escape";
+          }
           this.index += 4;
           string += String.fromCharCode(parseInt(hex, 16));
         }
@@ -255,4 +258,4 @@
   };
 })();
 
-//182
+//185
