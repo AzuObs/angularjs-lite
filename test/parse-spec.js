@@ -80,5 +80,19 @@
         parse("'abc\"");
       }).toThrow();
     });
+
+
+    it("can parse a string with single quotes inside", function() {
+      // debugger;
+      var fn = parse("'a\\\"b'");
+
+      expect(fn()).toEqual("a\"b");
+    });
+
+
+    it("can parse a string with double quotes inside", function() {
+      var fn = parse('"a\\\"b"');
+      expect(fn()).toEqual("a\"b");
+    });
   });
 })();

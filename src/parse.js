@@ -1,6 +1,17 @@
 (function() {
   "use strict";
 
+  var ESCAPES = {
+    n: "\n",
+    f: "\f",
+    r: "\r",
+    t: "\t",
+    v: "\v",
+    "\"": "\"",
+    "'": "\'"
+  };
+
+
   window.parse = function(expr) {
     var lexer = new Lexer();
     var parser = new Parser(lexer);
@@ -108,11 +119,25 @@
   Lexer.prototype.readString = function(quote) {
     this.index++; // to avoid opening quotes "" or ''
     var string = "";
+    var escape = false; // escape mode ex: "foo\nbar"
 
     while (this.index < this.text.length) {
       var ch = this.text.charAt(this.index);
 
-      if (ch === quote) {
+      if (escape) {
+        var replacement = ESCAPES[ch];
+
+        if (replacement) {
+          string += replacement;
+        }
+        else {
+          string += ch;
+        }
+
+        escape = false;
+      }
+
+      else if (ch === quote) {
         this.index++;
         this.tokens.push({
           text: string,
@@ -120,6 +145,11 @@
         });
         return;
       }
+
+      else if (ch === "\\") {
+        escape = true;
+      }
+
       else {
         string += ch;
       }
@@ -191,7 +221,7 @@
 
   ASTCompiler.prototype.escape = function(value) {
     if (typeof value === "string") {
-      return "\"" + value + "\"";
+      return "\"" + value.replace(this.stringEscapeRegex, this.stringEscapeFn) + "\"";
     }
     else {
       return value;
@@ -212,6 +242,12 @@
         throw "Error the ast.type is not recognised";
     }
   };
+
+
+  ASTCompiler.prototype.stringEscapeRegex = /[^ a-zA-Z0-9]/g;
+  ASTCompiler.prototype.stringEscapeFn = function(c) {
+    return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
+  };
 })();
 
-//178
+//182
