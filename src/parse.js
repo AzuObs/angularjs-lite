@@ -125,15 +125,20 @@
       var ch = this.text.charAt(this.index);
 
       if (escape) {
-        var replacement = ESCAPES[ch];
-
-        if (replacement) {
-          string += replacement;
+        if (ch === "u") {
+          var hex = this.text.substring(this.index + 1, this.index + 5);
+          this.index += 4;
+          string += String.fromCharCode(parseInt(hex, 16));
         }
         else {
-          string += ch;
+          var replacement = ESCAPES[ch];
+          if (replacement) {
+            string += replacement;
+          }
+          else {
+            string += ch;
+          }
         }
-
         escape = false;
       }
 
