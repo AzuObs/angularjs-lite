@@ -57,6 +57,9 @@
       else if (this.isIdent(this.ch)) {
         this.readIdent();
       }
+      else if (this.isWhiteSpace(this.ch)) {
+        this.index++;
+      }
       else {
         throw "Unexpected next character: " + this.ch;
       }
@@ -77,6 +80,11 @@
 
   Lexer.prototype.isNumber = function(ch) {
     return "0" <= ch && ch <= "9";
+  };
+
+  Lexer.prototype.isWhiteSpace = function(ch) {
+    return ch === " " || ch === "\r" || ch === "\t" ||
+      ch === "\n" || ch === "\v" || ch === "\u00A0";
   };
 
 
@@ -317,4 +325,4 @@
   };
 })();
 
-//187
+//189
