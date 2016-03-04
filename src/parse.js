@@ -57,7 +57,7 @@
         this.readString(this.ch);
       }
       // Arrays
-      else if (this.ch === "[" || this.ch === "]") {
+      else if (this.ch === "[" || this.ch === "]" || this.ch === ",") {
         this.tokens.push({
           text: this.ch
         });
@@ -239,9 +239,20 @@
 
 
   AST.prototype.arrayDeclaration = function() {
+    var elements = [];
+    if (!this.peek("]")) {
+      do {
+        if (this.peek("]")) {
+          break;
+        }
+        elements.push(this.primary());
+      } while (this.expect(","));
+    }
+
     this.consume("]");
     return {
-      type: AST.ArrayExpression
+      type: AST.ArrayExpression,
+      elements: elements
     };
   };
 
@@ -249,7 +260,7 @@
   AST.prototype.constant = function() {
     return {
       type: AST.Literal,
-      value: this.tokens[0].value
+      value: this.consume().value
     };
   };
 
@@ -280,9 +291,20 @@
 
 
   AST.prototype.expect = function(e) {
+    var token = this.peek(e);
+
+    if (token) {
+      return this.tokens.shift();
+    }
+  };
+
+
+  AST.prototype.peek = function(e) {
     if (this.tokens.length > 0) {
-      if (this.tokens[0].text === e || !e) {
-        return this.tokens.shift();
+      var text = this.tokens[0].text;
+
+      if (text === e || !e) {
+        return this.tokens[0];
       }
     }
   };
@@ -293,7 +315,7 @@
       return this.arrayDeclaration();
     }
     else if (this.constants.hasOwnProperty(this.tokens[0].text)) {
-      return this.constants[this.tokens[0].text];
+      return this.constants[this.consume().text];
     }
     else {
       return this.constant();
@@ -355,7 +377,11 @@
         return this.escape(ast.value);
 
       case AST.ArrayExpression:
-        return "[]";
+        var self = this;
+        var elements = ast.elements.map(function(element) {
+          return self.recurse(element);
+        });
+        return "[" + elements.join(",") + "]";
 
       default:
         throw "Error the ast.type is not recognised";
@@ -369,4 +395,4 @@
   };
 })();
 
-//189
+//198
