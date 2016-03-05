@@ -364,6 +364,9 @@
     else if (this.constants.hasOwnProperty(this.tokens[0].text)) { // "true", "false", "null"
       return this.constants[this.consume().text];
     }
+    else if (this.peek().identifier) {
+      return this.identifier();
+    }
     else {
       return this.constant();
     }
@@ -397,7 +400,7 @@
     this.recurse(ast);
 
     /* jshint -W054 */
-    return new Function(this.state.body.join(""));
+    return new Function("s", this.state.body.join(""));
     /* jshint +W054 */
   };
 
@@ -419,22 +422,26 @@
   };
 
 
+  ASTCompiler.prototype.nonComputedMember = function(left, right) {
+    return "(" + left + ")." + right;
+  };
+
+
   ASTCompiler.prototype.recurse = function(ast) {
     var self = this;
 
     switch (ast.type) {
-      case AST.Program:
-        this.state.body.push("return ", this.recurse(ast.body), ";");
-        break;
-
-      case AST.Literal:
-        return this.escape(ast.value);
-
       case AST.ArrayExpression:
         var elements = ast.elements.map(function(element) {
           return self.recurse(element);
         });
         return "[" + elements.join(",") + "]";
+
+      case AST.Identifier:
+        return this.nonComputedMember("s", ast.name);
+
+      case AST.Literal:
+        return this.escape(ast.value);
 
       case AST.ObjectExpression:
         var properties = ast.properties.map(function(property) {
@@ -443,8 +450,11 @@
           var value = self.recurse(property.value);
           return key + ":" + value;
         });
-
         return "{" + properties.join(",") + "}";
+
+      case AST.Program:
+        this.state.body.push("return ", this.recurse(ast.body), ";");
+        break;
 
       default:
         throw "Error the ast.type is not recognised";
@@ -454,4 +464,4 @@
 
 })();
 
-//198
+//209
