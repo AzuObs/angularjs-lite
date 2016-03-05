@@ -155,5 +155,14 @@
       var fn = parse("{}");
       expect(fn()).toEqual({});
     });
+
+
+    it("will parse a non-empty object", function() {
+      var fn = parse("{'a key': 1, \"another-key\": 2}");
+      expect(fn()).toEqual({
+        "a key": 1,
+        "another-key": 2
+      });
+    });
   });
 })();

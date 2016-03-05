@@ -235,6 +235,8 @@
   AST.Literal = "Literal";
   AST.ArrayExpression = "ArrayExpression";
   AST.ObjectExpression = "ObjectExpression";
+  AST.Property = "Property";
+
 
   AST.prototype.ast = function(text) {
     this.tokens = this.lexer.lex(text);
@@ -304,10 +306,25 @@
 
 
   AST.prototype.object = function() {
+    var properties = [];
+
+    if (!this.peek("}")) {
+      do {
+        var property = {
+          type: AST.Property
+        };
+        property.key = this.constant();
+        this.consume(":");
+        property.value = this.primary();
+        properties.push(property);
+      } while (this.expect(","));
+    }
+
     this.consume("}");
 
     return {
-      type: AST.ObjectExpression
+      type: AST.ObjectExpression,
+      properties: properties
     };
   };
 
@@ -330,7 +347,7 @@
     else if (this.expect("{")) {
       return this.object();
     }
-    else if (this.constants.hasOwnProperty(this.tokens[0].text)) {
+    else if (this.constants.hasOwnProperty(this.tokens[0].text)) { // "true", "false", "null"
       return this.constants[this.consume().text];
     }
     else {
@@ -358,6 +375,7 @@
 
   ASTCompiler.prototype.compile = function(text) {
     var ast = this.astBuilder.ast(text);
+
     this.state = {
       body: []
     };
@@ -381,9 +399,15 @@
       return value;
     }
   };
+  ASTCompiler.prototype.stringEscapeRegex = /[^ a-zA-Z0-9]/g;
+  ASTCompiler.prototype.stringEscapeFn = function(c) {
+    return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
+  };
 
 
   ASTCompiler.prototype.recurse = function(ast) {
+    var self = this;
+
     switch (ast.type) {
       case AST.Program:
         this.state.body.push("return ", this.recurse(ast.body), ";");
@@ -393,14 +417,19 @@
         return this.escape(ast.value);
 
       case AST.ArrayExpression:
-        var self = this;
         var elements = ast.elements.map(function(element) {
           return self.recurse(element);
         });
         return "[" + elements.join(",") + "]";
 
       case AST.ObjectExpression:
-        return "{}";
+        var properties = ast.properties.map(function(property) {
+          var key = self.escape(property.key.value);
+          var value = self.recurse(property.value);
+          return key + ":" + value;
+        });
+
+        return "{" + properties.join(",") + "}";
 
       default:
         throw "Error the ast.type is not recognised";
@@ -408,10 +437,6 @@
   };
 
 
-  ASTCompiler.prototype.stringEscapeRegex = /[^ a-zA-Z0-9]/g;
-  ASTCompiler.prototype.stringEscapeFn = function(c) {
-    return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
-  };
 })();
 
 //198
