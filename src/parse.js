@@ -49,15 +49,15 @@
 
       // Numbers
       if (this.isNumber(this.ch) ||
-        (this.ch === "." && this.isNumber(this.peek()))) {
+        (this.is(".") && this.isNumber(this.peek()))) {
         this.readNumber();
       }
       // Strings
-      else if (this.ch === "\"" || this.ch === "'") {
+      else if (this.is("\"'")) {
         this.readString(this.ch);
       }
       // Arrays
-      else if (this.ch === "[" || this.ch === "]" || this.ch === ",") {
+      else if (this.is("[]{},:)")) {
         this.tokens.push({
           text: this.ch
         });
@@ -79,6 +79,10 @@
     return this.tokens;
   };
 
+
+  Lexer.prototype.is = function(chs) {
+    return chs.indexOf(this.ch) >= 0;
+  };
 
   Lexer.prototype.isExpOperator = function(ch) {
     return ch === "+" || ch === "-" || this.isNumber(ch);
@@ -230,7 +234,7 @@
   AST.Program = "Program";
   AST.Literal = "Literal";
   AST.ArrayExpression = "ArrayExpression";
-
+  AST.ObjectExpression = "ObjectExpression";
 
   AST.prototype.ast = function(text) {
     this.tokens = this.lexer.lex(text);
@@ -299,6 +303,15 @@
   };
 
 
+  AST.prototype.object = function() {
+    this.consume("}");
+
+    return {
+      type: AST.ObjectExpression
+    };
+  };
+
+
   AST.prototype.peek = function(e) {
     if (this.tokens.length > 0) {
       var text = this.tokens[0].text;
@@ -313,6 +326,9 @@
   AST.prototype.primary = function() {
     if (this.expect("[")) {
       return this.arrayDeclaration();
+    }
+    else if (this.expect("{")) {
+      return this.object();
     }
     else if (this.constants.hasOwnProperty(this.tokens[0].text)) {
       return this.constants[this.consume().text];
@@ -382,6 +398,9 @@
           return self.recurse(element);
         });
         return "[" + elements.join(",") + "]";
+
+      case AST.ObjectExpression:
+        return "{}";
 
       default:
         throw "Error the ast.type is not recognised";
