@@ -390,17 +390,25 @@
   };
 
 
+  ASTCompiler.prototype.assign = function(id, value) {
+    return id + "=" + value + ";";
+  };
+
+
   ASTCompiler.prototype.compile = function(text) {
     var ast = this.astBuilder.ast(text);
 
     this.state = {
-      body: []
+      body: [],
+      nextId: 0,
+      vars: []
     };
 
     this.recurse(ast);
 
     /* jshint -W054 */
-    return new Function("s", this.state.body.join(""));
+    return new Function("s", (this.state.vars.length ?
+      "var " + this.state.vars.join("") + ";" : "") + this.state.body.join(""));
     /* jshint +W054 */
   };
 
@@ -422,6 +430,18 @@
   };
 
 
+  ASTCompiler.prototype.if_ = function(test, consequent) {
+    this.state.body.push("if(", test, "){", consequent, "}");
+  };
+
+
+  ASTCompiler.prototype.nextId = function() {
+    var id = "v" + (this.state.nextId++);
+    this.state.vars.push(id);
+    return id;
+  };
+
+
   ASTCompiler.prototype.nonComputedMember = function(left, right) {
     return "(" + left + ")." + right;
   };
@@ -438,7 +458,9 @@
         return "[" + elements.join(",") + "]";
 
       case AST.Identifier:
-        return this.nonComputedMember("s", ast.name);
+        var intoId = this.nextId();
+        this.if_("s", this.assign(intoId, this.nonComputedMember("s", ast.name)));
+        return intoId;
 
       case AST.Literal:
         return this.escape(ast.value);
