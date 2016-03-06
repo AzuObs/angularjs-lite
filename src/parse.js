@@ -57,7 +57,7 @@
         this.readString(this.ch);
       }
       // Arrays
-      else if (this.is("[]{},:).")) {
+      else if (this.is("[,]{:}.()")) {
         this.tokens.push({
           text: this.ch
         });
@@ -232,13 +232,14 @@
     this.lexer = lexer;
   };
 
+  AST.Program = "Program";
+  AST.CallExpression = "CallExpression";
   AST.ArrayExpression = "ArrayExpression";
-  AST.Identifier = "Identifier";
-  AST.Literal = "Literal";
   AST.MemberExpression = "MemberExpression";
   AST.ObjectExpression = "ObjectExpression";
-  AST.Program = "Program";
+  AST.Literal = "Literal";
   AST.Property = "Property";
+  AST.Identifier = "Identifier";
   AST.ThisExpression = "ThisExpression";
 
 
@@ -380,7 +381,7 @@
     }
 
     var next;
-    while ((next = this.expect(".", "["))) {
+    while ((next = this.expect(".", "[", "("))) {
       if (next.text === "[") {
         primary = {
           type: AST.MemberExpression,
@@ -390,13 +391,20 @@
         };
         this.consume("]");
       }
-      else {
+      else if (next.text === ".") {
         primary = {
           type: AST.MemberExpression,
           object: primary,
           property: this.identifier(),
           computed: false
         };
+      }
+      else if (next.text === "(") {
+        primary = {
+          type: AST.CallExpression,
+          callee: primary
+        };
+        this.consume(")");
       }
     }
 
@@ -506,6 +514,11 @@
         return "[" + elements.join(",") + "]";
 
 
+      case AST.CallExpression:
+        var callee = this.recurse(ast.callee);
+        return callee + " && " + callee + "()";
+
+
       case AST.Identifier:
         intoId = this.nextId();
         this.if_(this.getHasOwnProperty("l", ast.name),
@@ -558,4 +571,4 @@
     }
   };
 })();
-//223
+//228
