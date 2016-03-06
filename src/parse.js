@@ -238,6 +238,7 @@
   AST.ObjectExpression = "ObjectExpression";
   AST.Program = "Program";
   AST.Property = "Property";
+  AST.ThisExpression = "ThisExpression";
 
 
   AST.prototype.ast = function(text) {
@@ -285,6 +286,9 @@
     "false": {
       type: AST.Literal,
       value: false
+    },
+    "this": {
+      type: AST.ThisExpression
     }
   };
 
@@ -478,12 +482,12 @@
         this.state.body.push("return ", this.recurse(ast.body), ";");
         break;
 
+      case AST.ThisExpression:
+        return "s";
+
       default:
         throw "Error the ast.type is not recognised";
     }
   };
-
-
 })();
-
-//209
+//214
