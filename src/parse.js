@@ -349,6 +349,19 @@
   };
 
 
+  AST.prototype.parseArguments = function() {
+    var args = [];
+
+    if (!this.peek(")")) {
+      do {
+        args.push(this.primary());
+      } while (this.expect(","));
+    }
+
+    return args;
+  };
+
+
   AST.prototype.peek = function(e1, e2, e3, e4) {
     if (this.tokens.length > 0) {
       var text = this.tokens[0].text;
@@ -402,7 +415,8 @@
       else if (next.text === "(") {
         primary = {
           type: AST.CallExpression,
-          callee: primary
+          callee: primary,
+          arguments: this.parseArguments()
         };
         this.consume(")");
       }
@@ -516,7 +530,10 @@
 
       case AST.CallExpression:
         var callee = this.recurse(ast.callee);
-        return callee + " && " + callee + "()";
+        var args = ast.arguments.map(function(arg) {
+          return self.recurse(arg);
+        });
+        return callee + " && " + callee + "(" + args.join(",") + ")";
 
 
       case AST.Identifier:
