@@ -554,7 +554,7 @@
           this.assign(intoId, this.nonComputedMember("s", ast.name)));
 
         if (context) {
-          context.contex = this.getHasOwnProperty("l", ast.name) + "?l:s";
+          context.context = this.getHasOwnProperty("l", ast.name) + "?l:s";
           context.name = ast.name;
           context.computed = false;
         }

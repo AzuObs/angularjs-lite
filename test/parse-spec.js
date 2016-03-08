@@ -416,6 +416,7 @@
           return this;
         }
       };
+
       var fn = parse("aFunction()");
       expect(fn(scope)).toBe(scope);
     });
