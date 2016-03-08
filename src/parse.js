@@ -57,7 +57,7 @@
         this.readString(this.ch);
       }
       // Arrays
-      else if (this.is("[,]{:}.()")) {
+      else if (this.is("[,]{:}.()=")) {
         this.tokens.push({
           text: this.ch
         });
@@ -237,6 +237,7 @@
   AST.ArrayExpression = "ArrayExpression";
   AST.MemberExpression = "MemberExpression";
   AST.ObjectExpression = "ObjectExpression";
+  AST.AssignementExpression = "AssignementExpression";
   AST.Literal = "Literal";
   AST.Property = "Property";
   AST.Identifier = "Identifier";
@@ -249,6 +250,20 @@
   };
 
 
+  AST.prototype.assignement = function() {
+    var left = this.primary();
+    if (this.expect("=")) {
+      var right = this.primary();
+      return {
+        type: AST.AssignementExpression,
+        left: left,
+        right: right
+      };
+    }
+    return left;
+  };
+
+
   AST.prototype.arrayDeclaration = function() {
     var elements = [];
     if (!this.peek("]")) {
@@ -256,7 +271,7 @@
         if (this.peek("]")) {
           break;
         }
-        elements.push(this.primary());
+        elements.push(this.assignement());
       } while (this.expect(","));
     }
 
@@ -336,7 +351,7 @@
           property.key = this.constant();
         }
         this.consume(":");
-        property.value = this.primary();
+        property.value = this.assignement();
         properties.push(property);
       } while (this.expect(","));
     }
@@ -354,7 +369,7 @@
 
     if (!this.peek(")")) {
       do {
-        args.push(this.primary());
+        args.push(this.assignement());
       } while (this.expect(","));
     }
 
@@ -429,7 +444,7 @@
   AST.prototype.program = function() {
     return {
       type: AST.Program,
-      body: this.primary()
+      body: this.assignement()
     };
   };
 
@@ -521,6 +536,19 @@
     var intoId;
 
     switch (ast.type) {
+      case AST.AssignementExpression:
+        var leftContext = {};
+        this.recurse(ast.left, leftContext);
+        var leftExpr;
+        if (leftContext.computed) {
+          leftExpr = this.computedMember(leftContext.context, leftContext.name);
+        }
+        else {
+          leftExpr = this.nonComputedMember(leftContext.context, leftContext.name);
+        }
+        return this.assign(leftExpr, this.recurse(ast.right));
+
+
       case AST.ArrayExpression:
         var elements = ast.elements.map(function(element) {
           return self.recurse(element);
@@ -616,4 +644,4 @@
     }
   };
 })();
-//232 //235
+//232 //236
