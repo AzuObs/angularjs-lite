@@ -12,6 +12,15 @@
   };
 
 
+  var ensureSafeMemberName = function(name) {
+    if (name === "constructor" || name === "__proto__" ||
+      name === "__defineGetter__" || name === "__defineSetter__" ||
+      name === "__lookupGetter__" || name === "__lookupSetter__") {
+      throw "Attempting to access a disallowed field in Angular expression!";
+    }
+  };
+
+
   window.parse = function(expr) {
     var lexer = new Lexer();
     var parser = new Parser(lexer);
@@ -474,10 +483,13 @@
 
     this.recurse(ast);
 
-    /* jshint -W054 */
-    return new Function("s", "l",
+    var fnString = "var fn = function(s, l){ " +
       (this.state.vars.length ? "var " + this.state.vars.join("") + ";" : "") +
-      this.state.body.join(""));
+      this.state.body.join("") +
+      "}; return fn;";
+
+    /* jshint -W054 */
+    return new Function(fnString)();
     /* jshint +W054 */
   };
 
@@ -575,6 +587,8 @@
 
 
       case AST.Identifier:
+        ensureSafeMemberName(ast.name);
+
         intoId = this.nextId();
         this.if_(this.getHasOwnProperty("l", ast.name),
           this.assign(intoId, this.nonComputedMember("l", ast.name)));
@@ -624,6 +638,8 @@
           }
         }
         else {
+          ensureSafeMemberName(ast.property.name);
+
           if (create) {
             this.if_(this.not(this.nonComputedMember(left, ast.property.name)),
               this.assign(this.nonComputedMember(left, ast.property.name), "{}"));
@@ -663,4 +679,4 @@
     }
   };
 })();
-//232 //241
+//243
