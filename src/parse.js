@@ -11,6 +11,14 @@
     "'": "\'"
   };
 
+  var ensureSafeObject = function(obj) {
+    if (obj && obj.document && obj.location && obj.alert && obj.setInterval) {
+      throw "Referencing window in Angular is not allowed!";
+    }
+
+    return obj;
+  };
+
 
   var ensureSafeMemberName = function(name) {
     if (name === "constructor" || name === "__proto__" ||
@@ -467,6 +475,11 @@
   };
 
 
+  ASTCompiler.prototype.addEnsureSafeMemberName = function(expr) {
+    this.state.body.push("ensureSafeMemberName(" + expr + ");");
+  };
+
+
   ASTCompiler.prototype.assign = function(id, value) {
     return id + "=" + value + ";";
   };
@@ -484,12 +497,13 @@
     this.recurse(ast);
 
     var fnString = "var fn = function(s, l){ " +
-      (this.state.vars.length ? "var " + this.state.vars.join("") + ";" : "") +
+      (this.state.vars.length ? "var " + this.state.vars.join(",") + ";" : "") +
       this.state.body.join("") +
       "}; return fn;";
 
     /* jshint -W054 */
-    return new Function(fnString)();
+    return new Function("ensureSafeMemberName", "ensureSafeObject",
+      fnString)(ensureSafeMemberName, ensureSafeObject);
     /* jshint +W054 */
   };
 
@@ -624,6 +638,7 @@
 
         if (ast.computed) {
           var right = this.recurse(ast.property);
+          this.addEnsureSafeMemberName(right);
 
           if (create) {
             this.if_(this.not(this.computedMember(left, right)),
@@ -631,7 +646,9 @@
           }
 
           this.if_(left,
-            this.assign(intoId, this.computedMember(left, right)));
+            this.assign(intoId,
+              "ensureSafeObject(" + this.computedMember(left, right) + ")"));
+
           if (context) {
             context.name = right;
             context.computed = true;
@@ -646,7 +663,9 @@
           }
 
           this.if_(left,
-            this.assign(intoId, this.nonComputedMember(left, ast.property.name)));
+            this.assign(intoId,
+              "ensureSafeObject(" + this.nonComputedMember(left, ast.property.name) + ")"));
+
           if (context) {
             context.name = ast.property.name;
             context.computed = false;

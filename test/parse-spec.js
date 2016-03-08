@@ -552,27 +552,38 @@
     });
 
 
-    // it("does not allow accessing window as computed property", function() {
-    //   var fn = parse("anObject[\"wnd\"]");
-    //   expect(function() {
-    //     fn({
-    //       anObject: {
-    //         wnd: window
-    //       }
-    //     });
-    //   }).toThrow();
-    // });
+    it("does not allow accessing window as computed property", function() {
+      var fn = parse("anObject[\"wnd\"]");
+      expect(function() {
+        fn({
+          anObject: {
+            wnd: window
+          }
+        });
+      }).toThrow();
+    });
 
 
-    // it("does not allow accessing window as non-computed property", function() {
-    //   var fn = parse("anObject.wnd");
-    //   expect(function() {
-    //     fn({
-    //       anObject: {
-    //         wnd: window
-    //       }
-    //     });
-    //   }).toThrow();
-    // });
+    it("does not allow accessing window as non-computed property", function() {
+      var fn = parse("anObject.wnd");
+      expect(function() {
+        fn({
+          anObject: {
+            wnd: window
+          }
+        });
+      }).toThrow();
+    });
+
+
+    it("does not allow passing window as function argument", function() {
+      var fn = parse("aFunction(wnd)");
+      expect(function() {
+        fn({
+          aFunction: function() {},
+          wnd: window
+        });
+      }).toThrow();
+    });
   });
 })();
