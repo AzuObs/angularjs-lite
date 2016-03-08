@@ -480,6 +480,11 @@
   };
 
 
+  ASTCompiler.prototype.addEnsureSafeObject = function(expr) {
+    this.state.body.push("ensureSafeObject(" + expr + ");");
+  };
+
+
   ASTCompiler.prototype.assign = function(id, value) {
     return id + "=" + value + ";";
   };
@@ -586,10 +591,12 @@
         var callContext = {};
         var callee = this.recurse(ast.callee, callContext);
         var args = ast.arguments.map(function(arg) {
-          return self.recurse(arg);
+          return "ensureSafeObject(" + self.recurse(arg) + ")";
         });
 
         if (callContext.name) {
+          this.addEnsureSafeObject(callContext.context);
+
           if (callContext.computed) {
             callee = this.computedMember(callContext.context, callContext.name);
           }

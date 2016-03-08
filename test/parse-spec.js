@@ -585,5 +585,15 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow calling methods on window", function() {
+      var fn = parse("wnd.scrollTo(0)");
+      expect(function() {
+        fn({
+          wnd: window
+        });
+      }).toThrow();
+    });
   });
 })();
