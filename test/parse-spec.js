@@ -647,5 +647,15 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow calling functions on Object", function() {
+      var fn = parse("obj.create({})");
+      expect(function() {
+        fn({
+          obj: Object
+        });
+      }).toThrow();
+    });
   });
 })();
