@@ -617,5 +617,15 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow referencing window", function() {
+      var fn = parse("wnd");
+      expect(function() {
+        fn({
+          wnd: window
+        });
+      }).toThrow();
+    });
   });
 })();

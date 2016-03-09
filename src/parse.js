@@ -629,6 +629,7 @@
           context.name = ast.name;
           context.computed = false;
         }
+        this.addEnsureSafeObject(intoId);
         return intoId;
 
 
