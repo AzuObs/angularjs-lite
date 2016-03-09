@@ -739,5 +739,10 @@
     it("parses a remainder", function() {
       expect(parse("85 % 43")()).toBe(42);
     });
+
+
+    it("parses several multiplicatives", function() {
+      expect(parse("36 * 2 % 5")()).toBe(2);
+    });
   });
 })();
