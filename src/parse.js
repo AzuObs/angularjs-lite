@@ -510,6 +510,7 @@
     }
   };
 
+
   var APPLY = Function.prototype.apply;
   var BIND = Function.prototype.bind;
   var CALL = Function.prototype.call;
@@ -523,6 +524,11 @@
       }
     }
     return obj;
+  };
+
+
+  var ifDefined = function(value, defaultValue) {
+    return typeof value === "undefined" ? defaultValue : value;
   };
 
 
@@ -572,10 +578,12 @@
       "ensureSafeMemberName",
       "ensureSafeObject",
       "ensureSafeFunction",
+      "ifDefined",
       fnString)(
       ensureSafeMemberName,
       ensureSafeObject,
-      ensureSafeFunction
+      ensureSafeFunction,
+      ifDefined
     );
 
     /* jshint +W054 */
@@ -603,7 +611,6 @@
     return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
   };
 
-
   ASTCompiler.prototype.getHasOwnProperty = function(object, property) {
     return object + " && (" + this.escape(property) + " in " + object + ")";
   };
@@ -611,6 +618,11 @@
 
   ASTCompiler.prototype.if_ = function(test, consequent) {
     this.state.body.push("if(", test, "){", consequent, "}");
+  };
+
+
+  ASTCompiler.prototype.ifDefined = function(value, defaultValue) {
+    return "ifDefined(" + value + "," + this.escape(defaultValue) + ")";
   };
 
 
@@ -772,7 +784,8 @@
 
 
       case AST.UnaryExpression:
-        return ast.operator + "(" + this.recurse(ast.argument) + ")";
+        return ast.operator +
+          "(" + this.ifDefined(this.recurse(ast.argument), 0) + ")";
     }
   };
 })();

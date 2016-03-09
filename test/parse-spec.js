@@ -687,5 +687,10 @@
         a: 42
       })).toBe(42);
     });
+
+
+    it("replaces undefined with zero for unary +", function() {
+      expect(parse("+a")({})).toBe(0);
+    });
   });
 })();
