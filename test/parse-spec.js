@@ -637,5 +637,15 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow calling the aliased function constructor", function() {
+      var fn = parse("fnConstructor('return window;')");
+      expect(function() {
+        fn({
+          fnConstructor: (function() {}).constructor
+        });
+      }).toThrow();
+    });
   });
 })();
