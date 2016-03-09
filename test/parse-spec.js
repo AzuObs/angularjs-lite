@@ -724,5 +724,20 @@
     it("parses a ! in a string", function() {
       expect(parse("'!'")()).toBe("!");
     });
+
+
+    it("parses a multiplication", function() {
+      expect(parse("21 * 2")()).toBe(42);
+    });
+
+
+    it("parses a division", function() {
+      expect(parse("84 / 2")()).toBe(42);
+    });
+
+
+    it("parses a remainder", function() {
+      expect(parse("85 % 43")()).toBe(42);
+    });
   });
 })();

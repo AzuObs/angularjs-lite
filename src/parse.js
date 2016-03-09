@@ -39,7 +39,10 @@
   var OPERATORS = {
     "+": true,
     "!": true,
-    "-": true
+    "-": true,
+    "*": true,
+    "/": true,
+    "%": true
   };
 
 
@@ -255,6 +258,7 @@
   AST.ThisExpression = "ThisExpression";
   AST.ArrayExpression = "ArrayExpression";
   AST.UnaryExpression = "UnaryExpression";
+  AST.BinaryExpression = "BinaryExpression";
   AST.MemberExpression = "MemberExpression";
   AST.ObjectExpression = "ObjectExpression";
   AST.AssignementExpression = "AssignementExpression";
@@ -270,9 +274,9 @@
 
 
   AST.prototype.assignement = function() {
-    var left = this.unary();
+    var left = this.multiplicative();
     if (this.expect("=")) {
-      var right = this.unary();
+      var right = this.multiplicative();
       return {
         type: AST.AssignementExpression,
         left: left,
@@ -352,6 +356,22 @@
       type: AST.Identifier,
       name: this.consume().text
     };
+  };
+
+
+  AST.prototype.multiplicative = function() {
+    var left = this.unary();
+    var token;
+    if ((token = this.expect("*", "/", "%"))) {
+      left = {
+        type: AST.BinaryExpression,
+        left: left,
+        operator: token.text,
+        right: this.unary()
+      };
+    }
+
+    return left;
   };
 
 
@@ -673,6 +693,11 @@
         return "[" + elements.join(",") + "]";
 
 
+      case AST.BinaryExpression:
+        return "(" + this.recurse(ast.left) + ")" + ast.operator +
+          "(" + this.recurse(ast.right) + ")";
+
+
       case AST.CallExpression:
         var callContext = {};
         var callee = this.recurse(ast.callee, callContext);
@@ -795,4 +820,4 @@
   };
 })();
 //YTD     251 
-//TODAY   267
+//TODAY   269
