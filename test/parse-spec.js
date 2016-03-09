@@ -692,5 +692,20 @@
     it("replaces undefined with zero for unary +", function() {
       expect(parse("+a")({})).toBe(0);
     });
+
+
+    it("parses a unary !", function() {
+      expect(parse("!true")()).toBe(false);
+      expect(parse("!42")()).toBe(false);
+      expect(parse("!a")({
+        a: false
+      })).toBe(true);
+      expect(parse("!!a")({
+        a: false
+      })).toBe(false);
+      expect(parse("!!a")({
+        a: null
+      })).toBe(false);
+    });
   });
 })();

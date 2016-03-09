@@ -37,7 +37,8 @@
   };
 
   var OPERATORS = {
-    "+": true
+    "+": true,
+    "!": true
   };
 
 
@@ -465,11 +466,12 @@
 
 
   AST.prototype.unary = function() {
-    if (this.expect("+")) {
+    var token;
+    if ((token = this.expect("+", "!"))) {
       return {
         type: AST.UnaryExpression,
-        operator: "+",
-        argument: this.primary()
+        operator: token.text,
+        argument: this.unary()
       };
     }
     else {
@@ -790,4 +792,4 @@
   };
 })();
 //YTD     251 
-//TODAY   265
+//TODAY   267
