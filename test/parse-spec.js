@@ -607,5 +607,15 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow assigning window", function() {
+      var fn = parse("wnd = anObject");
+      expect(function() {
+        fn({
+          anObject: window
+        });
+      }).toThrow();
+    });
   });
 })();
