@@ -627,5 +627,15 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow calling functions on DOM elements", function() {
+      var fn = parse("el.setAttribute('evil', 'true')");
+      expect(function() {
+        fn({
+          el: document.documentElement
+        });
+      }).toThrow();
+    });
   });
 })();

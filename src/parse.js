@@ -12,8 +12,13 @@
   };
 
   var ensureSafeObject = function(obj) {
-    if (obj && obj.document && obj.location && obj.alert && obj.setInterval) {
-      throw "Referencing window in Angular is not allowed!";
+    if (obj) {
+      if (obj.document && obj.location && obj.alert && obj.setInterval) {
+        throw "Referencing window in Angular expressions is disallowed!";
+      }
+      else if (obj.children && (obj.nodeName || (obj.prop && obj.attr && obj.find))) {
+        throw "Referencing DOM nodes in Angular expressions is disallowed!";
+      }
     }
 
     return obj;
