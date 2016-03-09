@@ -707,5 +707,22 @@
         a: null
       })).toBe(false);
     });
+
+
+    it("parse a unary -", function() {
+      expect(parse("-42")()).toBe(-42);
+      expect(parse("-a")({
+        a: -42
+      })).toBe(42);
+      expect(parse("--a")({
+        a: -42
+      })).toBe(-42);
+      expect(parse("-a")({})).toBe(0);
+    });
+
+
+    it("parses a ! in a string", function() {
+      expect(parse("'!'")()).toBe("!");
+    });
   });
 })();

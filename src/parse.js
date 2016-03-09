@@ -38,7 +38,8 @@
 
   var OPERATORS = {
     "+": true,
-    "!": true
+    "!": true,
+    "-": true
   };
 
 
@@ -189,10 +190,12 @@
   Lexer.prototype.readString = function(quote) {
     this.index++; // to avoid opening quotes "" or ''
     var string = "";
+    var rawString = quote;
     var escape = false; // escape mode ex: "foo\nbar"
 
     while (this.index < this.text.length) {
       var ch = this.text.charAt(this.index);
+      rawString += ch;
 
       if (escape) {
         if (ch === "u") {
@@ -218,7 +221,7 @@
       else if (ch === quote) {
         this.index++;
         this.tokens.push({
-          text: string,
+          text: rawString,
           value: string
         });
         return;
@@ -467,7 +470,7 @@
 
   AST.prototype.unary = function() {
     var token;
-    if ((token = this.expect("+", "!"))) {
+    if ((token = this.expect("+", "!", "-"))) {
       return {
         type: AST.UnaryExpression,
         operator: token.text,
