@@ -244,7 +244,7 @@
       expect(fn({
         aKey: {}
       })).toBeUndefined();
-      expect(fn()).toBeUndefined();
+      expect(fn({})).toBeUndefined();
     });
 
 
@@ -678,6 +678,14 @@
           obj: {}
         });
       }).toThrow();
+    });
+
+
+    it("parses a unary", function() {
+      expect(parse("+42")()).toBe(42);
+      expect(parse("+a")({
+        a: 42
+      })).toBe(42);
     });
   });
 })();

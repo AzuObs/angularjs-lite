@@ -1,59 +1,6 @@
 (function() {
   "use strict";
 
-  var ESCAPES = {
-    n: "\n",
-    f: "\f",
-    r: "\r",
-    t: "\t",
-    v: "\v",
-    "\"": "\"",
-    "'": "\'"
-  };
-
-  var ensureSafeObject = function(obj) {
-    if (obj) {
-      if (obj.document && obj.location && obj.alert && obj.setInterval) {
-        throw "Referencing window in Angular expressions is disallowed!";
-      }
-      else if (obj.children && (obj.nodeName || (obj.prop && obj.attr && obj.find))) {
-        throw "Referencing DOM nodes in Angular expressions is disallowed!";
-      }
-      else if (obj.constructor === obj) {
-        throw "Referencing Function in Angular expressions is disallowed!";
-      }
-      else if (obj.getOwnPropertyNames || obj.getOwnPropertyDescriptor) {
-        throw "Referencing Object in Angular expressions is disallowed!";
-      }
-    }
-
-    return obj;
-  };
-
-
-  var ensureSafeMemberName = function(name) {
-    if (name === "constructor" || name === "__proto__" ||
-      name === "__defineGetter__" || name === "__defineSetter__" ||
-      name === "__lookupGetter__" || name === "__lookupSetter__") {
-      throw "Attempting to access a disallowed field in Angular expression!";
-    }
-  };
-
-  var APPLY = Function.prototype.apply;
-  var BIND = Function.prototype.bind;
-  var CALL = Function.prototype.call;
-  var ensureSafeFunction = function(obj) {
-    if (obj) {
-      if (obj.constructor === obj) {
-        throw "Referencing Function in Angular expressions is disallowed!";
-      }
-      else if (obj === CALL || obj === APPLY || obj === BIND) {
-        throw "Referencing call, apply or bind in Angular expressions is disallowed!";
-      }
-    }
-    return obj;
-  };
-
 
   window.parse = function(expr) {
     var lexer = new Lexer();
@@ -78,6 +25,21 @@
   // 
   // LEXER
   // 
+
+  var ESCAPES = {
+    n: "\n",
+    f: "\f",
+    r: "\r",
+    t: "\t",
+    v: "\v",
+    "\"": "\"",
+    "'": "\'"
+  };
+
+  var OPERATORS = {
+    "+": true
+  };
+
 
   var Lexer = function() {};
 
@@ -115,7 +77,16 @@
         this.index++;
       }
       else {
-        throw "Unexpected next character: " + this.ch;
+        var op = OPERATORS[this.ch];
+        if (op) {
+          this.tokens.push({
+            text: this.ch
+          });
+          this.index++;
+        }
+        else {
+          throw "Unexpected next character: " + this.ch;
+        }
       }
     }
 
@@ -277,14 +248,15 @@
 
   AST.Program = "Program";
   AST.CallExpression = "CallExpression";
+  AST.ThisExpression = "ThisExpression";
   AST.ArrayExpression = "ArrayExpression";
+  AST.UnaryExpression = "UnaryExpression";
   AST.MemberExpression = "MemberExpression";
   AST.ObjectExpression = "ObjectExpression";
   AST.AssignementExpression = "AssignementExpression";
   AST.Literal = "Literal";
   AST.Property = "Property";
   AST.Identifier = "Identifier";
-  AST.ThisExpression = "ThisExpression";
 
 
   AST.prototype.ast = function(text) {
@@ -294,9 +266,9 @@
 
 
   AST.prototype.assignement = function() {
-    var left = this.primary();
+    var left = this.unary();
     if (this.expect("=")) {
-      var right = this.primary();
+      var right = this.unary();
       return {
         type: AST.AssignementExpression,
         left: left,
@@ -492,9 +464,67 @@
   };
 
 
+  AST.prototype.unary = function() {
+    if (this.expect("+")) {
+      return {
+        type: AST.UnaryExpression,
+        operator: "+",
+        argument: this.primary()
+      };
+    }
+    else {
+      return this.primary();
+    }
+  };
+
+
   // 
   // AST Compiler
   // 
+
+  var ensureSafeObject = function(obj) {
+    if (obj) {
+      if (obj.document && obj.location && obj.alert && obj.setInterval) {
+        throw "Referencing window in Angular expressions is disallowed!";
+      }
+      else if (obj.children && (obj.nodeName || (obj.prop && obj.attr && obj.find))) {
+        throw "Referencing DOM nodes in Angular expressions is disallowed!";
+      }
+      else if (obj.constructor === obj) {
+        throw "Referencing Function in Angular expressions is disallowed!";
+      }
+      else if (obj.getOwnPropertyNames || obj.getOwnPropertyDescriptor) {
+        throw "Referencing Object in Angular expressions is disallowed!";
+      }
+    }
+
+    return obj;
+  };
+
+
+  var ensureSafeMemberName = function(name) {
+    if (name === "constructor" || name === "__proto__" ||
+      name === "__defineGetter__" || name === "__defineSetter__" ||
+      name === "__lookupGetter__" || name === "__lookupSetter__") {
+      throw "Attempting to access a disallowed field in Angular expression!";
+    }
+  };
+
+  var APPLY = Function.prototype.apply;
+  var BIND = Function.prototype.bind;
+  var CALL = Function.prototype.call;
+  var ensureSafeFunction = function(obj) {
+    if (obj) {
+      if (obj.constructor === obj) {
+        throw "Referencing Function in Angular expressions is disallowed!";
+      }
+      else if (obj === CALL || obj === APPLY || obj === BIND) {
+        throw "Referencing call, apply or bind in Angular expressions is disallowed!";
+      }
+    }
+    return obj;
+  };
+
 
   var ASTCompiler = function(astBuilder) {
     this.astBuilder = astBuilder;
@@ -534,7 +564,7 @@
 
     var fnString = "var fn = function(s, l){ " +
       (this.state.vars.length ? "var " + this.state.vars.join(",") + ";" : "") +
-      this.state.body.join("") +
+      this.state.body.join("") + ";" +
       "}; return fn;";
 
     /* jshint -W054 */
@@ -741,10 +771,10 @@
         return "s";
 
 
-      default:
-        throw "Error the ast.type is not recognised";
+      case AST.UnaryExpression:
+        return ast.operator + "(" + this.recurse(ast.argument) + ")";
     }
   };
 })();
 //YTD     251 
-//TODAY   255
+//TODAY   265
