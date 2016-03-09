@@ -39,6 +39,21 @@
     }
   };
 
+  var APPLY = Function.prototype.apply;
+  var BIND = Function.prototype.bind;
+  var CALL = Function.prototype.call;
+  var ensureSafeFunction = function(obj) {
+    if (obj) {
+      if (obj.constructor === obj) {
+        throw "Referencing Function in Angular expressions is disallowed!";
+      }
+      else if (obj === CALL || obj === APPLY || obj === BIND) {
+        throw "Referencing call, apply or bind in Angular expressions is disallowed!";
+      }
+    }
+    return obj;
+  };
+
 
   window.parse = function(expr) {
     var lexer = new Lexer();
@@ -486,6 +501,11 @@
   };
 
 
+  ASTCompiler.prototype.addEnsureSafeFunction = function(expr) {
+    this.state.body.push("ensureSafeFunction(" + expr + ");");
+  };
+
+
   ASTCompiler.prototype.addEnsureSafeMemberName = function(expr) {
     this.state.body.push("ensureSafeMemberName(" + expr + ");");
   };
@@ -518,8 +538,16 @@
       "}; return fn;";
 
     /* jshint -W054 */
-    return new Function("ensureSafeMemberName", "ensureSafeObject",
-      fnString)(ensureSafeMemberName, ensureSafeObject);
+    return new Function(
+      "ensureSafeMemberName",
+      "ensureSafeObject",
+      "ensureSafeFunction",
+      fnString)(
+      ensureSafeMemberName,
+      ensureSafeObject,
+      ensureSafeFunction
+    );
+
     /* jshint +W054 */
   };
 
@@ -615,6 +643,7 @@
             callee = this.nonComputedMember(callContext.context, callContext.name);
           }
         }
+        this.addEnsureSafeFunction(callee);
         return callee + " &&  ensureSafeObject(" + callee + "(" + args.join(",") + "))";
 
 
@@ -717,4 +746,5 @@
     }
   };
 })();
-//251
+//YTD     251 
+//TODAY   255
