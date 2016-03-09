@@ -604,7 +604,7 @@
             callee = this.nonComputedMember(callContext.context, callContext.name);
           }
         }
-        return callee + " && " + callee + "(" + args.join(",") + ")";
+        return callee + " &&  ensureSafeObject(" + callee + "(" + args.join(",") + "))";
 
 
       case AST.Identifier:
@@ -705,4 +705,4 @@
     }
   };
 })();
-//243
+//251

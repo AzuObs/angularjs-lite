@@ -595,5 +595,17 @@
         });
       }).toThrow();
     });
+
+
+    it("does not allow functions to return window", function() {
+      var fn = parse("getWnd()");
+      expect(function() {
+        fn({
+          getWnd: function() {
+            return window;
+          }
+        });
+      }).toThrow();
+    });
   });
 })();
