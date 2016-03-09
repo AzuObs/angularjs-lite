@@ -261,7 +261,7 @@
   AST.BinaryExpression = "BinaryExpression";
   AST.MemberExpression = "MemberExpression";
   AST.ObjectExpression = "ObjectExpression";
-  AST.AssignementExpression = "AssignementExpression";
+  AST.AssignmentExpression = "AssignmentExpression";
   AST.Literal = "Literal";
   AST.Property = "Property";
   AST.Identifier = "Identifier";
@@ -273,12 +273,27 @@
   };
 
 
-  AST.prototype.assignement = function() {
+  AST.prototype.additive = function() {
     var left = this.multiplicative();
-    if (this.expect("=")) {
-      var right = this.multiplicative();
+    var token;
+    while ((token = this.expect("+")) || (token = this.expect("-"))) {
+      left = {
+        type: AST.BinaryExpression,
+        left: left,
+        operator: token.text,
+        right: this.multiplicative()
+      };
+    }
+    return left;
+  };
+
+
+  AST.prototype.assignment = function() {
+    var left = this.additive();
+    if (this.expect('=')) {
+      var right = this.additive();
       return {
-        type: AST.AssignementExpression,
+        type: AST.AssignmentExpression,
         left: left,
         right: right
       };
@@ -294,7 +309,7 @@
         if (this.peek("]")) {
           break;
         }
-        elements.push(this.assignement());
+        elements.push(this.assignment());
       } while (this.expect(","));
     }
 
@@ -390,7 +405,7 @@
           property.key = this.constant();
         }
         this.consume(":");
-        property.value = this.assignement();
+        property.value = this.assignment();
         properties.push(property);
       } while (this.expect(","));
     }
@@ -408,7 +423,7 @@
 
     if (!this.peek(")")) {
       do {
-        args.push(this.assignement());
+        args.push(this.assignment());
       } while (this.expect(","));
     }
 
@@ -483,7 +498,7 @@
   AST.prototype.program = function() {
     return {
       type: AST.Program,
-      body: this.assignement()
+      body: this.assignment()
     };
   };
 
@@ -673,7 +688,7 @@
     var intoId;
 
     switch (ast.type) {
-      case AST.AssignementExpression:
+      case AST.AssignmentExpression:
         var leftContext = {};
         this.recurse(ast.left, leftContext, true);
         var leftExpr;
@@ -820,4 +835,4 @@
   };
 })();
 //YTD     251 
-//TODAY   269
+//TODAY   274
