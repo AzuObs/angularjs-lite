@@ -276,7 +276,7 @@
   AST.prototype.additive = function() {
     var left = this.multiplicative();
     var token;
-    while ((token = this.expect("+")) || (token = this.expect("-"))) {
+    while ((token = this.expect("+", "-"))) {
       left = {
         type: AST.BinaryExpression,
         left: left,
@@ -709,8 +709,17 @@
 
 
       case AST.BinaryExpression:
-        return "(" + this.recurse(ast.left) + ")" + ast.operator +
-          "(" + this.recurse(ast.right) + ")";
+        if (ast.operator === "+" || ast.operator === "-") {
+          return "(" + this.ifDefined(this.recurse(ast.left), 0) + ")" +
+            ast.operator +
+            "(" + this.ifDefined(this.recurse(ast.right), 0) + ")";
+        }
+        else {
+          return "(" + this.recurse(ast.left) + ")" +
+            ast.operator +
+            "(" + this.recurse(ast.right) + ")";
+        }
+        break;
 
 
       case AST.CallExpression:
@@ -834,5 +843,5 @@
     }
   };
 })();
-//YTD     251 
-//TODAY   274
+//YTD     275
+//TODAY   275
