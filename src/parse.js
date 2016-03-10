@@ -42,7 +42,16 @@
     "-": true,
     "*": true,
     "/": true,
-    "%": true
+    "%": true,
+    "=": true,
+    "==": true,
+    "!=": true,
+    "===": true,
+    "!==": true,
+    "<": true,
+    "<=": true,
+    ">": true,
+    ">=": true
   };
 
 
@@ -67,7 +76,7 @@
         this.readString(this.ch);
       }
       // Arrays
-      else if (this.is("[,]{:}.()=")) {
+      else if (this.is("[,]{:}.()")) {
         this.tokens.push({
           text: this.ch
         });
@@ -82,12 +91,18 @@
         this.index++;
       }
       else {
-        var op = OPERATORS[this.ch];
-        if (op) {
+        var ch = this.ch;
+        var ch2 = this.ch + this.peek();
+        var ch3 = this.ch + this.peek() + this.peek(2);
+        var op = OPERATORS[ch];
+        var op2 = OPERATORS[ch2];
+        var op3 = OPERATORS[ch3];
+        if (op || op2 || op3) {
+          var token = op3 ? ch3 : (op2 ? ch2 : ch);
           this.tokens.push({
-            text: this.ch
+            text: token
           });
-          this.index++;
+          this.index += token.length;
         }
         else {
           throw "Unexpected next character: " + this.ch;
@@ -122,9 +137,10 @@
   };
 
 
-  Lexer.prototype.peek = function() {
-    return this.index < this.text.length - 1 ?
-      this.text.charAt(this.index + 1) : false;
+  Lexer.prototype.peek = function(n) {
+    n = n || 1;
+    return this.index + n < this.text.length ?
+      this.text.charAt(this.index + n) : false;
   };
 
 
@@ -289,9 +305,9 @@
 
 
   AST.prototype.assignment = function() {
-    var left = this.additive();
+    var left = this.equality();
     if (this.expect('=')) {
-      var right = this.additive();
+      var right = this.equality();
       return {
         type: AST.AssignmentExpression,
         left: left,
@@ -357,6 +373,22 @@
   };
 
 
+  AST.prototype.equality = function() {
+    var left = this.relational();
+    var token;
+    while ((token = this.expect("==", "!=", "===", "!==="))) {
+      left = {
+        type: AST.BinaryExpression,
+        left: left,
+        operator: token.text,
+        right: this.relational()
+      };
+    }
+
+    return left;
+  };
+
+
   AST.prototype.expect = function(e1, e2, e3, e4) {
     var token = this.peek(e1, e2, e3, e4);
 
@@ -409,6 +441,7 @@
         properties.push(property);
       } while (this.expect(","));
     }
+
 
     this.consume("}");
     return {
@@ -500,6 +533,23 @@
       type: AST.Program,
       body: this.assignment()
     };
+  };
+
+
+  AST.prototype.relational = function() {
+    var left = this.additive();
+    var token;
+
+    while ((token = this.expect("<", "<=", ">", ">="))) {
+      left = {
+        type: AST.BinaryExpression,
+        left: left,
+        operator: token.text,
+        right: this.additive()
+      };
+    }
+
+    return left;
   };
 
 
