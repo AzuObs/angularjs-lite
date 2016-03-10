@@ -78,7 +78,7 @@
         this.readString(this.ch);
       }
       // Arrays
-      else if (this.is("[,]{:}.()")) {
+      else if (this.is("[,]{:}.()?")) {
         this.tokens.push({
           text: this.ch
         });
@@ -281,6 +281,7 @@
   AST.ObjectExpression = "ObjectExpression";
   AST.LogicalExpression = "LogicalExpression";
   AST.AssignmentExpression = "AssignmentExpression";
+  AST.ConditionalExpression = "ConditionalExpression";
   AST.Literal = "Literal";
   AST.Property = "Property";
   AST.Identifier = "Identifier";
@@ -308,9 +309,9 @@
 
 
   AST.prototype.assignment = function() {
-    var left = this.logicalOR();
+    var left = this.ternary();
     if (this.expect('=')) {
-      var right = this.logicalOR();
+      var right = this.ternary();
       return {
         type: AST.AssignmentExpression,
         left: left,
@@ -409,23 +410,6 @@
   };
 
 
-  AST.prototype.logicalOR = function() {
-    var left = this.logicalAND();
-    var token;
-
-    while ((token = this.expect("||"))) {
-      left = {
-        type: AST.LogicalExpression,
-        left: left,
-        operator: token.text,
-        right: this.logicalAND()
-      };
-    }
-
-    return left;
-  };
-
-
   AST.prototype.logicalAND = function() {
     var left = this.equality();
     var token;
@@ -436,6 +420,23 @@
         left: left,
         operator: token.text,
         right: this.equality()
+      };
+    }
+
+    return left;
+  };
+
+
+  AST.prototype.logicalOR = function() {
+    var left = this.logicalAND();
+    var token;
+
+    while ((token = this.expect("||"))) {
+      left = {
+        type: AST.LogicalExpression,
+        left: left,
+        operator: token.text,
+        right: this.logicalAND()
       };
     }
 
@@ -603,6 +604,27 @@
     else {
       return this.primary();
     }
+  };
+
+
+  AST.prototype.ternary = function() {
+    var test = this.logicalOR();
+
+    if (this.expect("?")) {
+      var consequent = this.assignment();
+
+      if (this.consume(":")) {
+        var alternate = this.assignment();
+        return {
+          type: AST.ConditionalExpression,
+          test: test,
+          consequent: consequent,
+          alternate: alternate
+        };
+      }
+    }
+
+    return test;
   };
 
 
@@ -831,6 +853,17 @@
         return callee + " &&  ensureSafeObject(" + callee + "(" + args.join(",") + "))";
 
 
+      case AST.ConditionalExpression:
+        intoId = this.nextId();
+        var testId = this.nextId();
+
+        this.state.body.push(this.assign(testId, this.recurse(ast.test)));
+        this.if_(testId, this.assign(intoId, this.recurse(ast.consequent)));
+        this.if_(this.not(testId), this.assign(intoId, this.recurse(ast.alternate)));
+
+        return intoId;
+
+
       case AST.Identifier:
         ensureSafeMemberName(ast.name);
 
@@ -940,4 +973,4 @@
   };
 })();
 //YTD     275
-//TODAY   280
+//TODAY   285
