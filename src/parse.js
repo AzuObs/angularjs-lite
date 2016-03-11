@@ -406,8 +406,9 @@
 
   AST.prototype.filter = function() {
     var left = this.assignment();
-    if (this.expect("|")) {
-      return {
+
+    while (this.expect("|")) {
+      left = {
         type: AST.CallExpression,
         callee: this.identifier(),
         arguments: [left],
@@ -1055,5 +1056,4 @@
     }
   };
 })();
-//YTD   290
-//TODAY 305
+//YTD   306
