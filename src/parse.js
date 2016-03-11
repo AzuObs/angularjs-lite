@@ -44,8 +44,9 @@
     "/": true,
     "%": true,
     "=": true,
-    "&&": true,
+    "|": true,
     "||": true,
+    "&&": true,
     "==": true,
     "!=": true,
     "===": true,
@@ -53,7 +54,7 @@
     "<": true,
     ">": true,
     "<=": true,
-    ">=": true
+    ">=": true,
   };
 
 
@@ -403,6 +404,21 @@
   };
 
 
+  AST.prototype.filter = function() {
+    var left = this.assignment();
+    if (this.expect("|")) {
+      return {
+        type: AST.CallExpression,
+        callee: this.identifier(),
+        arguments: [left],
+        filter: true
+      };
+    }
+
+    return left;
+  };
+
+
   AST.prototype.identifier = function() {
     return {
       type: AST.Identifier,
@@ -520,7 +536,7 @@
     var primary;
 
     if (this.expect("(")) {
-      primary = this.assignment();
+      primary = this.filter();
       this.consume(")");
     }
     else if (this.expect("[")) {
@@ -577,7 +593,7 @@
 
     while (true) {
       if (this.tokens.length) {
-        body.push(this.assignment());
+        body.push(this.filter());
       }
       if (!this.expect(";")) {
         return {
@@ -727,14 +743,16 @@
     this.state = {
       body: [],
       nextId: 0,
-      vars: []
+      vars: [],
+      filters: {}
     };
 
     this.recurse(ast);
 
-    var fnString = "var fn = function(s, l){ " +
-      (this.state.vars.length ? "var " + this.state.vars.join(",") + ";" : "") +
-      this.state.body.join("") + ";" +
+    var fnString = this.filterPrefix() + //assign filters
+      "var fn = function(s, l){ " +
+      (this.state.vars.length ? "var " + this.state.vars.join(",") + ";" : "") + //create variables
+      this.state.body.join("") + ";" + //generate main code
       "}; return fn;";
 
     /* jshint -W054 */
@@ -743,11 +761,13 @@
       "ensureSafeObject",
       "ensureSafeFunction",
       "ifDefined",
+      "filter",
       fnString)(
       ensureSafeMemberName,
       ensureSafeObject,
       ensureSafeFunction,
-      ifDefined
+      ifDefined,
+      filter
     );
 
     /* jshint +W054 */
@@ -775,6 +795,36 @@
     return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
   };
 
+
+  ASTCompiler.prototype.filter = function(name) {
+    if (!this.state.filters.hasOwnProperty(name)) {
+      this.state.filters[name] = this.nextId(true);
+    }
+
+    return this.state.filters[name];
+  };
+
+
+  ASTCompiler.prototype.filterPrefix = function() {
+    var self = this;
+
+    if (Object.keys(this.state.filters).length === 0) { // no filters
+      return "";
+    }
+
+    else {
+      var parts = Object.keys(this.state.filters).map(function(name) {
+        var varName = self.state.filters[name];
+        var filterName = name;
+
+        return varName + "= filter(" + self.escape(filterName) + ")";
+      });
+
+      return "var " + parts.join(",") + ";";
+    }
+  };
+
+
   ASTCompiler.prototype.getHasOwnProperty = function(object, property) {
     return object + " && (" + this.escape(property) + " in " + object + ")";
   };
@@ -790,9 +840,13 @@
   };
 
 
-  ASTCompiler.prototype.nextId = function() {
+  ASTCompiler.prototype.nextId = function(skip) {
     var id = "v" + (this.state.nextId++);
-    this.state.vars.push(id);
+
+    if (!skip) {
+      this.state.vars.push(id);
+    }
+
     return id;
   };
 
@@ -847,25 +901,37 @@
 
 
       case AST.CallExpression:
-        var callContext = {};
-        var callee = this.recurse(ast.callee, callContext);
-        var args = ast.arguments.map(function(arg) {
-          return "ensureSafeObject(" + self.recurse(arg) + ")";
-        });
+        var callContext, callee, args;
 
-        if (callContext.name) {
-          this.addEnsureSafeObject(callContext.context);
-
-          if (callContext.computed) {
-            callee = this.computedMember(callContext.context, callContext.name);
-          }
-          else {
-            callee = this.nonComputedMember(callContext.context, callContext.name);
-          }
+        if (ast.filter) {
+          callee = this.filter(ast.callee.name);
+          args = ast.arguments.map(function(arg) {
+            return self.recurse(arg);
+          });
+          return callee + "(" + args + ")";
         }
-        this.addEnsureSafeFunction(callee);
-        return callee + " &&  ensureSafeObject(" + callee + "(" + args.join(",") + "))";
 
+        else {
+          callContext = {};
+          callee = this.recurse(ast.callee, callContext);
+          args = ast.arguments.map(function(arg) {
+            return "ensureSafeObject(" + self.recurse(arg) + ")";
+          });
+
+          if (callContext.name) {
+            this.addEnsureSafeObject(callContext.context);
+
+            if (callContext.computed) {
+              callee = this.computedMember(callContext.context, callContext.name);
+            }
+            else {
+              callee = this.nonComputedMember(callContext.context, callContext.name);
+            }
+          }
+          this.addEnsureSafeFunction(callee);
+          return callee + " &&  ensureSafeObject(" + callee + "(" + args.join(",") + "))";
+        }
+        break;
 
       case AST.ConditionalExpression:
         intoId = this.nextId();
@@ -990,4 +1056,4 @@
   };
 })();
 //YTD   290
-//TODAY 293
+//TODAY 305
