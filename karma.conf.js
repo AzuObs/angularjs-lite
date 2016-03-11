@@ -9,7 +9,8 @@
         "bower_components/jquery/dist/jquery.js",
         "src/**/*.js",
         "test/scope-spec.js",
-        "test/parse-spec.js"
+        "test/parse-spec.js",
+        "test/filter-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],
