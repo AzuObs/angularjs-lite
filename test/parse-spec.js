@@ -889,5 +889,20 @@
     });
 
 
+    it("parses several statements", function() {
+      var fn = parse("a = 1; b = 2; c = 3");
+      var scope = {};
+      fn(scope);
+      expect(scope).toEqual({
+        a: 1,
+        b: 2,
+        c: 3
+      });
+    });
+
+
+    it("returns the value of the last statement", function() {
+      expect(parse("a = 1; b = 2; a + b")({})).toBe(3);
+    });
   });
 })();

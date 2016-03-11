@@ -77,13 +77,14 @@
       else if (this.is("\"'")) {
         this.readString(this.ch);
       }
-      // Arrays
-      else if (this.is("[,]{:}.()?")) {
+
+      else if (this.is('[],{}:.()?;')) {
         this.tokens.push({
           text: this.ch
         });
         this.index++;
       }
+
       // Identifiers
       else if (this.isIdent(this.ch)) {
         this.readIdent();
@@ -572,10 +573,19 @@
 
 
   AST.prototype.program = function() {
-    return {
-      type: AST.Program,
-      body: this.assignment()
-    };
+    var body = [];
+
+    while (true) {
+      if (this.tokens.length) {
+        body.push(this.assignment());
+      }
+      if (!this.expect(";")) {
+        return {
+          type: AST.Program,
+          body: body
+        };
+      }
+    }
   };
 
 
@@ -962,7 +972,10 @@
 
 
       case AST.Program:
-        this.state.body.push("return ", this.recurse(ast.body), ";");
+        ast.body.forEach(function(statement) {
+          self.state.body.push(self.recurse(statement), ";");
+        });
+        this.state.body.push('return ', this.recurse(_.last(ast.body)), ';');
         break;
 
 
@@ -977,4 +990,4 @@
   };
 })();
 //YTD     275
-//TODAY   285
+//TODAY   290 NOT WORKING <- DEBUG IT
