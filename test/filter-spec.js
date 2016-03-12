@@ -28,13 +28,5 @@
       expect(filter("my")).toBe(myFilter);
       expect(filter("myOther")).toBe(myOtherFilter);
     });
-
-
-    describe("filter filter", function() {
-
-      it("is available", function() {
-        expect(filter("filter")).toBeDefined();
-      });
-    });
   });
 })();
