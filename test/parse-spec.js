@@ -935,5 +935,33 @@
       var fn = parse("'hello' | upcase | exclamate");
       expect(fn()).toEqual("HELLO!");
     });
+
+
+    it("can pass an additional argument to filters", function() {
+      register("repeat", function() {
+        return function(s, times) {
+          var str = "";
+          if (times) {
+            for (var i = 0; i < times; i++) {
+              str += s;
+            }
+          }
+          return str;
+        };
+      });
+      var fn = parse("'hello' | repeat:3");
+      expect(fn()).toEqual("hellohellohello");
+    });
+
+
+    it("can pass several additional arguments to filters", function() {
+      register("surround", function() {
+        return function(s, left, right) {
+          return left + s + right;
+        };
+      });
+      var fn = parse("'hello' | surround:'*':'!'");
+      expect(fn()).toEqual("*hello!");
+    });
   });
 })();
