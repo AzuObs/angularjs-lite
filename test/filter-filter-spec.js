@@ -25,5 +25,13 @@
         arr: ["a", "b", "a"]
       })).toEqual(["a", "a"]);
     });
+
+
+    it("filters an array of strings with substring matching", function() {
+      var fn = parse("arr | filter:'o'");
+      expect(fn({
+        arr: ["quick", "brown", "fox"]
+      })).toEqual(["brown", "fox"]);
+    });
   });
 })();
