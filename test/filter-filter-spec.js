@@ -33,5 +33,13 @@
         arr: ["quick", "brown", "fox"]
       })).toEqual(["brown", "fox"]);
     });
+
+
+    it("filters an array of strings ignoring case", function() {
+      var fn = parse("arr | filter:'o'");
+      expect(fn({
+        arr: ["quick", "BROWN", "fox"]
+      })).toEqual(["BROWN", "fox"]);
+    });
   });
 })();
