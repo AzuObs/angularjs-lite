@@ -2,6 +2,7 @@
   "use strict";
 
   describe("filter", function() {
+
     it("can be registered and obtained", function() {
       var myFilter = function() {};
       var myFilterFactory = function() {
@@ -26,6 +27,14 @@
       });
       expect(filter("my")).toBe(myFilter);
       expect(filter("myOther")).toBe(myOtherFilter);
+    });
+
+
+    describe("filter filter", function() {
+
+      it("is available", function() {
+        expect(filter("filter")).toBeDefined();
+      });
     });
   });
 })();

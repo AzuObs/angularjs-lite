@@ -16,8 +16,18 @@
     }
   };
 
+
   window.filter = function(name) {
     return filters[name];
   };
+
+
+  var filterFilter = function(array) {
+    return function() {
+
+    };
+  };
+
+  register("filter", filterFilter);
 
 })();
