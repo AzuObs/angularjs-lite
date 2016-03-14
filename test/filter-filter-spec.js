@@ -190,5 +190,13 @@
         arr: [null, "not null"]
       })).toEqual(["not null"]);
     });
+
+
+    it("does not match undefined values", function() {
+      var fn = parse("arr | filter:'undefined'");
+      expect(fn({
+        arr: [undefined, "undefined"]
+      })).toEqual(["undefined"]);
+    });
   });
 })();

@@ -15,6 +15,10 @@
 
   var createPredicateFn = function(expression) {
     var comparator = function(actual, expected) {
+      if (actual === undefined) {
+        return false;
+      }
+
       if (actual === null || expected === null) {
         return actual === expected;
       }
