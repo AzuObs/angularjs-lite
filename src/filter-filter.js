@@ -2,12 +2,26 @@
   "use strict";
 
 
-  var createPredicateFn = function(expression) {
-    return function predicateFn(item) {
-      var actual = item.toLowerCase();
-      var expected = expression.toLowerCase();
+  var deepCompare = function(actual, expected, comparator) {
+    if (mixin.isObjectLike(actual)) {
+      return Object.keys(actual).some(function(key) {
+        return comparator(actual[key], expected);
+      });
+    }
+    else {
+      return comparator(actual, expected);
+    }
+  };
 
+  var createPredicateFn = function(expression) {
+    var comparator = function(actual, expected) {
+      actual = actual.toLowerCase();
+      expected = expression.toLowerCase();
       return actual.indexOf(expected) !== -1;
+    };
+
+    return function(item) {
+      return deepCompare(item, expression, comparator);
     };
   };
 
@@ -21,7 +35,6 @@
           predicateFn = filterExpr;
         }
         else if (typeof filterExpr === "string") {
-          // debugger
           predicateFn = createPredicateFn(filterExpr);
         }
       }

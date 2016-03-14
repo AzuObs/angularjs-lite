@@ -759,7 +759,7 @@
     var fnString = this.filterPrefix() + //assign filters
       "var fn = function(s, l){ " +
       (this.state.vars.length ? "var " + this.state.vars.join(",") + ";" : "") + //create variables
-      this.state.body.join("") + ";" + //generate main code
+      this.state.body.join("") + //generate main code
       "}; return fn;";
 
     /* jshint -W054 */
@@ -1062,5 +1062,4 @@
     }
   };
 })();
-//YTD   306
-//TODAY 310
+//YTD   311
