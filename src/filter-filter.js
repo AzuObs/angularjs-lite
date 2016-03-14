@@ -1,17 +1,17 @@
 (function() {
   "use strict";
 
-
   var deepCompare = function(actual, expected, comparator) {
     if (mixin.isObjectLike(actual)) {
       return Object.keys(actual).some(function(key) {
-        return comparator(actual[key], expected);
+        return deepCompare(actual[key], expected, comparator);
       });
     }
     else {
       return comparator(actual, expected);
     }
   };
+
 
   var createPredicateFn = function(expression) {
     var comparator = function(actual, expected) {
