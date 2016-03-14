@@ -15,6 +15,10 @@
 
   var createPredicateFn = function(expression) {
     var comparator = function(actual, expected) {
+      if (actual === null || expected === null) {
+        return actual === expected;
+      }
+
       actual = ("" + actual).toLowerCase();
       expected = ("" + expression).toLowerCase();
       return actual.indexOf(expected) !== -1;
@@ -30,19 +34,18 @@
     return function(array, filterExpr) {
       var predicateFn;
 
-      if (filterExpr) {
-        if (
-          typeof filterExpr === "function"
-        ) {
-          predicateFn = filterExpr;
-        }
-        else if (
-          typeof filterExpr === "string" ||
-          typeof filterExpr === "number" ||
-          typeof filterExpr === "boolean"
-        ) {
-          predicateFn = createPredicateFn(filterExpr);
-        }
+      if (
+        typeof filterExpr === "function"
+      ) {
+        predicateFn = filterExpr;
+      }
+      else if (
+        typeof filterExpr === "string" ||
+        typeof filterExpr === "number" ||
+        typeof filterExpr === "boolean" ||
+        filterExpr === null
+      ) {
+        predicateFn = createPredicateFn(filterExpr);
       }
 
       return array.filter(predicateFn);

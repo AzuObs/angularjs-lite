@@ -165,5 +165,30 @@
         admin: true
       }]);
     });
+
+
+    it("filters with a substring numeric value", function() {
+      var fn = parse("arr | filter:42");
+      expect(fn({
+        arr: ["contains 42"]
+      })).toEqual(["contains 42"]);
+    });
+
+
+    it("filters matching null", function() {
+      var fn = parse("arr | filter:null");
+
+      expect(fn({
+        arr: [null, "not null"]
+      })).toEqual([null]);
+    });
+
+
+    it("does not match null value with the string null", function() {
+      var fn = parse("arr | filter:'null'");
+      expect(fn({
+        arr: [null, "not null"]
+      })).toEqual(["not null"]);
+    });
   });
 })();
