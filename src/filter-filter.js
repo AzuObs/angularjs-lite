@@ -2,6 +2,10 @@
   "use strict";
 
   var deepCompare = function(actual, expected, comparator) {
+    if (typeof expected === "string" && expected.charAt(0) === "!") {
+      return !deepCompare(actual, expected.substring(1), comparator);
+    }
+
     if (mixin.isObjectLike(actual)) {
       return Object.keys(actual).some(function(key) {
         return deepCompare(actual[key], expected, comparator);
@@ -11,6 +15,20 @@
       return comparator(actual, expected);
     }
   };
+  // 
+  // function deepCompare(actual, expected, comparator) {
+  //   if (_.isString(expected) && _.startsWith(expected, '!')) {
+  //     return !deepCompare(actual, expected.substring(1), comparator);
+  //   }
+  //   if (_.isObject(actual)) {
+  //     return _.some(actual, function(value, key) {
+  //       return deepCompare(value, expected, comparator);
+  //     });
+  //   }
+  //   else {
+  //     return comparator(actual, expected);
+  //   }
+  // }
 
 
   var createPredicateFn = function(expression) {
@@ -24,7 +42,7 @@
       }
 
       actual = ("" + actual).toLowerCase();
-      expected = ("" + expression).toLowerCase();
+      expected = ("" + expected).toLowerCase();
       return actual.indexOf(expected) !== -1;
     };
 
