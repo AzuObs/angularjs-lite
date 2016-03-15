@@ -1,18 +1,18 @@
 (function() {
   "use strict";
 
-  var deepCompare = function(actual, expected, comparator) {
+  var deepCompare = function(actual, expected, comparator, matchAnyProperty) {
     if (typeof expected === "string" && expected.charAt(0) === "!") {
-      return !deepCompare(actual, expected.substring(1), comparator);
+      return !deepCompare(actual, expected.substring(1), comparator, matchAnyProperty);
     }
 
-    if (_.isArray(actual)) {
+    if (Object.prototype.toString.call(actual) === "[object Array]") {
       return actual.some(function(actualItem) {
-        return deepCompare(actualItem, expected, comparator);
+        return deepCompare(actualItem, expected, comparator, matchAnyProperty);
       });
     }
 
-    if (mixin.isObjectLike(actual)) {
+    if (Object.prototype.toString.call(actual) === "[object Object]") {
       if (mixin.isObjectLike(expected)) {
         return Object.keys(_.toPlainObject(expected)).every(function(key) {
           if (expected[key] === undefined) {
@@ -20,12 +20,14 @@
           }
           return deepCompare(actual[key], expected[key], comparator);
         });
-
+      }
+      else if (matchAnyProperty) {
+        return Object.keys(actual).some(function(key) {
+          return deepCompare(actual[key], expected, comparator, matchAnyProperty);
+        });
       }
       else {
-        return Object.keys(actual).some(function(key) {
-          return deepCompare(actual[key], expected, comparator);
-        });
+        return comparator(actual, expected);
       }
     }
     else {
@@ -50,7 +52,7 @@
     };
 
     return function(item) {
-      return deepCompare(item, expression, comparator);
+      return deepCompare(item, expression, comparator, true);
     };
   };
 
