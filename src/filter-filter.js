@@ -6,9 +6,18 @@
       return !deepCompare(actual, expected.substring(1), comparator);
     }
 
+    if (_.isArray(actual)) {
+      return actual.some(function(actualItem) {
+        return deepCompare(actualItem, expected, comparator);
+      });
+    }
+
     if (mixin.isObjectLike(actual)) {
       if (mixin.isObjectLike(expected)) {
         return Object.keys(_.toPlainObject(expected)).every(function(key) {
+          if (expected[key] === undefined) {
+            return true;
+          }
           return deepCompare(actual[key], expected[key], comparator);
         });
 
