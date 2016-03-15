@@ -7,28 +7,22 @@
     }
 
     if (mixin.isObjectLike(actual)) {
-      return Object.keys(actual).some(function(key) {
-        return deepCompare(actual[key], expected, comparator);
-      });
+      if (mixin.isObjectLike(expected)) {
+        return Object.keys(_.toPlainObject(expected)).every(function(key) {
+          return deepCompare(actual[key], expected[key], comparator);
+        });
+
+      }
+      else {
+        return Object.keys(actual).some(function(key) {
+          return deepCompare(actual[key], expected, comparator);
+        });
+      }
     }
     else {
       return comparator(actual, expected);
     }
   };
-  // 
-  // function deepCompare(actual, expected, comparator) {
-  //   if (_.isString(expected) && _.startsWith(expected, '!')) {
-  //     return !deepCompare(actual, expected.substring(1), comparator);
-  //   }
-  //   if (_.isObject(actual)) {
-  //     return _.some(actual, function(value, key) {
-  //       return deepCompare(value, expected, comparator);
-  //     });
-  //   }
-  //   else {
-  //     return comparator(actual, expected);
-  //   }
-  // }
 
 
   var createPredicateFn = function(expression) {
@@ -65,6 +59,7 @@
         typeof filterExpr === "string" ||
         typeof filterExpr === "number" ||
         typeof filterExpr === "boolean" ||
+        mixin.isObjectLike(filterExpr) ||
         filterExpr === null
       ) {
         predicateFn = createPredicateFn(filterExpr);
