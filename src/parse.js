@@ -1045,12 +1045,20 @@
 
 
       case AST.Program:
-        ast.body.forEach(function(statement) {
+        var initialStatements = ast.body.slice(0, ast.body.length - 1);
+        var closingStatement = ast.body[ast.body.length - 1];
+
+        initialStatements.forEach(function(statement) {
           self.state.body.push(self.recurse(statement), ";");
         });
-        this.state.body.push('return ', this.recurse(_.last(ast.body)), ';');
+        this.state.body.push('return ', this.recurse(closingStatement), ';');
         break;
 
+        // _.forEach(_.initial(ast.body), function(stmt) {
+        //   this.state.body.push(this.recurse(stmt), ';');
+        // }, this);
+        // this.state.body.push('return ', this.recurse(_.last(ast.body)), ';');
+        // break;
 
       case AST.ThisExpression:
         return "s";
@@ -1062,5 +1070,5 @@
     }
   };
 })();
-//YTD   311
-//TODAY 319
+//YTD   319
+//TODAY 325

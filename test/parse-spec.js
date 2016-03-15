@@ -167,6 +167,7 @@
 
 
     it("will parse an object with identifier keys", function() {
+      // debugger;
       var fn = parse("{a: 1, b: [2, 3], c: {d: 4}}");
       expect(fn()).toEqual({
         a: 1,
