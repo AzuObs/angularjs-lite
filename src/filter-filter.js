@@ -18,7 +18,10 @@
           if (expected[key] === undefined) {
             return true;
           }
-          return deepCompare(actual[key], expected[key], comparator);
+
+          var isWildcard = (key === "$");
+          var actualVal = isWildcard ? actual : actual[key];
+          return deepCompare(actualVal, expected[key], comparator, isWildcard);
         });
       }
       else if (matchAnyProperty) {

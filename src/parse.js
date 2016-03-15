@@ -1054,11 +1054,6 @@
         this.state.body.push('return ', this.recurse(closingStatement), ';');
         break;
 
-        // _.forEach(_.initial(ast.body), function(stmt) {
-        //   this.state.body.push(this.recurse(stmt), ';');
-        // }, this);
-        // this.state.body.push('return ', this.recurse(_.last(ast.body)), ';');
-        // break;
 
       case AST.ThisExpression:
         return "s";
