@@ -491,13 +491,15 @@
           last: "Fox"
         },
         role: "admin"
-      }, {
-        name: {
-          first: "Mary",
-          last: "Brown"
-        },
-        role: "admin"
-      }]);
+      }, {}]);
+    });
+
+
+    it("filters primitives with a wildcard property", function() {
+      var fn = parse("arr | filter:{$: 'o'}");
+      expect(fn({
+        arr: ["Joe", "Jane", "Mary"]
+      })).toEqual(["Joe"]);
     });
   });
 })();

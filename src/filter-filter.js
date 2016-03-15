@@ -40,6 +40,8 @@
 
 
   var createPredicateFn = function(expression) {
+    var shouldMatchPrimitives = mixin.isObjectLike(expression) && ("$" in expression);
+
     var comparator = function(actual, expected) {
       if (actual === undefined) {
         return false;
@@ -54,7 +56,10 @@
       return actual.indexOf(expected) !== -1;
     };
 
-    return function(item) {
+    return function predicateFn(item) {
+      if (shouldMatchPrimitives && !mixin.isObjectLike(item)) {
+        return deepCompare(item, expression.$, comparator);
+      }
       return deepCompare(item, expression, comparator, true);
     };
   };
