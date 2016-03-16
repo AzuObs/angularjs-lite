@@ -12,10 +12,10 @@
         "src/filter-filter.js",
         "src/parse.js",
         "src/scope.js",
-        "test/scope-spec.js",
         "test/parse-spec.js",
         "test/filter-spec.js",
-        "test/filter-filter-spec.js"
+        "test/filter-filter-spec.js",
+        "test/scope-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],

@@ -287,7 +287,7 @@
 
 
     $eval: function(expr, locals) {
-      return expr(this, locals);
+      return parse(expr)(this, locals);
     },
 
 
