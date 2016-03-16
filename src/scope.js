@@ -356,7 +356,7 @@
       var self = this;
 
       var watcher = {
-        watchFn: watchFn,
+        watchFn: parse(watchFn),
         listenerFn: listenerFn || function() {},
         valueEq: !!valueEq, //compare by value (e.i. deep comparisson vs reference comparisson)
         last: initWatchVal
@@ -529,3 +529,6 @@
 
   exports.Scope = Scope;
 })(this);
+
+//YTD   328
+//TODAY 337

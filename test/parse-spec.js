@@ -970,5 +970,10 @@
       var fn = function() {};
       expect(parse(fn)).toBe(fn);
     });
+
+
+    it("still returns a function when given no argument", function() {
+      expect(parse()).toEqual(jasmine.any(Function));
+    });
   });
 })();
