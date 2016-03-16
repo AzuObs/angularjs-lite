@@ -39,22 +39,24 @@
   };
 
 
-  var createPredicateFn = function(expression) {
+  var createPredicateFn = function(expression, comparator) {
     var shouldMatchPrimitives = mixin.isObjectLike(expression) && ('$' in expression);
 
-    var comparator = function(actual, expected) {
-      if (actual === undefined) {
-        return false;
-      }
+    if (typeof comparator !== "function") {
+      comparator = function(actual, expected) {
+        if (actual === undefined) {
+          return false;
+        }
 
-      if (actual === null || expected === null) {
-        return actual === expected;
-      }
+        if (actual === null || expected === null) {
+          return actual === expected;
+        }
 
-      actual = ("" + actual).toLowerCase();
-      expected = ("" + expected).toLowerCase();
-      return actual.indexOf(expected) !== -1;
-    };
+        actual = ("" + actual).toLowerCase();
+        expected = ("" + expected).toLowerCase();
+        return actual.indexOf(expected) !== -1;
+      };
+    }
 
     return function(item) {
       if (shouldMatchPrimitives && !mixin.isObjectLike(item)) {
@@ -66,7 +68,7 @@
 
 
   var filterFilter = function() {
-    return function(array, filterExpr) {
+    return function(array, filterExpr, comparator) {
       var predicateFn;
 
       if (
@@ -81,7 +83,7 @@
         mixin.isObjectLike(filterExpr) ||
         filterExpr === null
       ) {
-        predicateFn = createPredicateFn(filterExpr);
+        predicateFn = createPredicateFn(filterExpr, comparator);
       }
 
       return array.filter(predicateFn);
