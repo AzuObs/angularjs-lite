@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  var deepCompare = function(actual, expected, comparator, matchAnyProperty) {
+  var deepCompare = function(actual, expected, comparator, matchAnyProperty, inWildcard) {
     if (typeof expected === "string" && expected.charAt(0) === "!") {
       return !deepCompare(actual, expected.substring(1), comparator, matchAnyProperty);
     }
@@ -13,7 +13,7 @@
     }
 
     if (Object.prototype.toString.call(actual) === "[object Object]") {
-      if (mixin.isObjectLike(expected)) {
+      if (mixin.isObjectLike(expected) && !inWildcard) {
         return Object.keys(_.toPlainObject(expected)).every(function(key) {
           if (expected[key] === undefined) {
             return true;
@@ -21,7 +21,7 @@
 
           var isWildcard = (key === "$");
           var actualVal = isWildcard ? actual : actual[key];
-          return deepCompare(actualVal, expected[key], comparator, isWildcard);
+          return deepCompare(actualVal, expected[key], comparator, isWildcard, isWildcard);
         });
       }
       else if (matchAnyProperty) {
@@ -40,7 +40,7 @@
 
 
   var createPredicateFn = function(expression) {
-    var shouldMatchPrimitives = mixin.isObjectLike(expression) && ("$" in expression);
+    var shouldMatchPrimitives = mixin.isObjectLike(expression) && ('$' in expression);
 
     var comparator = function(actual, expected) {
       if (actual === undefined) {
@@ -56,7 +56,7 @@
       return actual.indexOf(expected) !== -1;
     };
 
-    return function predicateFn(item) {
+    return function(item) {
       if (shouldMatchPrimitives && !mixin.isObjectLike(item)) {
         return deepCompare(item, expression.$, comparator);
       }
@@ -65,7 +65,7 @@
   };
 
 
-  var filterFilter = function(array, fn) {
+  var filterFilter = function() {
     return function(array, filterExpr) {
       var predicateFn;
 
