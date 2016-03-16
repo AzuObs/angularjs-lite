@@ -386,6 +386,8 @@
       var changeCount = 0;
       var firstRun = true;
 
+      watchFn = parse(watchFn);
+
       var internalWatchFn = function(scope) {
         var newLength;
         newValue = watchFn(scope);
