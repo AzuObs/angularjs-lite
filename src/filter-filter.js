@@ -42,7 +42,10 @@
   var createPredicateFn = function(expression, comparator) {
     var shouldMatchPrimitives = mixin.isObjectLike(expression) && ('$' in expression);
 
-    if (typeof comparator !== "function") {
+    if (comparator === true) {
+      comparator = _.isEqual;
+    }
+    else if (typeof comparator !== "function") {
       comparator = function(actual, expected) {
         if (actual === undefined) {
           return false;
