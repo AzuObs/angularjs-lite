@@ -3,10 +3,18 @@
 
 
   window.parse = function(expr) {
-    var lexer = new Lexer();
-    var parser = new Parser(lexer);
+    switch (typeof expr) {
+      case "string":
+        var lexer = new Lexer();
+        var parser = new Parser(lexer);
+        return parser.parse(expr);
 
-    return parser.parse(expr);
+      case "function":
+        return expr;
+
+      default:
+        return Function.prototype; //noop
+    }
   };
 
 
@@ -1066,4 +1074,4 @@
   };
 })();
 //YTD   328
-//TODAY
+//TODAY 335
