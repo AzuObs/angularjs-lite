@@ -779,6 +779,11 @@
         markConstantExpressions(ast.right);
         ast.constant = ast.left.constant && ast.right.constant;
         break;
+
+      case AST.UnaryExpression:
+        markConstantExpressions(ast.argument);
+        ast.constant = ast.argument.constant;
+        break;
     }
   };
 
