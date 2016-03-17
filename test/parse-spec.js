@@ -1035,5 +1035,11 @@
       var fn = parse("true");
       expect(fn.constant).toBe(true);
     });
+
+
+    it("marks identifiers non-constant", function() {
+      var fn = parse("a");
+      expect(fn.constant).toBe(false);
+    });
   });
 })();

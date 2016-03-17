@@ -716,9 +716,6 @@
 
 
   var markConstantExpressions = function(ast) {
-    if (window.debug) {
-      debugger;
-    }
     var allConstants;
 
     switch (ast.type) {
@@ -735,6 +732,10 @@
 
       case AST.Literal:
         ast.constant = true;
+        break;
+
+      case AST.Identifier:
+        ast.constant = false;
         break;
     }
   };
