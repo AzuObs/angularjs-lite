@@ -715,6 +715,31 @@
   };
 
 
+  var markConstantExpressions = function(ast) {
+    if (window.debug) {
+      debugger;
+    }
+    var allConstants;
+
+    switch (ast.type) {
+      case AST.Program:
+        allConstants = true;
+
+        ast.body.forEach(function(expression) {
+          markConstantExpressions(expression);
+          allConstants = allConstants && expression.constant;
+        });
+
+        ast.constant = allConstants;
+        break;
+
+      case AST.Literal:
+        ast.constant = true;
+        break;
+    }
+  };
+
+
   var APPLY = Function.prototype.apply;
   var BIND = Function.prototype.bind;
   var CALL = Function.prototype.call;
@@ -763,6 +788,7 @@
 
   ASTCompiler.prototype.compile = function(text) {
     var ast = this.astBuilder.ast(text);
+    markConstantExpressions(ast);
 
     this.state = {
       body: [],
