@@ -786,6 +786,13 @@
         markConstantExpressions(ast.argument);
         ast.constant = ast.argument.constant;
         break;
+
+      case AST.ConditionalExpression:
+        markConstantExpressions(ast.test);
+        markConstantExpressions(ast.consequent);
+        markConstantExpressions(ast.alternate);
+        ast.constant = ast.test.constant && ast.consequent.constant && ast.alternate.constant;
+        break;
     }
   };
 
