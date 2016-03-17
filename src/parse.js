@@ -706,6 +706,15 @@
   };
 
 
+  var isLiteral = function(ast) {
+    return ast.body.length === 0 ||
+      ast.body.length === 1 && (
+        ast.body[0].type === AST.Literal ||
+        ast.body[0].type === AST.ArrayExpression ||
+        ast.body[0].type === AST.ObjectExpression);
+  };
+
+
   var APPLY = Function.prototype.apply;
   var BIND = Function.prototype.bind;
   var CALL = Function.prototype.call;
@@ -771,7 +780,7 @@
       "}; return fn;";
 
     /* jshint -W054 */
-    return new Function(
+    var fn = new Function(
       "ensureSafeMemberName",
       "ensureSafeObject",
       "ensureSafeFunction",
@@ -784,8 +793,12 @@
       ifDefined,
       filter
     );
-
     /* jshint +W054 */
+
+    fn.literal = isLiteral(ast);
+    fn.constant = ast.constant;
+
+    return fn;
   };
 
 
