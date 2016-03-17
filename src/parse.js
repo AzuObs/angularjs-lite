@@ -513,7 +513,6 @@
       } while (this.expect(","));
     }
 
-
     this.consume("}");
     return {
       type: AST.ObjectExpression,
@@ -741,6 +740,15 @@
         ast.elements.forEach(function(element) {
           markConstantExpressions(element);
           allConstants = allConstants && element.constant;
+        });
+        ast.constant = allConstants;
+        break;
+
+      case AST.ObjectExpression:
+        allConstants = true;
+        ast.properties.forEach(function(property) {
+          markConstantExpressions(property.value);
+          allConstants = allConstants && property.value.constant;
         });
         ast.constant = allConstants;
         break;
