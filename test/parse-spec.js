@@ -1057,5 +1057,10 @@
       expect(parse("{a: 1, b: something}").constant).toBe(false);
       expect(parse("{a: 1, b: {c: something}}").constant).toBe(false);
     });
+
+
+    it("marks this as non-constant", function() {
+      expect(parse("this").constant).toBe(false);
+    });
   });
 })();
