@@ -721,12 +721,10 @@
     switch (ast.type) {
       case AST.Program:
         allConstants = true;
-
         ast.body.forEach(function(expression) {
           markConstantExpressions(expression);
           allConstants = allConstants && expression.constant;
         });
-
         ast.constant = allConstants;
         break;
 
@@ -736,6 +734,15 @@
 
       case AST.Identifier:
         ast.constant = false;
+        break;
+
+      case AST.ArrayExpression:
+        allConstants = true;
+        ast.elements.forEach(function(element) {
+          markConstantExpressions(element);
+          allConstants = allConstants && element.constant;
+        });
+        ast.constant = allConstants;
         break;
     }
   };
