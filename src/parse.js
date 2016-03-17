@@ -766,8 +766,14 @@
         break;
 
       case AST.CallExpression:
-        ast.constant = false;
+        allConstants = !!ast.filter;
+        ast.arguments.forEach(function(argument) {
+          markConstantExpressions(argument);
+          allConstants = allConstants && argument.constant;
+        });
+        ast.constant = allConstants;
         break;
+
     }
   };
 

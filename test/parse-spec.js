@@ -1081,5 +1081,16 @@
     it("marks function calls non-constant", function() {
       expect(parse("aFunction()").constant).toBe(false);
     });
+
+
+    it("marks filters constant if arguments are", function() {
+      register("aFilter", function() {
+        return _.identity;
+      });
+      expect(parse("[1, 2, 3] | aFilter").constant).toBe(true);
+      expect(parse("[1, 2, a] | aFilter").constant).toBe(false);
+      expect(parse("[1, 2, 3] | aFilter:42").constant).toBe(true);
+      expect(parse("[1, 2, 3] | aFilter:a").constant).toBe(false);
+    });
   });
 })();
