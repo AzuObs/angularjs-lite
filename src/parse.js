@@ -774,6 +774,11 @@
         ast.constant = allConstants;
         break;
 
+      case AST.AssignmentExpression:
+        markConstantExpressions(ast.left);
+        markConstantExpressions(ast.right);
+        ast.constant = ast.left.constant && ast.right.constant;
+        break;
     }
   };
 
