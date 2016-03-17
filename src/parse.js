@@ -756,6 +756,11 @@
       case AST.ThisExpression:
         ast.constant = false;
         break;
+
+      case AST.MemberExpression:
+        markConstantExpressions(ast.object);
+        ast.constant = ast.object.constant;
+        break;
     }
   };
 
