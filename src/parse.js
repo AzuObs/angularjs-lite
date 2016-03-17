@@ -775,6 +775,8 @@
         break;
 
       case AST.AssignmentExpression:
+      case AST.LogicalExpression:
+      case AST.BinaryExpression:
         markConstantExpressions(ast.left);
         markConstantExpressions(ast.right);
         ast.constant = ast.left.constant && ast.right.constant;
