@@ -2113,6 +2113,34 @@
           done();
         });
       });
+
+
+      it("removes constant watches after first invocation", function() {
+        scope.$watch("[1, 2, 3]", function() {});
+        scope.$digest();
+        expect(scope.$$watchers.length).toBe(0);
+      });
+
+
+      it("accepts one-time watches", function() {
+        var theValue;
+        scope.aValue = 42;
+
+        scope.$watch("::aValue", function(newValue, oldValue, scope) {
+          theValue = newValue;
+        });
+
+        scope.$digest();
+        expect(theValue).toBe(42);
+      });
+
+
+      it("removes one-time watches after first invocation", function() {
+        scope.aValue = 42;
+        scope.$watch("::aValue", function() {});
+        scope.$digest();
+        expect(scope.$$watchers.length).toBe(0);
+      });
     });
   });
 })();

@@ -355,8 +355,14 @@
     $watch: function(watchFn, listenerFn, valueEq) {
       var self = this;
 
+      watchFn = parse(watchFn);
+
+      if (watchFn.$$watchDelegate) {
+        return watchFn.$$watchDelegate(self, listenerFn, valueEq, watchFn);
+      }
+
       var watcher = {
-        watchFn: parse(watchFn),
+        watchFn: watchFn,
         listenerFn: listenerFn || function() {},
         valueEq: !!valueEq, //compare by value (e.i. deep comparisson vs reference comparisson)
         last: initWatchVal
@@ -532,5 +538,5 @@
   exports.Scope = Scope;
 })(this);
 
-//YTD   339
-//TODAY 349
+//YTD   354
+//TODAY 354

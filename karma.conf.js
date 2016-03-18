@@ -14,8 +14,8 @@
         "src/scope.js",
         "test/filter-spec.js",
         "test/filter-filter-spec.js",
-        "test/scope-spec.js",
-        "test/parse-spec.js"
+        "test/parse-spec.js",
+        "test/scope-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],

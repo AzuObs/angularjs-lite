@@ -2,12 +2,62 @@
   "use strict";
 
 
+  var constantWatchDelegate = function(scope, listenerFn, valueEq, watchFn) {
+    var unwatch = scope.$watch(
+      function() {
+        return watchFn(scope);
+      },
+      function(newValue, oldValue, scope) {
+        if (listenerFn && typeof listenerFn === "function") {
+          listenerFn.apply(this, arguments);
+        }
+        unwatch();
+      },
+      valueEq
+    );
+    return unwatch;
+  };
+
+
+  var oneTimeWatchDelegate = function(scope, listenerFn, valueEq, watchFn) {
+    var unwatch = scope.$watch(
+      function() {
+        return watchFn(scope);
+      },
+      function(newValue, oldValue, scope) {
+        if (listenerFn && typeof listenerFn === "function") {
+          listenerFn.apply(this, arguments);
+        }
+        unwatch();
+      },
+      valueEq
+    );
+    return unwatch;
+  };
+
+
   window.parse = function(expr) {
     switch (typeof expr) {
       case "string":
         var lexer = new Lexer();
         var parser = new Parser(lexer);
-        return parser.parse(expr);
+
+        var oneTime = false;
+        if (expr.charAt(0) === ":" && expr.charAt(1) === ":") {
+          oneTime = true;
+          expr = expr.substring(2, expr.length - 2);
+        }
+
+        var parseFn = parser.parse(expr);
+        if (parseFn.constant) {
+          // will the expression always return the same value
+          parseFn.$$watchDelegate = constantWatchDelegate;
+        }
+        if (oneTime) {
+          // does the expression start by "::" ei assign one time only operator
+          parseFn.$$watchDelegate = oneTimeWatchDelegate;
+        }
+        return parseFn;
 
       case "function":
         return expr;
