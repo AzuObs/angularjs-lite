@@ -357,6 +357,13 @@
 
       watchFn = parse(watchFn);
 
+      // special watches are create for: 
+      // constant expressions: $watch("10 + 20", listenerFn)
+      // one-time expressions: $watch("::anIdentifier")
+      // literal expressions: $watch("[1, anElement]") or $watch("{aKey: aValue}")
+      //
+      // these watchers either deregister the watch after it has been itialized (case 1 & 2)
+      // or they only keep track of non-constant properties/elements
       if (watchFn.$$watchDelegate) {
         return watchFn.$$watchDelegate(self, listenerFn, valueEq, watchFn);
       }
@@ -539,4 +546,4 @@
 })(this);
 
 //YTD   354
-//TODAY 359
+//TODAY 379
