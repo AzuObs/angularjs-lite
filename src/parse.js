@@ -28,7 +28,9 @@
         if (listenerFn && typeof listenerFn === "function") {
           listenerFn.apply(this, arguments);
         }
-        unwatch();
+        if (newValue !== undefined) {
+          unwatch();
+        }
       },
       valueEq
     );
@@ -45,7 +47,7 @@
         var oneTime = false;
         if (expr.charAt(0) === ":" && expr.charAt(1) === ":") {
           oneTime = true;
-          expr = expr.substring(2, expr.length - 2);
+          expr = expr.substring(2, expr.length);
         }
 
         var parseFn = parser.parse(expr);
