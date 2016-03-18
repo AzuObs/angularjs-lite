@@ -20,16 +20,24 @@
 
 
   var oneTimeWatchDelegate = function(scope, listenerFn, valueEq, watchFn) {
+    var lastValue;
     var unwatch = scope.$watch(
       function() {
         return watchFn(scope);
       },
       function(newValue, oldValue, scope) {
+        lastValue = newValue;
+
         if (listenerFn && typeof listenerFn === "function") {
           listenerFn.apply(this, arguments);
         }
+
         if (newValue !== undefined) {
-          unwatch();
+          scope.$$postDigest(function() {
+            if (lastValue !== undefined) {
+              unwatch();
+            }
+          });
         }
       },
       valueEq

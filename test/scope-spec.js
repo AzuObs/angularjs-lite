@@ -2151,6 +2151,25 @@
         scope.$digest();
         expect(scope.$$watchers.length).toBe(0);
       });
+
+
+      it("does not remove one-time-watches until value stays defined", function() {
+        scope.aValue = 42;
+        scope.$watch("::aValue", function() {});
+
+        var unwatchDeleter = scope.$watch("aValue", function() {
+          delete scope.aValue;
+        });
+
+        scope.$digest();
+        expect(scope.$$watchers.length).toBe(2);
+
+        scope.aValue = 42;
+        unwatchDeleter();
+        scope.$digest();
+
+        expect(scope.$$watchers.length).toBe(0);
+      });
     });
   });
 })();
