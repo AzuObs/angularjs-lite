@@ -46,6 +46,42 @@
   };
 
 
+  var oneTimeLiteralWatchDelegate = function(scope, listenerFn, valueEq, watchFn) {
+    var isAllDefined = function(val) {
+      if (Object.prototype.toString.call(val) === "[object Object]") {
+        return !Object.keys(val).some(function(key) {
+          return val[key] === undefined;
+        });
+      }
+
+      return !val.some(function(element) {
+        return element === undefined;
+      });
+    };
+
+    var unwatch = scope.$watch(
+      function() {
+        return watchFn(scope);
+      },
+      function(newValue, oldValue, scope) {
+        if (listenerFn && typeof listenerFn === "function") {
+          listenerFn.apply(this, arguments);
+        }
+
+        if (isAllDefined(newValue)) {
+          scope.$$postDigest(function() {
+            if (isAllDefined(newValue)) {
+              unwatch();
+            }
+          });
+        }
+      },
+      valueEq
+    );
+    return unwatch;
+  };
+
+
   window.parse = function(expr) {
     switch (typeof expr) {
       case "string":
@@ -65,7 +101,8 @@
         }
         if (oneTime) {
           // does the expression start by "::" ei assign one time only operator
-          parseFn.$$watchDelegate = oneTimeWatchDelegate;
+          parseFn.$$watchDelegate = parseFn.literal ?
+            oneTimeLiteralWatchDelegate : oneTimeWatchDelegate;
         }
         return parseFn;
 
