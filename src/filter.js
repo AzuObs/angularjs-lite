@@ -3,7 +3,7 @@
 
   var filters = {};
 
-  window.register = function(name, factory) {
+  var register = function(name, factory) {
     if (name && mixin.isObjectLike(name)) { // if name is an object
       return Object.keys(name).map(function(key) { // map object
         return register(key, name[key]);
@@ -17,7 +17,11 @@
   };
 
 
-  window.filter = function(name) {
+  var filter = function(name) {
     return filters[name];
   };
+
+
+  window.register = register;
+  window.filter = filter;
 })();

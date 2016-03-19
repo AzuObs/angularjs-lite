@@ -128,7 +128,7 @@
   };
 
 
-  window.parse = function(expr) {
+  var parse = function(expr) {
     switch (typeof expr) {
       case "string":
         var lexer = new Lexer();
@@ -1471,4 +1471,7 @@
 
     return result.join("");
   };
+
+
+  window.parse = parse;
 })();

@@ -1,4 +1,4 @@
-(function(exports) {
+(function() {
   "use strict";
 
   var myMixin = {
@@ -16,6 +16,6 @@
     }
   };
 
-  exports.mixin = myMixin;
 
-})(this);
+  window.mixin = myMixin;
+})();

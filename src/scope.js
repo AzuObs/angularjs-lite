@@ -1,4 +1,4 @@
-(function(exports) {
+(function() {
   "use strict";
 
 
@@ -542,8 +542,8 @@
   };
 
 
-  exports.Scope = Scope;
-})(this);
+  window.Scope = Scope;
+})();
 
 //YTD   379
 //TODAY 391
