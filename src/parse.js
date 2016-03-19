@@ -2,7 +2,7 @@
   "use strict";
 
 
-  // constant watch, no need to keep track of this because if the watch is constant
+  // constant watch, no need to keep track of this watcher because if the watch is constant
   // it will always be the same and only be executed once, but Angular will still be 
   // calling the watchFn during every digest (for no reason)
   var constantWatchDelegate = function(scope, listenerFn, valueEq, watchFn) {
@@ -942,7 +942,12 @@
         break;
 
       case AST.CallExpression:
-        allConstants = !!ast.filter;
+        //filter is a "pure function" aka stateless aka constant unless it has the 
+        //$stateful property attached to it
+        //other functions are always considered non-constant since they can be changed easily
+        var stateless = ast.filter && !filter(ast.callee.name).$stateful;
+
+        allConstants = stateless;
         argsToWatch = [];
 
         ast.arguments.forEach(function(argument) {
@@ -954,7 +959,7 @@
         });
 
         ast.constant = allConstants;
-        ast.toWatch = ast.filter ? argsToWatch : [ast];
+        ast.toWatch = stateless ? argsToWatch : [ast];
         break;
 
       case AST.AssignmentExpression:

@@ -2217,6 +2217,31 @@
         expect(values.length).toBe(2);
         expect(values[1]).toEqual([1, 2, 4]);
       });
+
+
+      it("allows $stateful filter value to change over time", function(done) {
+        register("withTime", function() {
+          var fn = function(v) {
+            return new Date().toISOString() + ': ' + v;
+          };
+          fn.$stateful = true;
+          return fn;
+        });
+
+        var listenerSpy = jasmine.createSpy();
+        scope.$watch('42 | withTime', listenerSpy);
+        scope.$digest();
+        var firstValue = listenerSpy.calls.mostRecent().args[0];
+
+        setTimeout(function() {
+          scope.$digest();
+          var secondValue = listenerSpy.calls.mostRecent().args[0];
+          expect(secondValue).not.toEqual(firstValue);
+          done();
+        }, 100);
+      });
+
+
     });
   });
 })();

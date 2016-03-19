@@ -545,5 +545,4 @@
   exports.Scope = Scope;
 })(this);
 
-//YTD   354
-//TODAY 379
+//YTD   379
