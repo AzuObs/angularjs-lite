@@ -443,6 +443,7 @@
   AST.Literal = "Literal";
   AST.Property = "Property";
   AST.Identifier = "Identifier";
+  AST.NGValueParameter = "NGValueParameter";
 
 
   AST.prototype.ast = function(text) {
@@ -824,6 +825,22 @@
   // AST Compiler
   // 
 
+  var assignableAST = function(ast) {
+    if (ast.body.length == 1 && isAssignable(ast.body[0])) {
+      return {
+        type: AST.AssignmentExpression,
+        left: ast.body[0],
+        right: {
+          type: AST.NGValueParameter
+        }
+      };
+    }
+  };
+  var isAssignable = function(ast) {
+    return ast.type === AST.Identifier || ast.type === AST.MemberExpression;
+  };
+
+
   var ensureSafeMemberName = function(name) {
     if (name === "constructor" || name === "__proto__" ||
       name === "__defineGetter__" || name === "__defineSetter__" ||
@@ -1049,20 +1066,25 @@
   ASTCompiler.prototype.compile = function(text) {
     var self = this;
     var ast = this.astBuilder.ast(text);
+    var extra = "";
     markConstantAndWatchExpressions(ast);
 
     this.state = {
       nextId: 0,
-      fn: {
+      filters: {},
+      inputs: [],
+      assign: {
         body: [],
         vars: []
       },
-      filters: {},
-      inputs: []
+      fn: {
+        body: [],
+        vars: []
+      }
     };
 
-    this.stage = "inputs";
 
+    this.stage = "inputs";
     var inputs = getInputs(ast.body);
     if (inputs) {
       inputs.forEach(function(input, idx) {
@@ -1076,10 +1098,25 @@
         self.state.inputs.push(inputKey);
       });
     }
-    this.stage = "main";
 
+
+    this.stage = "assign";
+    var assignable = assignableAST(ast);
+    if (assignable) {
+      this.state.computing = "assign";
+      this.state.assign.body.push(this.recurse(assignable));
+      extra = "fn.assign = function(s,v,l){" +
+        (this.state.assign.vars.length ?
+          "var " + this.state.assign.vars.join(",") + ";" : "") +
+        this.state.assign.body.join("") +
+        "};";
+    }
+
+
+    this.stage = "main";
     this.state.computing = "fn";
     this.recurse(ast);
+
 
     var fnString = this.filterPrefix() + //assign filters
       "var fn = function(s, l){ " +
@@ -1087,6 +1124,7 @@
       this.state.fn.body.join("") + //generate main code
       "};" +
       this.watchFns() +
+      extra +
       "return fn;";
 
     /* jshint -W054 */
@@ -1371,6 +1409,10 @@
           }
         }
         return intoId;
+
+
+      case AST.NGValueParameter:
+        return "v";
 
 
       case AST.ObjectExpression:
