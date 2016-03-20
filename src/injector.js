@@ -30,6 +30,10 @@
     return {
       has: function(key) {
         return cache.hasOwnProperty(key);
+      },
+
+      get: function(key) {
+        return cache[key];
       }
     };
   };
