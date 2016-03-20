@@ -962,7 +962,7 @@
         //filter is a "pure function" aka stateless aka constant unless it has the 
         //$stateful property attached to it
         //other functions are always considered non-constant since they can be changed easily
-        var stateless = ast.filter && !filter(ast.callee.name).$stateful;
+        var stateless = !!ast.filter && !filter(ast.callee.name).$stateful;
 
         allConstants = stateless;
         argsToWatch = [];
