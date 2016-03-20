@@ -1,6 +1,13 @@
 (function() {
   "use strict";
 
+  // ascii puke from the angularJS source to detect the arguments on function "fn"
+  // once fn.toString has been called
+  var FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
+  // regex to match any whitespace at the start of end of a string
+  var FN_ARG = /^\s*(\S+)\s*$/;
+
+
   var createInjector = function(modulesToLoad) {
     // holds copies of the already built module components
     var cache = {};
@@ -36,15 +43,20 @@
 
 
     var annotate = function(fn) {
-
       if (Object.prototype.toString.call(fn) === "[object Array]") {
         return fn.slice(0, fn.length - 1);
       }
       else if (fn.$inject) {
         return fn.$inject;
       }
-      else {
+      else if (!fn.length) { //fn has no arguments
         return [];
+      }
+      else {
+        var argDeclaration = fn.toString().match(FN_ARGS); //get arguments
+        return argDeclaration[1].split(",").map(function(argName) {
+          return argName.match(FN_ARG)[1]: []; //strip whitespace form args
+        });
       }
     };
 
