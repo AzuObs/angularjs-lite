@@ -6,9 +6,14 @@
       throw "hasOwnProperty is not a valid module name!";
     }
 
+    var invokeQueue = [];
     var moduleInstance = {
       name: name,
-      requires: requires
+      requires: requires,
+      constant: function(key, value) {
+        invokeQueue.push(["constant", [key, value]]);
+      },
+      _invokeQueue: invokeQueue
     };
     modules[name] = moduleInstance;
     return moduleInstance;

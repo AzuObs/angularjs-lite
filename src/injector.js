@@ -2,7 +2,33 @@
   "use strict";
 
   var createInjector = function(modulesToLoad) {
-    return {};
+    var cache = {};
+
+    var $provide = {
+      constant: function(key, value) {
+        cache[key] = value;
+      }
+    };
+
+    // cycle through each module
+    modulesToLoad.forEach(function(moduleName) {
+      var module = angular.module(moduleName);
+
+      // cycle through each module components
+      module._invokeQueue.forEach(function(invokeArgs) {
+        var method = invokeArgs[0];
+        var args = invokeArgs[1];
+
+        // build the components
+        $provide[method].apply($provide, args);
+      });
+    });
+
+    return {
+      has: function(key) {
+        return cache.hasOwnProperty(key);
+      }
+    };
   };
 
 
