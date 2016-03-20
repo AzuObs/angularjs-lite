@@ -29,27 +29,7 @@
     };
 
 
-    // will call fn and pass it as its own arguments the elements held in fn.$inject
-    var invoke = function(fn, self, locals) {
-      var args = annotate(fn).map(function(token) {
-        if (typeof token === "string") {
-          return locals && locals.hasOwnProperty(token) ?
-            locals[token] : cache[token];
-        }
-        else {
-          throw "Incorrect injection token! Expected a string, got " + token;
-        }
-      });
-
-      //if fn was annotate eg ['a','b', function(a,b){...}]
-      if (Object.prototype.toString.call(fn) === "[object Array]") {
-        fn = fn[fn.length - 1];
-      }
-
-      return fn.apply(self, args);
-    };
-
-
+    // returns an array containing the fn dependencies. eg ["$scope", "$log"] 
     var annotate = function(fn) {
       if (Object.prototype.toString.call(fn) === "[object Array]") {
         return fn.slice(0, fn.length - 1);
@@ -70,6 +50,37 @@
           return argName.match(FN_ARG)[2]; //strip whitespace and _arg_ (underscores) form args
         });
       }
+    };
+
+
+    // will call fn and will inject the arguments/arguments
+    var invoke = function(fn, self, locals) {
+      var args = annotate(fn).map(function(token) {
+        if (typeof token === "string") {
+          return locals && locals.hasOwnProperty(token) ?
+            locals[token] : cache[token];
+        }
+        else {
+          throw "Incorrect injection token! Expected a string, got " + token;
+        }
+      });
+
+      //if fn was annotate eg ['a','b', function(a,b){...}]
+      if (Object.prototype.toString.call(fn) === "[object Array]") {
+        fn = fn[fn.length - 1];
+      }
+
+      return fn.apply(self, args);
+    };
+
+
+    var instantiate = function(Type) {
+      var UnwrappedType = Object.prototype.toString.call(Type) === "[object Array]" ?
+        Type[Type.length - 1] : Type;
+      var instance = Object.create(UnwrappedType.prototype);
+
+      invoke(Type, instance);
+      return instance;
     };
 
 
@@ -103,6 +114,7 @@
       },
       annotate: annotate,
       invoke: invoke,
+      instantiate: instantiate
     };
   };
 
