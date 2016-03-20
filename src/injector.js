@@ -13,11 +13,14 @@
       }
     };
 
-    // cycle through each module
-    modulesToLoad.forEach(function(moduleName) {
+    // load each module
+    modulesToLoad.forEach(function loadModule(moduleName) {
       var module = angular.module(moduleName);
 
-      // cycle through each module components
+      // load each dependency
+      module.requires.forEach(loadModule);
+
+      // load each component
       module._invokeQueue.forEach(function(invokeArgs) {
         var method = invokeArgs[0];
         var args = invokeArgs[1];

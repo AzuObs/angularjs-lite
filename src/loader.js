@@ -35,9 +35,10 @@
       return obj[name] || (obj[name] = factory());
     };
 
+    // create window.angular
     var angular = ensure(window, "angular", Object);
 
-
+    // create angular.module
     ensure(angular, "module", function() {
       var modules = {};
 
