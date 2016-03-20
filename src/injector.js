@@ -5,18 +5,18 @@
   // once fn.toString has been called
   var FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
   // regex to match any whitespace at the start of end of a string
-  var FN_ARG = /^\s*(\S+)\s*$/;
+  var FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
   //removes comments form a string
   var STRIP_COMMENTS = /(\/\/.*$)|(\/\*.*?\*\/)/mg;
 
 
-  var createInjector = function(modulesToLoad) {
+  var createInjector = function(modulesToLoad, strictDi) {
     // holds copies of the already built module components
     var cache = {};
     // keeps track of the loaded modules to avoid conflicts if two modules reference
     // each other
     var loadedModules = {};
-
+    strictDi = !!strictDi;
 
     // builds the module components (constant, value, service, factory, controller, directive)
     var $provide = {
@@ -55,10 +55,13 @@
         return [];
       }
       else {
+        if (strictDi) {
+          throw "fn is not using explicit annotation and cannot be invoked in strict mode";
+        }
         var source = fn.toString().replace(STRIP_COMMENTS, "");
         var argDeclaration = source.match(FN_ARGS); //get arguments
         return argDeclaration[1].split(",").map(function(argName) {
-          return argName.match(FN_ARG)[1]; //strip whitespace form args
+          return argName.match(FN_ARG)[2]; //strip whitespace and _arg_ (underscores) form args
         });
       }
     };

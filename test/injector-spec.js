@@ -224,6 +224,25 @@
           c) {};
         expect(injector.annotate(fn)).toEqual(["a", "c"]);
       });
+
+
+      it("strips surrounding underscores from argument names when parsing", function() {
+        var injector = createInjector([]);
+        var fn = function(a, _b_, c_, _d, an_argument) {};
+
+        expect(injector.annotate(fn)).toEqual(["a", "b", "c_", "_d", "an_argument"]);
+      });
+
+
+      it("throws when using a non-annotated fn in strict mode", function() {
+        var STRICT_DI = true;
+        var injector = createInjector([], STRICT_DI);
+
+        var fn = function(a, b, c) {};
+        expect(function() {
+          injector.annotate(fn);
+        }).toThrow();
+      });
     });
   });
 })();
