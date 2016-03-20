@@ -196,11 +196,20 @@
         expect(injector.annotate(fn)).toEqual([]);
       });
 
+
       it("returns annotations parsed from function args when not annotated", function() {
         var injector = createInjector([]);
         var fn = function(a, b) {};
         expect(injector.annotate(fn)).toEqual(["a", "b"]);
       });
+
+
+      it("strips comments from argument lists when parsing", function() {
+        var injector = createInjector([]);
+        var fn = function(a, /*b,*/ c) {};
+        expect(injector.annotate(fn)).toEqual(["a", "c"]);
+      });
+
     });
   });
 })();

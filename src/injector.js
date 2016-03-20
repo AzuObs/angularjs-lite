@@ -6,6 +6,8 @@
   var FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
   // regex to match any whitespace at the start of end of a string
   var FN_ARG = /^\s*(\S+)\s*$/;
+  //removes comments form a string
+  var STRIP_COMMENTS = /\/\*.*\*\//;
 
 
   var createInjector = function(modulesToLoad) {
@@ -53,9 +55,10 @@
         return [];
       }
       else {
-        var argDeclaration = fn.toString().match(FN_ARGS); //get arguments
+        var source = fn.toString().replace(STRIP_COMMENTS, "");
+        var argDeclaration = source.match(FN_ARGS); //get arguments
         return argDeclaration[1].split(",").map(function(argName) {
-          return argName.match(FN_ARG)[1]: []; //strip whitespace form args
+          return argName.match(FN_ARG)[1]; //strip whitespace form args
         });
       }
     };
