@@ -3,6 +3,7 @@
 
   var createInjector = function(modulesToLoad) {
     var cache = {};
+    var loadedModules = {};
 
     var $provide = {
       constant: function(key, value) {
@@ -15,19 +16,22 @@
 
     // load each module
     modulesToLoad.forEach(function loadModule(moduleName) {
-      var module = angular.module(moduleName);
+      if (!loadedModules.hasOwnProperty(moduleName)) {
+        loadedModules[moduleName] = true;
+        var module = angular.module(moduleName);
 
-      // load each dependency
-      module.requires.forEach(loadModule);
+        // load each dependency
+        module.requires.forEach(loadModule);
 
-      // load each component
-      module._invokeQueue.forEach(function(invokeArgs) {
-        var method = invokeArgs[0];
-        var args = invokeArgs[1];
+        // load each component
+        module._invokeQueue.forEach(function(invokeArgs) {
+          var method = invokeArgs[0];
+          var args = invokeArgs[1];
 
-        // build the components
-        $provide[method].apply($provide, args);
-      });
+          // build the components
+          $provide[method].apply($provide, args);
+        });
+      }
     });
 
     return {
