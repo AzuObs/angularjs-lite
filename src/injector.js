@@ -36,13 +36,15 @@
 
 
     var annotate = function(fn) {
-      //isArray
-      if (typeof fn === "object") {
+
+      if (Object.prototype.toString.call(fn) === "[object Array]") {
         return fn.slice(0, fn.length - 1);
       }
-      // isFunction
-      else {
+      else if (fn.$inject) {
         return fn.$inject;
+      }
+      else {
+        return [];
       }
     };
 

@@ -188,6 +188,13 @@
         var fn = ["a", "b", function() {}];
         expect(injector.annotate(fn)).toEqual(["a", "b"]);
       });
+
+
+      it("returns an empty array for a non-annotated 0-arg function", function() {
+        var injector = createInjector([]);
+        var fn = function() {};
+        expect(injector.annotate(fn)).toEqual([]);
+      });
     });
   });
 })();
