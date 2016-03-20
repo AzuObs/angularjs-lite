@@ -81,5 +81,12 @@
       }).toThrow();
     });
 
+
+    it("does not allow a module to be called hasOwnProperty", function() {
+      expect(function() {
+        window.angular.module("hasOwnProperty", []);
+      }).toThrow();
+    });
+
   });
 })();

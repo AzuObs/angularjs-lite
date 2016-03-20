@@ -8,6 +8,7 @@
         "bower_components/lodash/dist/lodash.js",
         "bower_components/jquery/dist/jquery.js",
         "src/loader.js",
+        "src/injector.js",
         "src/angular.js",
         "src/filter.js",
         "src/filter-filter.js",
@@ -17,7 +18,8 @@
         "test/filter-filter-spec.js",
         "test/parse-spec.js",
         "test/scope-spec.js",
-        "test/loader-spec.js"
+        "test/loader-spec.js",
+        "test/injector-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],
