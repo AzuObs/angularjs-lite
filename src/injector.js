@@ -21,7 +21,7 @@
 
 
     // will call fn and pass it as its own arguments the elements held in fn.$inject
-    var invoke = function(fn) {
+    var invoke = function(fn, self) {
       var args = fn.$inject.map(function(token) {
         if (typeof token === "string") {
           return cache[token];
@@ -30,7 +30,7 @@
           throw "Incorrect injection token! Expected a string, got " + token;
         }
       });
-      return fn.apply(null, args);
+      return fn.apply(self, args);
     };
 
 
