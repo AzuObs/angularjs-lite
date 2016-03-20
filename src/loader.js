@@ -38,7 +38,6 @@
 
       return function(name, requires) {
         if (requires) {
-
           return createModule(name, requires, modules);
         }
         else {
