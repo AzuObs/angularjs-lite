@@ -36,7 +36,14 @@
 
 
     var annotate = function(fn) {
-      return fn.$inject;
+      //isArray
+      if (typeof fn === "object") {
+        return fn.slice(0, fn.length - 1);
+      }
+      // isFunction
+      else {
+        return fn.$inject;
+      }
     };
 
 
@@ -65,14 +72,11 @@
       has: function(key) {
         return cache.hasOwnProperty(key);
       },
-
       get: function(key) {
         return cache[key];
       },
-
+      annotate: annotate,
       invoke: invoke,
-
-      annotate: annotate
     };
   };
 
