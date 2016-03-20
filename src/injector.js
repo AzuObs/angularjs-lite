@@ -6,6 +6,9 @@
 
     var $provide = {
       constant: function(key, value) {
+        if (key === "hasOwnProperty") {
+          throw "hasOwnProperty is not a valid constant name!";
+        }
         cache[key] = value;
       }
     };

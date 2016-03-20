@@ -29,5 +29,14 @@
 
       expect(injector.has("aConstant")).toBe(false);
     });
+
+
+    it("does not allow a constant called hasOwnProperty", function() {
+      var module = angular.module("myModule", []);
+      module.constant("hasOwnProperty", _.constant(false));
+      expect(function() {
+        createInjector(["myModule"]);
+      }).toThrow();
+    });
   });
 })();
