@@ -31,7 +31,7 @@
 
     // will call fn and pass it as its own arguments the elements held in fn.$inject
     var invoke = function(fn, self, locals) {
-      var args = fn.$inject.map(function(token) {
+      var args = annotate(fn).map(function(token) {
         if (typeof token === "string") {
           return locals && locals.hasOwnProperty(token) ?
             locals[token] : cache[token];
@@ -40,6 +40,12 @@
           throw "Incorrect injection token! Expected a string, got " + token;
         }
       });
+
+      //if fn was annotate eg ['a','b', function(a,b){...}]
+      if (Object.prototype.toString.call(fn) === "[object Array]") {
+        fn = fn[fn.length - 1];
+      }
+
       return fn.apply(self, args);
     };
 
