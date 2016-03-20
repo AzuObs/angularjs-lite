@@ -2,9 +2,14 @@
   "use strict";
 
   var createInjector = function(modulesToLoad) {
+    // holds copies of the already built module components
     var cache = {};
+    // keeps track of the loaded modules to avoid conflicts if two modules reference
+    // each other
     var loadedModules = {};
 
+
+    // builds the module components (constant, value, service, factory, controller, directive)
     var $provide = {
       constant: function(key, value) {
         if (key === "hasOwnProperty") {
@@ -15,12 +20,19 @@
     };
 
 
+    // will call fn and pass it as its own arguments the elements held in fn.$inject
     var invoke = function(fn) {
-      var args = fn.$inject.map(function(moduleName) {
-        return cache[moduleName];
+      var args = fn.$inject.map(function(token) {
+        if (typeof token === "string") {
+          return cache[token];
+        }
+        else {
+          throw "Incorrect injection token! Expected a string, got " + token;
+        }
       });
       return fn.apply(null, args);
     };
+
 
     // load each module
     modulesToLoad.forEach(function loadModule(moduleName) {
@@ -41,6 +53,7 @@
         });
       }
     });
+
 
     return {
       has: function(key) {
