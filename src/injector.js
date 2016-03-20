@@ -7,7 +7,7 @@
   // regex to match any whitespace at the start of end of a string
   var FN_ARG = /^\s*(\S+)\s*$/;
   //removes comments form a string
-  var STRIP_COMMENTS = /\/\*.*\*\//;
+  var STRIP_COMMENTS = /(\/\/.*$)|(\/\*.*?\*\/)/mg;
 
 
   var createInjector = function(modulesToLoad) {
