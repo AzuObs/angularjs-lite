@@ -35,6 +35,11 @@
     };
 
 
+    var annotate = function(fn) {
+      return fn.$inject;
+    };
+
+
     // load each module
     modulesToLoad.forEach(function loadModule(moduleName) {
       if (!loadedModules.hasOwnProperty(moduleName)) {
@@ -65,7 +70,9 @@
         return cache[key];
       },
 
-      invoke: invoke
+      invoke: invoke,
+
+      annotate: annotate
     };
   };
 
