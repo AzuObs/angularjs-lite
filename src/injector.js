@@ -14,6 +14,14 @@
       }
     };
 
+
+    var invoke = function(fn) {
+      var args = fn.$inject.map(function(moduleName) {
+        return cache[moduleName];
+      });
+      return fn.apply(null, args);
+    };
+
     // load each module
     modulesToLoad.forEach(function loadModule(moduleName) {
       if (!loadedModules.hasOwnProperty(moduleName)) {
@@ -41,7 +49,9 @@
 
       get: function(key) {
         return cache[key];
-      }
+      },
+
+      invoke: invoke
     };
   };
 
