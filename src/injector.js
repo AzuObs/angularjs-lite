@@ -102,6 +102,7 @@
       // invoke is called during instantiation
       var invoke = function(fn, self, locals) {
         var args = annotate(fn).map(function(token) {
+          // "function(a, b){..}"
           if (typeof token === "string") {
             return locals && locals.hasOwnProperty(token) ?
               locals[token] : getService(token);

@@ -498,7 +498,7 @@
         aProvider.setValue(2);
         this.$get = function() {};
       });
-      window.debug = true;
+
       var injector = createInjector(["myModule"]);
 
       expect(injector.get("a")).toBe(2);
@@ -571,6 +571,20 @@
       expect(function() {
         injector.get("aProvider");
       }).toThrow();
+    });
+
+
+    it("registers constants first to make them available to providers", function() {
+      var module = angular.module("myModule", []);
+      module.provider("a", function AProvider(b) {
+        this.$get = function() {
+          return b;
+        };
+      });
+      module.constant("b", 42);
+      var injector = createInjector(["myModule"]);
+
+      expect(injector.get("a")).toBe(42);
     });
   });
 })();

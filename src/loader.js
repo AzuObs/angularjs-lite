@@ -7,9 +7,9 @@
     }
 
     var invokeQueue = [];
-    var invokeLater = function(method) {
+    var invokeLater = function(method, arrayMethod) {
       return function() {
-        invokeQueue.push([method, arguments]);
+        invokeQueue[arrayMethod || "push"]([method, arguments]);
 
         // return module instance so that method chaining is possible
         // eg angular.module("a",[]).constant("b", 1).provider("c", fn) 
@@ -20,7 +20,7 @@
     var moduleInstance = {
       name: name,
       requires: requires,
-      constant: invokeLater("constant"),
+      constant: invokeLater("constant", "unshift"),
       provider: invokeLater("provider"),
       _invokeQueue: invokeQueue
     };
