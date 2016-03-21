@@ -19,6 +19,8 @@
     var providerCache = {};
     // keeps track of the loaded modules to avoid circular referencing of modules
     var loadedModules = {};
+    // the stack of components that we are traversing
+    var path = [];
     strictDi = !!strictDi;
 
     // builds the module components (constant, value, service, factory, controller, directive)
@@ -39,11 +41,12 @@
     var getService = function(name) {
       if (instanceCache.hasOwnProperty(name)) {
         if (instanceCache[name] === INSTANTIATING) {
-          throw new Error("Circular dependency found");
+          throw new Error("Circular dependency found: " + name + " <- " + path.join(" <- "));
         }
         return instanceCache[name];
       }
       else if (providerCache.hasOwnProperty(name + "Provider")) {
+        path.unshift(name);
         instanceCache[name] = INSTANTIATING;
         try {
           var provider = providerCache[name + "Provider"];
@@ -51,6 +54,7 @@
           return instance;
         }
         finally {
+          path.shift();
           // if instantitation failed, then delete the placeholder "INSTANTIATING"
           if (instanceCache[name] === INSTANTIATING) {
             delete instanceCache[name];
