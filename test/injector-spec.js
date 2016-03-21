@@ -397,5 +397,24 @@
 
       expect(injector.get("a")).toBe(injector.get("a"));
     });
+
+
+    it("notifies the user about a circular dependency", function() {
+      var module = angular.module("myModule", []);
+      module.provider("a", {
+        $get: function(b) {}
+      });
+      module.provider("b", {
+        $get: function(c) {}
+      });
+      module.provider("c", {
+        $get: function(a) {}
+      });
+      var injector = createInjector(["myModule"]);
+
+      expect(function() {
+        injector.get("a");
+      }).toThrowError("Circular dependency found");
+    });
   });
 })();
