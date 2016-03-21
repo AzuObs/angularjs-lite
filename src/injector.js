@@ -74,12 +74,12 @@
     };
 
 
-    var instantiate = function(Type) {
+    var instantiate = function(Type, locals) {
       var UnwrappedType = Object.prototype.toString.call(Type) === "[object Array]" ?
         Type[Type.length - 1] : Type;
       var instance = Object.create(UnwrappedType.prototype);
 
-      invoke(Type, instance);
+      invoke(Type, instance, locals);
       return instance;
     };
 
