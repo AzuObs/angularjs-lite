@@ -15,14 +15,15 @@
   var createInjector = function(modulesToLoad, strictDi) {
     var providerCache = {};
     var providerInjector = createInternalInjector(providerCache, function() {
-      throw 'Unknown provider: ' + path.join(' <- ');
+      throw "Unknown provider: " + path.join(" <- ");
     });
 
     var instanceCache = {};
-    var instanceInjector = createInternalInjector(instanceCache, function(name) {
-      var provider = providerInjector.get(name + 'Provider');
-      return instanceInjector.invoke(provider.$get, provider);
-    });
+    var instanceInjector = instanceCache.$injector =
+      createInternalInjector(instanceCache, function(name) {
+        var provider = providerInjector.get(name + "Provider");
+        return instanceInjector.invoke(provider.$get, provider);
+      });
 
     var loadedModules = {};
     var path = [];
@@ -111,7 +112,7 @@
             throw "Incorrect injection token! Expected a string, got " + token;
           }
         });
-        //if fn was annotate eg ['a','b', function(a,b){...}]
+        //if fn was annotate eg ["a","b", function(a,b){...}]
         if (Object.prototype.toString.call(fn) === "[object Array]") {
           fn = fn[fn.length - 1];
         }
@@ -130,7 +131,7 @@
       return {
         has: function(name) {
           return cache.hasOwnProperty(name) ||
-            providerCache.hasOwnProperty(name + 'Provider');
+            providerCache.hasOwnProperty(name + "Provider");
         },
         get: getService,
         annotate: annotate,
