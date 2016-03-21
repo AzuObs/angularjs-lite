@@ -33,6 +33,9 @@
         instanceCache[key] = value;
       },
       provider: function(key, provider) {
+        if (typeof provider === "function") {
+          provider = instantiate(provider);
+        }
         providerCache[key + "Provider"] = provider;
       }
     };
