@@ -8,7 +8,7 @@
   var FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
   //removes comments form a string
   var STRIP_COMMENTS = /(\/\/.*$)|(\/\*.*?\*\/)/mg;
-  // keeps tracked of components being instantiated to avoid circular references
+  // placeholder to keep tracked of components being instantiated to avoid circular references
   var INSTANTIATING = {};
 
 
@@ -45,9 +45,17 @@
       }
       else if (providerCache.hasOwnProperty(name + "Provider")) {
         instanceCache[name] = INSTANTIATING;
-        var provider = providerCache[name + "Provider"];
-        var instance = instanceCache[name] = invoke(provider.$get);
-        return instance;
+        try {
+          var provider = providerCache[name + "Provider"];
+          var instance = instanceCache[name] = invoke(provider.$get);
+          return instance;
+        }
+        finally {
+          // if instantitation failed, then delete the placeholder "INSTANTIATING"
+          if (instanceCache[name] === INSTANTIATING) {
+            delete instanceCache[name];
+          }
+        }
       }
     };
 
