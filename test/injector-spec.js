@@ -354,5 +354,19 @@
       expect(injector.has("a")).toBe(true);
       expect(injector.get("a")).toBe(42);
     });
+
+
+    it("injects the $get method of a provider", function() {
+      var module = angular.module("myModule", []);
+      module.constant("a", 1);
+      module.provider("b", {
+        $get: function(a) {
+          return a + 2;
+        }
+      });
+      var injector = createInjector(["myModule"]);
+
+      expect(injector.get("b")).toBe(3);
+    });
   });
 })();
