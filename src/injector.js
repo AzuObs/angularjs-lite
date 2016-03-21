@@ -144,6 +144,16 @@
     }
 
 
+    function runInvokeQueue(queue) {
+      queue.forEach(function(invokeArgs) {
+        var service = providerInjector.get(invokeArgs[0]);
+        var method = invokeArgs[1];
+        var args = invokeArgs[2];
+        service[method].apply(service, args);
+      });
+    }
+
+
     // load each module
     modulesToLoad.forEach(function loadModule(moduleName) {
       if (!loadedModules.hasOwnProperty(moduleName)) {
@@ -154,13 +164,8 @@
         module.requires.forEach(loadModule);
 
         // load each component
-        module._invokeQueue.forEach(function(invokeArgs) {
-          var method = invokeArgs[0];
-          var args = invokeArgs[1];
-
-          // build the components
-          providerCache.$provide[method].apply(providerCache.$provide, args);
-        });
+        runInvokeQueue(module._invokeQueue);
+        runInvokeQueue(module._configBlocks);
       }
     });
 

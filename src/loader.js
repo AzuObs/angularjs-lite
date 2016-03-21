@@ -7,10 +7,11 @@
     }
 
     var invokeQueue = [];
-    var invokeLater = function(method, arrayMethod) {
+    var configBlocks = [];
+    var invokeLater = function(service, method, arrayMethod, queue) {
       return function() {
-        invokeQueue[arrayMethod || "push"]([method, arguments]);
-
+        queue = queue || invokeQueue;
+        queue[arrayMethod || "push"]([service, method, arguments]);
         // return module instance so that method chaining is possible
         // eg angular.module("a",[]).constant("b", 1).provider("c", fn) 
         return moduleInstance;
@@ -20,9 +21,11 @@
     var moduleInstance = {
       name: name,
       requires: requires,
-      constant: invokeLater("constant", "unshift"),
-      provider: invokeLater("provider"),
-      _invokeQueue: invokeQueue
+      constant: invokeLater("$provide", "constant", "unshift"),
+      provider: invokeLater("$provide", "provider"),
+      config: invokeLater("$injector", "invoke", "push", configBlocks),
+      _invokeQueue: invokeQueue,
+      _configBlocks: configBlocks
     };
 
     modules[name] = moduleInstance;
