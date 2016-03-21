@@ -12,9 +12,10 @@
 
   var createInjector = function(modulesToLoad, strictDi) {
     // holds copies of the already built module components
-    var cache = {};
-    // keeps track of the loaded modules to avoid conflicts if two modules reference
-    // each other
+    var instanceCache = {};
+    // hold copies of the provider definition - used for lazy-loading. aka just-on-time loading
+    var providerCache = {};
+    // keeps track of the loaded modules to avoid circular referencing of modules
     var loadedModules = {};
     strictDi = !!strictDi;
 
@@ -25,12 +26,24 @@
         if (key === "hasOwnProperty") {
           throw "hasOwnProperty is not a valid constant name!";
         }
-        cache[key] = value;
+        instanceCache[key] = value;
       },
       provider: function(key, provider) {
-        cache[key] = invoke(provider.$get, provider);
+        providerCache[key + "Provider"] = provider;
       }
     };
+
+
+    var getService = function(name) {
+      if (instanceCache.hasOwnProperty(name)) {
+        return instanceCache[name];
+      }
+      else if (providerCache.hasOwnProperty(name + "Provider")) {
+        var provider = providerCache[name + "Provider"];
+        return invoke(provider.$get, provider);
+      }
+    };
+
 
     // returns an array containing the fn dependencies. eg ["$scope", "$log"] 
     // annotate is called during component invokation
@@ -62,7 +75,7 @@
       var args = annotate(fn).map(function(token) {
         if (typeof token === "string") {
           return locals && locals.hasOwnProperty(token) ?
-            locals[token] : cache[token];
+            locals[token] : getService(token);
         }
         else {
           throw "Incorrect injection token! Expected a string, got " + token;
@@ -111,10 +124,11 @@
 
     return {
       has: function(key) {
-        return cache.hasOwnProperty(key);
+        return instanceCache.hasOwnProperty(key) ||
+          providerCache.hasOwnProperty(key + "Provider");
       },
       get: function(key) {
-        return cache[key];
+        return getService(key);
       },
       annotate: annotate,
       invoke: invoke,
