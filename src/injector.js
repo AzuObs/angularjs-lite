@@ -35,7 +35,7 @@
 
     // builds the module components (constant, value, service, factory, controller, directive)
     // $provide is called during module instantiation
-    var $provide = {
+    providerCache.$provide = {
       constant: function(key, value) {
         if (key === "hasOwnProperty") {
           throw "hasOwnProperty is not a valid constant name!";
@@ -159,7 +159,7 @@
           var args = invokeArgs[1];
 
           // build the components
-          $provide[method].apply($provide, args);
+          providerCache.$provide[method].apply(providerCache.$provide, args);
         });
       }
     });
