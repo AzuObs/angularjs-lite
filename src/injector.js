@@ -19,17 +19,21 @@
     strictDi = !!strictDi;
 
     // builds the module components (constant, value, service, factory, controller, directive)
+    // $provide is called during module instantiation
     var $provide = {
       constant: function(key, value) {
         if (key === "hasOwnProperty") {
           throw "hasOwnProperty is not a valid constant name!";
         }
         cache[key] = value;
+      },
+      provider: function(key, provider) {
+        cache[key] = provider.$get();
       }
     };
 
-
     // returns an array containing the fn dependencies. eg ["$scope", "$log"] 
+    // annotate is called during component invokation
     var annotate = function(fn) {
       if (Object.prototype.toString.call(fn) === "[object Array]") {
         return fn.slice(0, fn.length - 1);
@@ -52,8 +56,8 @@
       }
     };
 
-
     // will call fn and will inject the arguments/arguments
+    // invoke is called during instantiation
     var invoke = function(fn, self, locals) {
       var args = annotate(fn).map(function(token) {
         if (typeof token === "string") {
