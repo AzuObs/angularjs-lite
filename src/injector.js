@@ -13,15 +13,21 @@
 
 
   var createInjector = function(modulesToLoad, strictDi) {
-    // holds copies of the already built module components
-    var instanceCache = {};
-    // hold copies of the provider definition - used for lazy-loading. aka just-on-time loading
     var providerCache = {};
-    // keeps track of the loaded modules to avoid circular referencing of modules
+    var providerInjector = createInternalInjector(providerCache, function() {
+      throw 'Unknown provider: ' + path.join(' <- ');
+    });
+
+    var instanceCache = {};
+    var instanceInjector = createInternalInjector(instanceCache, function(name) {
+      var provider = providerInjector.get(name + 'Provider');
+      return instanceInjector.invoke(provider.$get, provider);
+    });
+
     var loadedModules = {};
-    // the stack of components that we are traversing
     var path = [];
     strictDi = !!strictDi;
+
 
     // builds the module components (constant, value, service, factory, controller, directive)
     // $provide is called during module instantiation
@@ -30,46 +36,21 @@
         if (key === "hasOwnProperty") {
           throw "hasOwnProperty is not a valid constant name!";
         }
+        providerCache[key] = value;
         instanceCache[key] = value;
       },
       provider: function(key, provider) {
         if (typeof provider === "function") {
-          provider = instantiate(provider);
+          provider = providerInjector.instantiate(provider);
         }
         providerCache[key + "Provider"] = provider;
       }
     };
 
 
-    var getService = function(name) {
-      if (instanceCache.hasOwnProperty(name)) {
-        if (instanceCache[name] === INSTANTIATING) {
-          throw new Error("Circular dependency found: " + name + " <- " + path.join(" <- "));
-        }
-        return instanceCache[name];
-      }
-      else if (providerCache.hasOwnProperty(name + "Provider")) {
-        path.unshift(name);
-        instanceCache[name] = INSTANTIATING;
-        try {
-          var provider = providerCache[name + "Provider"];
-          var instance = instanceCache[name] = invoke(provider.$get);
-          return instance;
-        }
-        finally {
-          path.shift();
-          // if instantitation failed, then delete the placeholder "INSTANTIATING"
-          if (instanceCache[name] === INSTANTIATING) {
-            delete instanceCache[name];
-          }
-        }
-      }
-    };
-
-
     // returns an array containing the fn dependencies. eg ["$scope", "$log"] 
     // annotate is called during component invokation
-    var annotate = function(fn) {
+    function annotate(fn) {
       if (Object.prototype.toString.call(fn) === "[object Array]") {
         return fn.slice(0, fn.length - 1);
       }
@@ -89,38 +70,73 @@
           return argName.match(FN_ARG)[2]; //strip whitespace and _arg_ (underscores) form args
         });
       }
-    };
+    }
 
-    // will call fn and will inject the arguments/arguments
-    // invoke is called during instantiation
-    var invoke = function(fn, self, locals) {
-      var args = annotate(fn).map(function(token) {
-        if (typeof token === "string") {
-          return locals && locals.hasOwnProperty(token) ?
-            locals[token] : getService(token);
+
+    function createInternalInjector(cache, factoryFn) {
+      //returns the the instance of a provider
+      var getService = function(name) {
+        if (cache.hasOwnProperty(name)) {
+          if (cache[name] === INSTANTIATING) {
+            throw new Error("Circular dependency found: " + name + " <- " + path.join(" <- "));
+          }
+          return cache[name];
         }
         else {
-          throw "Incorrect injection token! Expected a string, got " + token;
+          path.unshift(name);
+          cache[name] = INSTANTIATING;
+          try {
+            return (cache[name] = factoryFn(name));
+          }
+          finally {
+            path.shift();
+            // if instantitation failed, then delete the placeholder "INSTANTIATING"
+            if (cache[name] === INSTANTIATING) {
+              delete cache[name];
+            }
+          }
         }
-      });
+      };
 
-      //if fn was annotate eg ['a','b', function(a,b){...}]
-      if (Object.prototype.toString.call(fn) === "[object Array]") {
-        fn = fn[fn.length - 1];
-      }
+      // will call fn and will inject the arguments/arguments
+      // invoke is called during instantiation
+      var invoke = function(fn, self, locals) {
+        var args = annotate(fn).map(function(token) {
+          if (typeof token === "string") {
+            return locals && locals.hasOwnProperty(token) ?
+              locals[token] : getService(token);
+          }
+          else {
+            throw "Incorrect injection token! Expected a string, got " + token;
+          }
+        });
+        //if fn was annotate eg ['a','b', function(a,b){...}]
+        if (Object.prototype.toString.call(fn) === "[object Array]") {
+          fn = fn[fn.length - 1];
+        }
+        return fn.apply(self, args);
+      };
 
-      return fn.apply(self, args);
-    };
+      var instantiate = function(Type, locals) {
+        var UnwrappedType = Object.prototype.toString.call(Type) === "[object Array]" ?
+          Type[Type.length - 1] : Type;
+        var instance = Object.create(UnwrappedType.prototype);
+        invoke(Type, instance, locals);
+        return instance;
+      };
 
 
-    var instantiate = function(Type, locals) {
-      var UnwrappedType = Object.prototype.toString.call(Type) === "[object Array]" ?
-        Type[Type.length - 1] : Type;
-      var instance = Object.create(UnwrappedType.prototype);
-
-      invoke(Type, instance, locals);
-      return instance;
-    };
+      return {
+        has: function(name) {
+          return cache.hasOwnProperty(name) ||
+            providerCache.hasOwnProperty(name + 'Provider');
+        },
+        get: getService,
+        annotate: annotate,
+        invoke: invoke,
+        instantiate: instantiate
+      };
+    }
 
 
     // load each module
@@ -144,18 +160,7 @@
     });
 
 
-    return {
-      has: function(key) {
-        return instanceCache.hasOwnProperty(key) ||
-          providerCache.hasOwnProperty(key + "Provider");
-      },
-      get: function(key) {
-        return getService(key);
-      },
-      annotate: annotate,
-      invoke: invoke,
-      instantiate: instantiate
-    };
+    return instanceInjector;
   };
 
 
