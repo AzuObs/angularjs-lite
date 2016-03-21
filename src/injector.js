@@ -14,11 +14,14 @@
 
   var createInjector = function(modulesToLoad, strictDi) {
     var providerCache = {};
-    var providerInjector = createInternalInjector(providerCache, function() {
-      throw "Unknown provider: " + path.join(" <- ");
-    });
+    // will allow users to acces providerInjector from their providers
+    var providerInjector = providerCache.$injector =
+      createInternalInjector(providerCache, function() {
+        throw "Unknown provider: " + path.join(" <- ");
+      });
 
     var instanceCache = {};
+    // will allow users to access instanceInjector from their instances
     var instanceInjector = instanceCache.$injector =
       createInternalInjector(instanceCache, function(name) {
         var provider = providerInjector.get(name + "Provider");
