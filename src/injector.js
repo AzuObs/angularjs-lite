@@ -78,7 +78,7 @@
 
 
     function createInternalInjector(cache, factoryFn) {
-      //returns the the instance of a provider
+      //returns the the cached service
       var getService = function(name) {
         if (cache.hasOwnProperty(name)) {
           if (cache[name] === INSTANTIATING) {

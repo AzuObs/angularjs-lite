@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  var createModule = function(name, requires, modules) {
+  var createModule = function(name, requires, modules, configFn) {
     if (name === "hasOwnProperty") {
       throw "hasOwnProperty is not a valid module name!";
     }
@@ -27,6 +27,11 @@
       _invokeQueue: invokeQueue,
       _configBlocks: configBlocks
     };
+
+    if (configFn) {
+      moduleInstance.config(configFn);
+    }
+
 
     modules[name] = moduleInstance;
     return moduleInstance;
@@ -55,9 +60,9 @@
     ensure(angular, "module", function() {
       var modules = {};
 
-      return function(name, requires) {
+      return function(name, requires, configFn) {
         if (requires) {
-          return createModule(name, requires, modules);
+          return createModule(name, requires, modules, configFn);
         }
         else {
           return getModule(name, modules);
