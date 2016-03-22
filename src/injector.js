@@ -28,7 +28,7 @@
         return instanceInjector.invoke(provider.$get, provider);
       });
 
-    var loadedModules = {};
+    var loadedModules = new HashMap();
     var path = [];
     strictDi = !!strictDi;
 
@@ -157,9 +157,10 @@
     // load each module
     var runBlocks = [];
     modulesToLoad.forEach(function loadModule(module) {
-      if (typeof module === "string") {
-        if (!loadedModules.hasOwnProperty(module)) {
-          loadedModules[module] = true;
+      if (!loadedModules.get(module)) {
+        loadedModules.put(module, true);
+
+        if (typeof module === "string") {
           module = angular.module(module);
 
           // load each dependency
@@ -172,13 +173,14 @@
           //we want to run the runBlocks after every module in the app has loaded
           runBlocks = runBlocks.concat(module._runBlocks);
         }
-      }
-      // in rare cases users might want to declare modules requierements as function
-      // these are considered config functions
-      else if (typeof module === "function" || Object.prototype.toString.call(module) === "[object Array]") {
-        // push the result of the invokation onto the run block, because the configFns are allowed
-        // to return a function, and when this is the case the function is considered a run block
-        runBlocks.push(providerInjector.invoke(module));
+
+        // in rare cases users might want to declare modules requierements as function
+        // these are considered config functions
+        else if (typeof module === "function" || Object.prototype.toString.call(module) === "[object Array]") {
+          // push the result of the invokation onto the run block, because the configFns are allowed
+          // to return a function, and when this is the case the function is considered a run block
+          runBlocks.push(providerInjector.invoke(module));
+        }
       }
     });
 

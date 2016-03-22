@@ -20,8 +20,8 @@
         "test/parse-spec.js",
         "test/scope-spec.js",
         "test/loader-spec.js",
+        "test/apis-spec.js",
         "test/injector-spec.js",
-        "test/apis-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],
