@@ -176,11 +176,18 @@
       // in rare cases users might want to declare modules requierements as function
       // these are considered config functions
       else if (typeof module === "function" || Object.prototype.toString.call(module) === "[object Array]") {
-        providerInjector.invoke(module);
+        // push the result of the invokation onto the run block, because the configFns are allowed
+        // to return a function, and when this is the case the function is considered a run block
+        runBlocks.push(providerInjector.invoke(module));
       }
     });
 
+    runBlocks = runBlocks.filter(function(runBlock) {
+      //we want to filter out anything that is falsy
+      return !!runBlock;
+    });
     runBlocks.forEach(function(runBlock) {
+
       instanceInjector.invoke(runBlock);
     });
 
