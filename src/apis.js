@@ -7,7 +7,10 @@
 
     if (type === "function" || (type === "object" && value !== null)) {
       uid = value.$$hashKey;
-      if (uid === undefined) {
+      if (typeof uid === "function") {
+        uid = value.$$hashKey();
+      }
+      else if (uid === undefined) {
         // _.uniqueId is simply a function that has an internal counter
         // and increments it by one everytime it is called
         // it's the same as what angular does internally
