@@ -2,7 +2,6 @@
   "use strict";
 
   function $filterProvider($provide) {
-    var filters = {};
 
     this.register = function(name, factory) {
       if (name && mixin.isObjectLike(name)) { // if name is an object
@@ -11,18 +10,16 @@
         }, this);
       }
       else { // if name is a string
-        var filter = factory();
-        filters[name] = filter;
         return $provide.factory(name + "Filter", factory);
       }
     };
 
 
-    this.$get = function() {
+    this.$get = ["$injector", function($injector) {
       return function filter(name) {
-        return filters[name];
+        return $injector.get(name + "Filter");
       };
-    };
+    }];
   }
 
   $filterProvider.$inject = ["$provide"];
