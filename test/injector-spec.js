@@ -841,5 +841,13 @@
       }).toThrow();
       expect(injector.get("b")).toBeNull();
     });
+
+
+    it("allows registering a value", function() {
+      var module = angular.module("myModule", []);
+      module.value("a", 42);
+      var injector = createInjector(["myModule"]);
+      expect(injector.get("a")).toBe(42);
+    });
   });
 })();
