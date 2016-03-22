@@ -2173,7 +2173,6 @@
 
 
       it("does not remove one-time watches before all array items defined", function() {
-        window.debug = true;
         scope.$watch("::[1, 2, aValue]", function() {}, true);
         scope.$digest();
         expect(scope.$$watchers.length).toBe(1);

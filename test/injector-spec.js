@@ -721,5 +721,25 @@
 
       expect(gotA).toBe(42);
     });
+
+
+    it("configures all modules before running any run blocks", function() {
+      var module1 = angular.module("myModule", []);
+      module1.provider("a", {
+        $get: _.constant(1)
+      });
+      var result;
+      module1.run(function(a, b) {
+        result = a + b;
+      });
+      var module2 = angular.module("myOtherModule", []);
+      module2.provider("b", {
+        $get: _.constant(2)
+      });
+
+      createInjector(["myModule", "myOtherModule"]);
+
+      expect(result).toBe(3);
+    });
   });
 })();

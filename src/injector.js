@@ -155,6 +155,7 @@
 
 
     // load each module
+    var runBlocks = [];
     modulesToLoad.forEach(function loadModule(moduleName) {
       if (!loadedModules.hasOwnProperty(moduleName)) {
         loadedModules[moduleName] = true;
@@ -166,10 +167,14 @@
         // load each component
         runInvokeQueue(module._invokeQueue);
         runInvokeQueue(module._configBlocks);
-        module._runBlocks.forEach(function(runBlock) {
-          instanceInjector.invoke(runBlock);
-        });
+
+        //we want to run the runBlocks after every module in the app has loaded
+        runBlocks = runBlocks.concat(module._runBlocks);
       }
+    });
+
+    runBlocks.forEach(function(runBlock) {
+      instanceInjector.invoke(runBlock);
     });
 
 
