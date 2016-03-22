@@ -166,6 +166,9 @@
         // load each component
         runInvokeQueue(module._invokeQueue);
         runInvokeQueue(module._configBlocks);
+        module._runBlocks.forEach(function(runBlock) {
+          instanceInjector.invoke(runBlock);
+        });
       }
     });
 
