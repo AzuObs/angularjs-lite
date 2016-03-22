@@ -60,15 +60,15 @@
         }
         providerCache[key + "Provider"] = provider;
       },
-      factory: function(key, factoryFn) {
+      factory: function(key, factoryFn, enforce) {
         this.provider(key, {
-          $get: enforceReturnValue(factoryFn)
+          $get: enforce === false ? factoryFn : enforceReturnValue(factoryFn)
         });
       },
       value: function(key, value) {
         this.factory(key, function() {
           return value;
-        });
+        }, false);
       }
     };
 
@@ -189,13 +189,14 @@
 
           // load each component
           runInvokeQueue(module._invokeQueue);
+          // config blocks are run after invokables because we want to have access to the invokableProvider
           runInvokeQueue(module._configBlocks);
 
           //we want to run the runBlocks after every module in the app has loaded
           runBlocks = runBlocks.concat(module._runBlocks);
         }
 
-        // in rare cases users might want to declare modules requierements as function
+        // in rare cases users might want to declare modules requirements as function
         // these are considered config functions
         else if (typeof module === "function" || Object.prototype.toString.call(module) === "[object Array]") {
           // push the result of the invokation onto the run block, because the configFns are allowed
@@ -210,7 +211,6 @@
       return !!runBlock;
     });
     runBlocks.forEach(function(runBlock) {
-
       instanceInjector.invoke(runBlock);
     });
 
