@@ -64,6 +64,11 @@
         this.provider(key, {
           $get: enforceReturnValue(factoryFn)
         });
+      },
+      value: function(key, value) {
+        this.factory(key, function() {
+          return value;
+        });
       }
     };
 
