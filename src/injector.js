@@ -156,20 +156,27 @@
 
     // load each module
     var runBlocks = [];
-    modulesToLoad.forEach(function loadModule(moduleName) {
-      if (!loadedModules.hasOwnProperty(moduleName)) {
-        loadedModules[moduleName] = true;
-        var module = angular.module(moduleName);
+    modulesToLoad.forEach(function loadModule(module) {
+      if (typeof module === "string") {
+        if (!loadedModules.hasOwnProperty(module)) {
+          loadedModules[module] = true;
+          module = angular.module(module);
 
-        // load each dependency
-        module.requires.forEach(loadModule);
+          // load each dependency
+          module.requires.forEach(loadModule);
 
-        // load each component
-        runInvokeQueue(module._invokeQueue);
-        runInvokeQueue(module._configBlocks);
+          // load each component
+          runInvokeQueue(module._invokeQueue);
+          runInvokeQueue(module._configBlocks);
 
-        //we want to run the runBlocks after every module in the app has loaded
-        runBlocks = runBlocks.concat(module._runBlocks);
+          //we want to run the runBlocks after every module in the app has loaded
+          runBlocks = runBlocks.concat(module._runBlocks);
+        }
+      }
+      // in rare cases users might want to declare modules requierements as function
+      // these are considered config functions
+      else if (typeof module === "function" || Object.prototype.toString.call(module) === "[object Array]") {
+        providerInjector.invoke(module);
       }
     });
 
