@@ -45,5 +45,34 @@
       expect($filter("my")).toBe(myFilter);
       expect($filter("myOther")).toBe(myOtherFilter);
     });
+
+
+    it("is available through injector", function() {
+      var myFilter = function() {};
+      angular.module("ng").config(function($filterProvider) {
+        $filterProvider.register("my", function() {
+          return myFilter;
+        });
+      });
+
+      var injector = createInjector(["ng"]);
+      expect(injector.has("myFilter")).toBe(true);
+      expect(injector.get("myFilter")).toBe(myFilter);
+    });
+
+
+    it("may have dependencies in factory", function() {
+      angular.module("ng").config(function($provide, $filterProvider) {
+        $provide.constant("suffix", "!");
+        $filterProvider.register("my", function(suffix) {
+          return function(v) {
+            return suffix + v;
+          };
+        });
+      });
+
+      var injector = createInjector(["ng"]);
+      expect(injector.has("myFilter")).toBe(true);
+    });
   });
 })();
