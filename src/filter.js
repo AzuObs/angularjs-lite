@@ -1,27 +1,30 @@
 (function() {
   "use strict";
 
-  var filters = {};
+  function $filterProvider() {
+    var filters = {};
 
-  var register = function(name, factory) {
-    if (name && mixin.isObjectLike(name)) { // if name is an object
-      return Object.keys(name).map(function(key) { // map object
-        return register(key, name[key]);
-      });
-    }
-    else { // if name is a string
-      var filter = factory();
-      filters[name] = filter;
-      return filter;
-    }
-  };
-
-
-  var filter = function(name) {
-    return filters[name];
-  };
+    this.register = function(name, factory) {
+      var self = this;
+      if (name && mixin.isObjectLike(name)) { // if name is an object
+        return Object.keys(name).map(function(key) { // map object
+          return self.register(key, name[key]);
+        });
+      }
+      else { // if name is a string
+        var filter = factory();
+        filters[name] = filter;
+        return filter;
+      }
+    };
 
 
-  window.register = register;
-  window.filter = filter;
+    this.$get = function() {
+      return function filter(name) {
+        return filters[name];
+      };
+    };
+  }
+
+  window.$filterProvider = $filterProvider;
 })();

@@ -14,6 +14,13 @@
       publishExternalAPI();
       expect(createInjector(["ng"])).toBeDefined();
     });
+
+
+    it("sets up the $filter service", function() {
+      publishExternalAPI();
+      var injector = createInjector(["ng"]);
+      expect(injector.has("$filter")).toBe(true);
+    });
   });
 
 })();
