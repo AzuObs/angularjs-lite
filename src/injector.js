@@ -69,6 +69,11 @@
         this.factory(key, function() {
           return value;
         }, false);
+      },
+      service: function(key, Constructor) {
+        this.factory(key, function() {
+          return instanceInjector.instantiate(Constructor);
+        });
       }
     };
 
