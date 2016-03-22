@@ -23,6 +23,21 @@
     return type + ":" + uid;
   }
 
+
+  function HashMap() {
+
+  }
+
+  HashMap.prototype = {
+    put: function(key, value) {
+      this[hashKey(key)] = value;
+    },
+    get: function(key) {
+      return this[hashKey(key)];
+    }
+  };
+
   window.hashKey = hashKey;
+  window.HashMap = HashMap;
 
 })();
