@@ -826,5 +826,20 @@
 
       expect(injector.get("a")).toBe(injector.get("a"));
     });
+
+
+    it("forces a factory to return a value", function() {
+      var module = angular.module("myModule", []);
+      module.factory("a", function() {});
+      module.factory("b", function() {
+        return null;
+      });
+      var injector = createInjector(["myModule"]);
+
+      expect(function() {
+        injector.get("a");
+      }).toThrow();
+      expect(injector.get("b")).toBeNull();
+    });
   });
 })();

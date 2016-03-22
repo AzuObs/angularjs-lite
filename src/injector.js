@@ -33,6 +33,17 @@
     strictDi = !!strictDi;
 
 
+    function enforceReturnValue(factoryFn) {
+      return function() {
+        var value = instanceInjector.invoke(factoryFn);
+        if (value === undefined) {
+          throw "factory must return a value";
+        }
+        return value;
+      };
+    }
+
+
     // builds the module components (constant, value, service, factory, controller, directive)
     // $provide is called during module instantiation
     providerCache.$provide = {
@@ -51,7 +62,7 @@
       },
       factory: function(key, factoryFn) {
         this.provider(key, {
-          $get: factoryFn
+          $get: enforceReturnValue(factoryFn)
         });
       }
     };
