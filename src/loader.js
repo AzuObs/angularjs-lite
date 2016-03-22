@@ -41,7 +41,6 @@
       moduleInstance.config(configFn);
     }
 
-
     modules[name] = moduleInstance;
     return moduleInstance;
   };

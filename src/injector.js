@@ -12,7 +12,7 @@
   var INSTANTIATING = {};
 
 
-  var createInjector = function(modulesToLoad, strictDi) {
+  function createInjector(modulesToLoad, strictDi) {
     var providerCache = {};
     // will allow users to acces providerInjector from their providers
     var providerInjector = providerCache.$injector =
@@ -232,7 +232,7 @@
 
 
     return instanceInjector;
-  };
+  }
 
 
   window.createInjector = createInjector;
