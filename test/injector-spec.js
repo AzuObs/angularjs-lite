@@ -787,7 +787,7 @@
       };
       angular.module("myModule", [functionModule, functionModule]);
       createInjector(["myModule"]);
-
+      console.log("it's normal that this is not working for now, because we are implementing hashKey");
       expect(loadedTimes).toBe(1);
     });
   });

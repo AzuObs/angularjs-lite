@@ -7,7 +7,7 @@
       files: [
         "bower_components/lodash/dist/lodash.js",
         "bower_components/jquery/dist/jquery.js",
-        "src/api.js",
+        "src/apis.js",
         "src/loader.js",
         "src/injector.js",
         "src/angular.js",
@@ -21,7 +21,7 @@
         "test/scope-spec.js",
         "test/loader-spec.js",
         "test/injector-spec.js",
-        "test/api-spec.js"
+        "test/apis-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],
