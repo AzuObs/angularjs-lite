@@ -3,8 +3,11 @@
 
   describe("filter filter", function() {
 
+    var parse;
+
     beforeEach(function() {
       publishExternalAPI();
+      parse = createInjector(["ng"]).get("$parse");
     });
 
 
