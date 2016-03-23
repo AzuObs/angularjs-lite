@@ -4,11 +4,15 @@
 
   function $QProvider() {
     this.$get = ["$rootScope", function($rootScope) {
+
       function processQueue(state) {
         var pending = state.pending;
         delete state.pending;
-        pending.forEach(function(onFulfilled) {
-          onFulfilled(state.value);
+        pending.forEach(function(handlers) {
+          // handlers looks like [null, onFulfilledCallback, onRejectCallback]
+          // state.status is either 1 (resolved) or 2 (rejected)
+          var fn = handlers[state.status];
+          fn(state.value);
         });
       }
 
@@ -23,9 +27,9 @@
         this.$$state = {};
       }
 
-      Promise.prototype.then = function(onFulfilled) {
+      Promise.prototype.then = function(onFulfilled, onRejected) {
         this.$$state.pending = this.$$state.pending || [];
-        this.$$state.pending.push(onFulfilled);
+        this.$$state.pending.push([null, onFulfilled, onRejected]);
 
         // if deferred has already resolved
         if (this.$$state.status > 0) {
@@ -38,6 +42,15 @@
         this.promise = new Promise();
       }
 
+      Deferred.prototype.reject = function(reason) {
+        if (this.promise.$$state.status) {
+          return;
+        }
+        this.promise.$$state.status = 2;
+        this.promise.$$state.value = reason;
+        scheduleProcessQueue(this.promise.$$state);
+      };
+
       Deferred.prototype.resolve = function(value) {
         // if deferred has already resolved
         if (this.promise.$$state.status) {
@@ -45,12 +58,7 @@
         }
         this.promise.$$state.status = 1;
         this.promise.$$state.value = value;
-
-        // !!this was a personal addition
-        // if promise.then has any defined callbacks
-        if (this.promise.$$state.pending && this.promise.$$state.pending.length) {
-          scheduleProcessQueue(this.promise.$$state);
-        }
+        scheduleProcessQueue(this.promise.$$state);
       };
 
 
