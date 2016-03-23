@@ -21,6 +21,11 @@
 
       Promise.prototype.then = function(onFulfilled) {
         this.$$state.pending = onFulfilled;
+
+        // if deferred has already resolved
+        if (this.$$state.status > 0) {
+          scheduleProcessQueue(this.$$state);
+        }
       };
 
 
@@ -29,6 +34,7 @@
       }
 
       Deferred.prototype.resolve = function(value) {
+        // if deferred has already resolved
         if (this.promise.$$state.status) {
           return;
         }
