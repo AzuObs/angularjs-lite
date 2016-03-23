@@ -8,7 +8,12 @@
       function processQueue(state) {
         var pending = state.pending;
         delete state.pending;
+
         pending.forEach(function(handlers) {
+          // deferred is the deferred object that may be used to chain
+          // a .then after the promise has resolved
+          var deferred = handlers[0];
+
           // handlers looks like [null, onFulfilledCallback, onRejectCallback]
           // state.status is either 1 (resolved) or 2 (rejected)
           var fn = handlers[state.status];
@@ -17,7 +22,7 @@
           // because sometimes only one of two handler functions
           // was defined and the other was undefined
           if (typeof fn === "function") {
-            fn(state.value);
+            deferred.resolve(fn(state.value));
           }
         });
       }
@@ -34,13 +39,17 @@
       }
 
       Promise.prototype.then = function(onFulfilled, onRejected) {
+        var result = new Deferred();
+
         this.$$state.pending = this.$$state.pending || [];
-        this.$$state.pending.push([null, onFulfilled, onRejected]);
+        this.$$state.pending.push([result, onFulfilled, onRejected]);
 
         // if deferred has already resolved
         if (this.$$state.status > 0) {
           scheduleProcessQueue(this.$$state);
         }
+
+        return result.promise;
       };
 
       Promise.prototype.catch = function(onRejected) {
