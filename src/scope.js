@@ -3,9 +3,20 @@
 
 
   function $RootScopeProvider() {
+    var TTL = 10;
+
+    this.digestTtl = function(value) {
+      if (typeof value === "number" && value !== NaN) {
+        TTL = value;
+      }
+      return TTL;
+    };
+
     this.$get = ["$parse", function($parse) {
 
+
       function initWatchVal() {}
+
 
       function Scope() {
         this.$$applyAsyncQueue = [];
@@ -217,7 +228,7 @@
           this.$beginPhase("$digest");
 
           var dirty = false;
-          var ttl = 10;
+          var ttl = TTL;
           this.$root.$$lastDirtyWatch = null;
 
           if (this.$root.$$applyAsyncId) {
@@ -241,7 +252,7 @@
 
               if ((dirty || this.$$asyncQueue.length) && !(ttl--)) {
                 this.$clearPhase();
-                throw "10 digest iterations reached";
+                throw TTL + " digest iterations reached";
               }
             }
             while (dirty || this.$$asyncQueue.length);
