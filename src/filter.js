@@ -14,7 +14,6 @@
       }
     };
 
-
     this.$get = ["$injector", function($injector) {
       return function filter(name) {
         return $injector.get(name + "Filter");

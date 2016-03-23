@@ -74,5 +74,18 @@
       var injector = createInjector(["ng"]);
       expect(injector.has("myFilter")).toBe(true);
     });
+
+
+    it("can be registered through module API", function() {
+      var myFilter = function() {};
+      var module = angular.module("myModule", [])
+        .filter("my", function() {
+          return myFilter;
+        });
+
+      var injector = createInjector(["ng", "myModule"]);
+      expect(injector.has("myFilter")).toBe(true);
+      expect(injector.get("myFilter")).toBe(myFilter);
+    });
   });
 })();
