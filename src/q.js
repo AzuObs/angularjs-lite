@@ -12,7 +12,13 @@
           // handlers looks like [null, onFulfilledCallback, onRejectCallback]
           // state.status is either 1 (resolved) or 2 (rejected)
           var fn = handlers[state.status];
-          fn(state.value);
+
+          // we check whether fn is a function
+          // because sometimes only one of two handler functions
+          // was defined and the other was undefined
+          if (typeof fn === "function") {
+            fn(state.value);
+          }
         });
       }
 
