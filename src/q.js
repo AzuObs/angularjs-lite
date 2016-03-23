@@ -43,6 +43,10 @@
         }
       };
 
+      Promise.prototype.catch = function(onRejected) {
+        this.then(null, onRejected);
+      };
+
 
       function Deferred() {
         this.promise = new Promise();
