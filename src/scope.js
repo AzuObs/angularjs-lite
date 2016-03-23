@@ -6,7 +6,7 @@
     var TTL = 10;
 
     this.digestTtl = function(value) {
-      if (typeof value === "number" && value !== NaN) {
+      if (typeof value === "number" && !isNaN(value)) {
         TTL = value;
       }
       return TTL;
@@ -305,6 +305,8 @@
         $evalAsync: function(expr) {
           var self = this;
 
+          //schedule a $digest if other evalAsync's haven't already done so
+          //and we are not already in a $digest
           if (!self.$$phase && !self.$$asyncQueue.length) {
             setTimeout(function() {
               if (self.$$asyncQueue.length) {

@@ -3,7 +3,18 @@
 
 
   function $QProvider() {
-    this.$get = function() {
+    this.$get = ["$rootScope", function($rootScope) {
+      function processQueue(state) {
+        state.pending(state.value);
+      }
+
+      function scheduleProcessQueue(state) {
+        $rootScope.$evalAsync(function() {
+          processQueue(state);
+        });
+      }
+
+
       function Promise() {
         this.$$state = {};
       }
@@ -18,8 +29,10 @@
       }
 
       Deferred.prototype.resolve = function(value) {
-        this.promise.$$state.pending(value);
+        this.promise.$$state.value = value;
+        scheduleProcessQueue(this.promise.$$state);
       };
+
 
       function defer() {
         return new Deferred();
@@ -28,7 +41,7 @@
       return {
         defer: defer
       };
-    };
+    }];
   }
 
   window.$QProvider = $QProvider;
