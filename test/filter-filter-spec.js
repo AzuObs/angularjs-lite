@@ -3,8 +3,14 @@
 
   describe("filter filter", function() {
 
+    beforeEach(function() {
+      publishExternalAPI();
+    });
+
+
     it("is available", function() {
-      expect(filter("filter")).toBeDefined();
+      var injector = createInjector(["ng"]);
+      expect(injector.has("filterFilter")).toBe(true);
     });
 
 

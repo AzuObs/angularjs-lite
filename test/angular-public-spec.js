@@ -21,6 +21,13 @@
       var injector = createInjector(["ng"]);
       expect(injector.has("$filter")).toBe(true);
     });
+
+
+    it("sets up the $parse service", function() {
+      publishExternalAPI();
+      var injector = createInjector(["ng"]);
+      expect(injector.has("$parse")).toBe(true);
+    });
   });
 
 })();

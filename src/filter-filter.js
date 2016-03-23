@@ -70,7 +70,7 @@
   };
 
 
-  var filterFilter = function() {
+  function filterFilter() {
     return function(array, filterExpr, comparator) {
       var predicateFn;
 
@@ -91,8 +91,7 @@
 
       return array.filter(predicateFn);
     };
-  };
+  }
 
-
-  register("filter", filterFilter);
+  window.filterFilter = filterFilter;
 })();
