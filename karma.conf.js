@@ -8,6 +8,7 @@
         "bower_components/lodash/dist/lodash.js",
         "bower_components/jquery/dist/jquery.js",
         "src/angular-public.js",
+        "src/q.js",
         "src/apis.js",
         "src/loader.js",
         "src/injector.js",
@@ -23,7 +24,8 @@
         "test/loader-spec.js",
         "test/apis-spec.js",
         "test/injector-spec.js",
-        "test/angular-public-spec.js"
+        "test/angular-public-spec.js",
+        "test/q-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],

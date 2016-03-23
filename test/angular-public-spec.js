@@ -28,6 +28,13 @@
       var injector = createInjector(["ng"]);
       expect(injector.has("$parse")).toBe(true);
     });
+
+
+    it("sets up $q", function() {
+      publishExternalAPI();
+      var injector = createInjector(["ng"]);
+      expect(injector.has("$q")).toBe(true);
+    });
   });
 
 })();
