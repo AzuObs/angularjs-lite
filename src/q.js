@@ -24,6 +24,16 @@
           if (typeof fn === "function") {
             deferred.resolve(fn(state.value));
           }
+
+          // if handler[state.status] is undefined it means that
+          // if we must be in a .catch and we need to schedule a then
+          else if (state.status === 1) {
+            deferred.resolve(state.value);
+          }
+          // and vice versa
+          else if (state.status === 2) {
+            deferred.reject(state.value);
+          }
         });
       }
 
