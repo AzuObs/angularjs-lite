@@ -18,21 +18,27 @@
           // state.status is either 1 (resolved) or 2 (rejected)
           var fn = handlers[state.status];
 
-          // we check whether fn is a function
-          // because sometimes only one of two handler functions
-          // was defined and the other was undefined
-          if (typeof fn === "function") {
-            deferred.resolve(fn(state.value));
+          try {
+            // we check whether fn is a function
+            // because sometimes only one of two handler functions
+            // was defined and the other was undefined
+            if (typeof fn === "function") {
+              deferred.resolve(fn(state.value));
+            }
+
+            // if handler[state.status] is undefined it means that
+            // if we must be in a .catch and we need to schedule a then
+            else if (state.status === 1) {
+              deferred.resolve(state.value);
+            }
+            // and vice versa
+            else {
+              deferred.reject(state.value);
+            }
           }
 
-          // if handler[state.status] is undefined it means that
-          // if we must be in a .catch and we need to schedule a then
-          else if (state.status === 1) {
-            deferred.resolve(state.value);
-          }
-          // and vice versa
-          else if (state.status === 2) {
-            deferred.reject(state.value);
+          catch (e) {
+            deferred.reject(e);
           }
         });
       }
@@ -63,7 +69,7 @@
       };
 
       Promise.prototype.catch = function(onRejected) {
-        this.then(null, onRejected);
+        return this.then(null, onRejected);
       };
 
       Promise.prototype.finally = function(callback) {
