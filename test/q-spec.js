@@ -622,5 +622,33 @@
       expect(progressSpy).toHaveBeenCalledWith("working...");
       expect(fulfilledSpy).toHaveBeenCalledWith("ok");
     });
+
+
+    it("can notify progress through promise returned from handler", function() {
+      var d = $q.defer();
+      var d2 = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise.then(null, null, progressSpy);
+
+      d.resolve(d2.promise);
+      d2.notify("working...");
+      $rootScope.$apply();
+
+      expect(progressSpy).toHaveBeenCalledWith("working...");
+    });
+
+
+    it("allows attaching progressback in finally", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise.finally(null, progressSpy);
+
+      d.notify("working...");
+      $rootScope.$apply();
+
+      expect(progressSpy).toHaveBeenCalledWith("working...");
+    });
   });
 })();

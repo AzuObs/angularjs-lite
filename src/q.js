@@ -99,12 +99,13 @@
         }
       }
 
-      Promise.prototype.finally = function(callback) {
+      Promise.prototype.finally = function(callback, progressBack) {
         return this.then(function(value) {
-          return handleFinallyCallback(callback, value, true);
-        }, function(rejection) {
-          return handleFinallyCallback(callback, rejection, false);
-        });
+            return handleFinallyCallback(callback, value, true);
+          }, function(rejection) {
+            return handleFinallyCallback(callback, rejection, false);
+          },
+          progressBack);
       };
 
 
@@ -128,7 +129,7 @@
         }
 
         if (value && typeof value.then === "function") {
-          value.then(this.resolve.bind(this), this.reject.bind(this));
+          value.then(this.resolve.bind(this), this.reject.bind(this), this.notify.bind(this));
         }
         else {
           this.promise.$$state.status = 1;
