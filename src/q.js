@@ -72,32 +72,36 @@
         return this.then(null, onRejected);
       };
 
+
+      function makePromise(value, resolved) {
+        var d = new Deferred();
+        if (resolved) {
+          d.resolve(value);
+        }
+        else {
+          d.reject(value);
+        }
+
+        return d.promise;
+      }
+
+      function handleFinallyCallback(callback, value, resolved) {
+        var callBackValue = callback();
+        if (callBackValue && callBackValue.then) {
+          return callBackValue.then(function() {
+            return makePromise(value, resolved);
+          });
+        }
+        else {
+          return makePromise(value, resolved);
+        }
+      }
+
       Promise.prototype.finally = function(callback) {
         return this.then(function(value) {
-          var callBackValue = callback();
-          if (callBackValue && callBackValue.then) {
-            return callBackValue.then(function() {
-              return value;
-            });
-          }
-          else {
-            return value;
-          }
-
+          return handleFinallyCallback(callback, value, true);
         }, function(rejection) {
-          var callBackValue = callback();
-          if (callBackValue && callBackValue.then) {
-            return callBackValue.then(function() {
-              var d = new Deferred();
-              d.reject(rejection);
-              return d.promise;
-            });
-          }
-          else {
-            var d = new Deferred();
-            d.reject(rejection);
-            return d.promise;
-          }
+          return handleFinallyCallback(callback, rejection, false);
         });
       };
 
