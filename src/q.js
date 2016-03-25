@@ -3,7 +3,7 @@
 
 
   function $QProvider() {
-    this.$get = ["$rootScope", function($rootScope) {
+    this.$get = ["$rootScope", function $Q($rootScope) {
 
       function processQueue(state) {
         var pending = state.pending;
@@ -161,8 +161,15 @@
         return new Deferred();
       }
 
+      function reject(reason) {
+        var d = defer();
+        d.reject(reason);
+        return d.promise;
+      }
+
       return {
-        defer: defer
+        defer: defer,
+        reject: reject
       };
     }];
   }
