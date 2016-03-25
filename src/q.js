@@ -173,11 +173,31 @@
         return d.promise.then(callback, errback, progressback);
       }
 
+      function all(promises) {
+        var results = [];
+        var counter = 0;
+        var d = defer();
+
+        promises.forEach(function(promise, index) {
+          counter++;
+          promise.then(function(value) {
+            results[index] = value;
+            counter--;
+            if (!counter) {
+              d.resolve(results);
+            }
+          });
+        });
+
+        return d.promise;
+      }
+
       return {
         defer: defer,
         reject: reject,
         when: when,
-        resolve: when
+        resolve: when,
+        all: all
       };
     }];
   }
