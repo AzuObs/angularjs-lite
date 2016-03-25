@@ -99,9 +99,15 @@
         if (this.promise.$$state.status) {
           return;
         }
-        this.promise.$$state.status = 1;
-        this.promise.$$state.value = value;
-        scheduleProcessQueue(this.promise.$$state);
+
+        if (value && typeof value.then === "function") {
+          value.then(this.resolve.bind(this), this.reject.bind(this));
+        }
+        else {
+          this.promise.$$state.status = 1;
+          this.promise.$$state.value = value;
+          scheduleProcessQueue(this.promise.$$state);
+        }
       };
 
 
