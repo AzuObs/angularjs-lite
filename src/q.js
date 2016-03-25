@@ -176,7 +176,8 @@
       return {
         defer: defer,
         reject: reject,
-        when: when
+        when: when,
+        resolve: when
       };
     }];
   }

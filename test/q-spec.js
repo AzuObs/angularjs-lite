@@ -719,5 +719,18 @@
       expect(rejectedSpy).not.toHaveBeenCalled();
       expect(progressSpy).toHaveBeenCalledWith("working...");
     });
+
+
+    it("makes an immediately resolved promise with resolve", function() {
+      var fulfilledSpy = jasmine.createSpy();
+      var rejectedSpy = jasmine.createSpy();
+      var promise = $q.resolve("ok");
+
+      promise.then(fulfilledSpy, rejectedSpy);
+      $rootScope.$apply();
+
+      expect(fulfilledSpy).toHaveBeenCalledWith("ok");
+      expect(rejectedSpy).not.toHaveBeenCalled();
+    });
   });
 })();
