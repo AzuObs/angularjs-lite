@@ -584,5 +584,23 @@
 
       expect(progressSpy).toHaveBeenCalledWith("working...");
     });
+
+
+    it("transforms progress through handlers", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise
+        .then(Function.prototype)
+        .then(null, null, function(progress) {
+          return "***" + progress + "***";
+        })
+        .catch(Function.prototype)
+        .then(null, null, progressSpy);
+      d.notify("working...");
+      $rootScope.$apply();
+
+      expect(progressSpy).toHaveBeenCalledWith("***working...***");
+    });
   });
 })();
