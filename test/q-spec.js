@@ -541,5 +541,33 @@
 
       expect(progressSpy.calls.count()).toBe(3);
     });
+
+
+    it("does not notify progress after being resolved", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise.then(null, null, progressSpy);
+      d.resolve("ok");
+      d.notify("working...");
+
+      $rootScope.$apply();
+
+      expect(progressSpy).not.toHaveBeenCalled();
+    });
+
+
+    it("does not notify progress after being rejected", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise.then(null, null, progressSpy);
+      d.reject("fail");
+      d.notify("working...");
+
+      $rootScope.$apply();
+
+      expect(progressSpy).not.toHaveBeenCalled();
+    });
   });
 })();

@@ -137,7 +137,7 @@
 
       Deferred.prototype.notify = function(progress) {
         var pending = this.promise.$$state.pending;
-        if (pending && pending.length) {
+        if (pending && pending.length && !this.promise.$$state.status) {
           $rootScope.$evalAsync(function() {
             pending.forEach(function(handlers) {
               var progressBack = handlers[3];
