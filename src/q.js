@@ -9,38 +9,40 @@
         var pending = state.pending;
         delete state.pending;
 
-        pending.forEach(function(handlers) {
-          // deferred is the deferred object that may be used to chain
-          // a .then after the promise has resolved
-          var deferred = handlers[0];
+        if (pending !== undefined) {
+          pending.forEach(function(handlers) {
+            // deferred is the deferred object that may be used to chain
+            // a .then after the promise has resolved
+            var deferred = handlers[0];
 
-          // handlers looks like [null, onFulfilledCallback, onRejectCallback]
-          // state.status is either 1 (resolved) or 2 (rejected)
-          var fn = handlers[state.status];
+            // handlers looks like [null, onFulfilledCallback, onRejectCallback]
+            // state.status is either 1 (resolved) or 2 (rejected)
+            var fn = handlers[state.status];
 
-          try {
-            // we check whether fn is a function
-            // because sometimes only one of two handler functions
-            // was defined and the other was undefined
-            if (typeof fn === "function") {
-              deferred.resolve(fn(state.value));
+            try {
+              // we check whether fn is a function
+              // because sometimes only one of two handler functions
+              // was defined and the other was undefined
+              if (typeof fn === "function") {
+                deferred.resolve(fn(state.value));
+              }
+
+              // if handler[state.status] is undefined it means that
+              // if we must be in a .catch and we need to schedule a then
+              else if (state.status === 1) {
+                deferred.resolve(state.value);
+              }
+              // and vice versa
+              else {
+                deferred.reject(state.value);
+              }
             }
 
-            // if handler[state.status] is undefined it means that
-            // if we must be in a .catch and we need to schedule a then
-            else if (state.status === 1) {
-              deferred.resolve(state.value);
+            catch (e) {
+              deferred.reject(e);
             }
-            // and vice versa
-            else {
-              deferred.reject(state.value);
-            }
-          }
-
-          catch (e) {
-            deferred.reject(e);
-          }
-        });
+          });
+        }
       }
 
       function scheduleProcessQueue(state) {
@@ -140,10 +142,12 @@
         if (pending && pending.length && !this.promise.$$state.status) {
           $rootScope.$evalAsync(function() {
             pending.forEach(function(handlers) {
+              var deferred = handlers[0];
               var progressBack = handlers[3];
               if (typeof progressBack === "function") {
                 progressBack(progress);
               }
+              deferred.notify(progress);
             });
           });
         }

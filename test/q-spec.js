@@ -569,5 +569,20 @@
 
       expect(progressSpy).not.toHaveBeenCalled();
     });
+
+
+    it("can notify progress through chain", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+      d.promise
+        .then(Function.prototype)
+        .catch(Function.prototype)
+        .then(null, null, progressSpy);
+      d.notify("working...");
+
+      $rootScope.$apply();
+
+      expect(progressSpy).toHaveBeenCalledWith("working...");
+    });
   });
 })();
