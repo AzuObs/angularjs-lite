@@ -144,7 +144,12 @@
             pending.forEach(function(handlers) {
               var deferred = handlers[0];
               var progressBack = handlers[3];
-              deferred.notify(typeof progressBack === "function" ? progressBack(progress) : progress);
+              try {
+                deferred.notify(typeof progressBack === "function" ? progressBack(progress) : progress);
+              }
+              catch (e) {
+                console.error(e);
+              }
             });
           });
         }

@@ -562,9 +562,9 @@
       var progressSpy = jasmine.createSpy();
 
       d.promise.then(null, null, progressSpy);
+
       d.reject("fail");
       d.notify("working...");
-
       $rootScope.$apply();
 
       expect(progressSpy).not.toHaveBeenCalled();
@@ -578,8 +578,8 @@
         .then(Function.prototype)
         .catch(Function.prototype)
         .then(null, null, progressSpy);
-      d.notify("working...");
 
+      d.notify("working...");
       $rootScope.$apply();
 
       expect(progressSpy).toHaveBeenCalledWith("working...");
@@ -597,10 +597,30 @@
         })
         .catch(Function.prototype)
         .then(null, null, progressSpy);
+
       d.notify("working...");
       $rootScope.$apply();
 
       expect(progressSpy).toHaveBeenCalledWith("***working...***");
+    });
+
+
+    it("recovers from progressback exceptions", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+      var fulfilledSpy = jasmine.createSpy();
+
+      d.promise.then(null, null, function(progress) {
+        throw "fail";
+      });
+      d.promise.then(fulfilledSpy, null, progressSpy);
+
+      d.notify("working...");
+      d.resolve("ok");
+      $rootScope.$apply();
+
+      expect(progressSpy).toHaveBeenCalledWith("working...");
+      expect(fulfilledSpy).toHaveBeenCalledWith("ok");
     });
   });
 })();
