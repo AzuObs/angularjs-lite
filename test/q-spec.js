@@ -696,5 +696,28 @@
       expect(fulfilledSpy).toHaveBeenCalledWith("ok");
       expect(rejectedSpy).not.toHaveBeenCalled();
     });
+
+
+    it("takes callbacks directly when wrapping", function() {
+      var fulfilledSpy = jasmine.createSpy();
+      var rejectedSpy = jasmine.createSpy();
+      var progressSpy = jasmine.createSpy();
+
+      var wrapped = $q.defer();
+      $q.when(
+        wrapped.promise,
+        fulfilledSpy,
+        rejectedSpy,
+        progressSpy
+      );
+
+      wrapped.notify("working...");
+      wrapped.resolve("ok");
+      $rootScope.$apply();
+
+      expect(fulfilledSpy).toHaveBeenCalledWith("ok");
+      expect(rejectedSpy).not.toHaveBeenCalled();
+      expect(progressSpy).toHaveBeenCalledWith("working...");
+    });
   });
 })();
