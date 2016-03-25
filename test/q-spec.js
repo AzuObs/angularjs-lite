@@ -511,5 +511,35 @@
       expect(fulfilledSpy).not.toHaveBeenCalled();
       expect(rejectedSpy).toHaveBeenCalledWith("fail");
     });
+
+
+    it("can report progress", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise.then(null, null, progressSpy);
+      d.notify("working...");
+      $rootScope.$apply();
+
+      expect(progressSpy).toHaveBeenCalledWith("working...");
+    });
+
+
+    it("can report progress many times", function() {
+      var d = $q.defer();
+      var progressSpy = jasmine.createSpy();
+
+      d.promise.then(null, null, progressSpy);
+      d.notify("40%");
+
+      $rootScope.$apply();
+
+      d.notify("80%");
+      d.notify("100%");
+
+      $rootScope.$apply();
+
+      expect(progressSpy.calls.count()).toBe(3);
+    });
   });
 })();
