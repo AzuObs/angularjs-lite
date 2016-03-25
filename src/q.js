@@ -73,10 +73,31 @@
       };
 
       Promise.prototype.finally = function(callback) {
-        return this.then(function() {
-          callback();
-        }, function() {
-          callback();
+        return this.then(function(value) {
+          var callBackValue = callback();
+          if (callBackValue && callBackValue.then) {
+            return callBackValue.then(function() {
+              return value;
+            });
+          }
+          else {
+            return value;
+          }
+
+        }, function(rejection) {
+          var callBackValue = callback();
+          if (callBackValue && callBackValue.then) {
+            return callBackValue.then(function() {
+              var d = new Deferred();
+              d.reject(rejection);
+              return d.promise;
+            });
+          }
+          else {
+            var d = new Deferred();
+            d.reject(rejection);
+            return d.promise;
+          }
         });
       };
 
