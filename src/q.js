@@ -128,6 +128,7 @@
           return;
         }
 
+        // if value is a promise, WHEN that promise resolves call this resolve, this reject, this notify
         if (value && typeof value.then === "function") {
           value.then(this.resolve.bind(this), this.reject.bind(this), this.notify.bind(this));
         }

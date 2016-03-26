@@ -630,7 +630,6 @@
       var progressSpy = jasmine.createSpy();
 
       d.promise.then(null, null, progressSpy);
-
       d.resolve(d2.promise);
       d2.notify("working...");
       $rootScope.$apply();
