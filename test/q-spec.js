@@ -755,10 +755,33 @@
 
         promise.then(fulfilledSpy);
         $rootScope.$apply();
+
         expect(fulfilledSpy).toHaveBeenCalledWith({
           a: 1,
           b: 2
         });
+      });
+
+
+      it("resolves an empty array of promises immediately", function() {
+        var promise = $q.all([]);
+        var fulfilledSpy = jasmine.createSpy();
+
+        promise.then(fulfilledSpy);
+        $rootScope.$apply();
+
+        expect(fulfilledSpy).toHaveBeenCalledWith([]);
+      });
+
+
+      it("resolves an empty object of promises immediately", function() {
+        var promise = $q.all({});
+        var fulfilledSpy = jasmine.createSpy();
+
+        promise.then(fulfilledSpy);
+        $rootScope.$apply();
+
+        expect(fulfilledSpy).toHaveBeenCalledWith({});
       });
     });
   });

@@ -192,6 +192,11 @@
           });
         });
 
+        // if empty array or empty object
+        if (!counter) {
+          d.resolve(results);
+        }
+
         return d.promise;
       }
 
