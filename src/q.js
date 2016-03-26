@@ -182,7 +182,7 @@
         Object.keys(promises).forEach(function(key) {
           var promise = promises[key];
           counter++;
-          promise.then(function(value) {
+          when(promise).then(function(value) {
             results[key] = value;
             counter--;
             if (!counter) {

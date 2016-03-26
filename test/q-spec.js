@@ -796,6 +796,17 @@
         expect(fulfilledSpy).not.toHaveBeenCalled();
         expect(rejectedSpy).toHaveBeenCalledWith("fail");
       });
+
+
+      it("wraps non-promises in the input collection", function() {
+        var promise = $q.all([$q.when(1), 2, 3]);
+        var fulfilledSpy = jasmine.createSpy();
+
+        promise.then(fulfilledSpy);
+        $rootScope.$apply();
+
+        expect(fulfilledSpy).toHaveBeenCalledWith([1, 2, 3]);
+      });
     });
   });
 })();
