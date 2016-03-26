@@ -31,10 +31,11 @@
         "test/http-spec.js",
         "test/http-backend-spec.js"
       ],
-      frameworks: ["jasmine"],
+      frameworks: ["jasmine", "sinon"],
       // browsers: ["PhantomJS"],
       plugins: [
-        "karma-jasmine"
+        "karma-jasmine",
+        "karma-sinon"
         // "karma-phantomjs-launcher"
       ],
       port: 9876
