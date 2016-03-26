@@ -783,6 +783,19 @@
 
         expect(fulfilledSpy).toHaveBeenCalledWith({});
       });
+
+
+      it("rejects when any of the promises rejects", function() {
+        var promise = $q.all([$q.when(1), $q.when(2), $q.reject("fail")]);
+        var fulfilledSpy = jasmine.createSpy();
+        var rejectedSpy = jasmine.createSpy();
+
+        promise.then(fulfilledSpy, rejectedSpy);
+        $rootScope.$apply();
+
+        expect(fulfilledSpy).not.toHaveBeenCalled();
+        expect(rejectedSpy).toHaveBeenCalledWith("fail");
+      });
     });
   });
 })();

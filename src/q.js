@@ -181,7 +181,6 @@
 
         Object.keys(promises).forEach(function(key) {
           var promise = promises[key];
-
           counter++;
           promise.then(function(value) {
             results[key] = value;
@@ -189,6 +188,8 @@
             if (!counter) {
               d.resolve(results);
             }
+          }, function(rejection) {
+            d.reject(rejection);
           });
         });
 
