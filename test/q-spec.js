@@ -744,6 +744,22 @@
 
         expect(fulfilledSpy).toHaveBeenCalledWith([1, 2, 3]);
       });
+
+
+      it("can resolve an object of promises to an object of results", function() {
+        var promise = $q.all({
+          a: $q.when(1),
+          b: $q.when(2)
+        });
+        var fulfilledSpy = jasmine.createSpy();
+
+        promise.then(fulfilledSpy);
+        $rootScope.$apply();
+        expect(fulfilledSpy).toHaveBeenCalledWith({
+          a: 1,
+          b: 2
+        });
+      });
     });
   });
 })();

@@ -175,14 +175,16 @@
       }
 
       function all(promises) {
-        var results = [];
+        var results = toString.call(promises) === "[object Array]" ? [] : {};
         var counter = 0;
         var d = defer();
 
-        promises.forEach(function(promise, index) {
+        Object.keys(promises).forEach(function(key) {
+          var promise = promises[key];
+
           counter++;
           promise.then(function(value) {
-            results[index] = value;
+            results[key] = value;
             counter--;
             if (!counter) {
               d.resolve(results);
