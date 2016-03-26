@@ -211,5 +211,13 @@
     }];
   }
 
+
+  function $$QProvider() {
+    this.$get = function() {
+
+    };
+  }
+
   window.$QProvider = $QProvider;
+  window.$$QProvider = $$QProvider;
 })();

@@ -3,12 +3,13 @@
 
 
   describe("$q", function() {
-    var $q, $rootScope;
+    var $q, $$q, $rootScope;
 
     beforeEach(function() {
       publishExternalAPI();
       var injector = createInjector(["ng"]);
       $q = injector.get("$q");
+      $$q = injector.get("$$q");
       $rootScope = injector.get("$rootScope");
     });
 
