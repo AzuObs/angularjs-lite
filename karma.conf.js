@@ -17,6 +17,8 @@
         "src/filter-filter.js",
         "src/parse.js",
         "src/scope.js",
+        "src/http.js",
+        "src/http-backend.js",
         "test/filter-spec.js",
         "test/filter-filter-spec.js",
         "test/parse-spec.js",
@@ -25,7 +27,9 @@
         "test/apis-spec.js",
         "test/injector-spec.js",
         "test/angular-public-spec.js",
-        "test/q-spec.js"
+        "test/q-spec.js",
+        "test/http-spec.js",
+        "test/http-backend-spec.js"
       ],
       frameworks: ["jasmine"],
       // browsers: ["PhantomJS"],
