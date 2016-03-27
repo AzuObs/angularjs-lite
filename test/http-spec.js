@@ -49,5 +49,23 @@
       expect(requests[0].async).toBe(true);
       expect(requests[0].requestBody).toBe("hello");
     });
+
+
+    it("resolves promise when XHR result received", function() {
+      var requestConfig = {
+        method: "GET",
+        url: "http://foobar.com"
+      };
+      var response;
+      $http(requestConfig).then(function(res) {
+        response = res;
+      });
+      requests[0].respond(200, {}, "Hello");
+      expect(response).toBeDefined();
+      expect(response.status).toBe(200);
+      expect(response.statusText).toBe("OK");
+      expect(response.data).toBe("Hello");
+      expect(response.config.url).toEqual("http://foobar.com");
+    });
   });
 })();
