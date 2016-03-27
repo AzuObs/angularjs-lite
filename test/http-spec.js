@@ -61,10 +61,30 @@
         response = res;
       });
       requests[0].respond(200, {}, "Hello");
+
       expect(response).toBeDefined();
       expect(response.status).toBe(200);
       expect(response.statusText).toBe("OK");
       expect(response.data).toBe("Hello");
+      expect(response.config.url).toEqual("http://foobar.com");
+    });
+
+
+    it("rejects promise when XHR result received with error status", function() {
+      var requestConfig = {
+        method: "GET",
+        url: "http://foobar.com"
+      };
+      var response;
+      $http(requestConfig).catch(function(res) {
+        response = res;
+      });
+      requests[0].respond(401, {}, "Fail");
+
+      expect(response).toBeDefined();
+      expect(response.status).toBe(401);
+      expect(response.statusText).toBe("Unauthorized");
+      expect(response.data).toBe("Fail");
       expect(response.config.url).toEqual("http://foobar.com");
     });
   });
