@@ -495,10 +495,39 @@
         200, {
           "Content-Type": "application/json"
         },
-        "{'message':'hello'}"
+        '{"message":"hello"}'
       );
       expect(_.isObject(response.data)).toBe(true);
       expect(response.data.message).toBe("hello");
+    });
+
+
+    it("parses a JSON object response without content type", function() {
+      var response;
+      $http({
+        method: "GET",
+        url: "http://teropa.info"
+      }).then(function(r) {
+        response = r;
+      });
+      // window.debug = true;
+      requests[0].respond(200, {}, '{"message":"hello"}');
+      expect(_.isObject(response.data)).toBe(true);
+      expect(response.data.message).toBe("hello");
+    });
+
+
+    it("parses a JSON array response without content type", function() {
+      var response;
+      $http({
+        method: "GET",
+        url: "http://teropa.info"
+      }).then(function(r) {
+        response = r;
+      });
+      requests[0].respond(200, {}, "[1, 2, 3]");
+      expect(_.isArray(response.data)).toBe(true);
+      expect(response.data).toEqual([1, 2, 3]);
     });
   });
 })();

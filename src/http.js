@@ -43,10 +43,18 @@
       return object.toString() === "[object FormData]";
     }
 
+    function isJsonLike(data) {
+      // data starts with "{" or "["
+      return data.match(/^\{/) || data.match(/^\[/);
+    }
+
     function defaultHttpResponseTransform(data, headers) {
+      if (window.debug) debugger;
       if (typeof data === "string") {
         var contentType = headers("Content-Type");
-        if (contentType && (contentType.indexOf("application/json") === 0)) {
+        if (contentType &&
+          (contentType.indexOf("application/json") === 0) ||
+          isJsonLike(data)) {
           return JSON.parse(data);
         }
       }
