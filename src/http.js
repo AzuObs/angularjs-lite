@@ -2,24 +2,25 @@
   "use strict";
 
   function $HttpProvider() {
+    var defaults = this.defaults = {
+      headers: {
+        common: {
+          Accept: "application/json, text/plain, */*"
+        },
+        post: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        put: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        patch: {
+          "Content-Type": "application/json;charset=utf-8"
+        }
+      }
+    };
+
     this.$get = ["$httpBackend", "$q", "$rootScope",
       function $get($httpBackend, $q, $rootScope) {
-        var defaults = {
-          headers: {
-            common: {
-              Accept: "application/json, text/plain, */*"
-            },
-            post: {
-              "Content-Type": "application/json;charset=utf-8"
-            },
-            put: {
-              "Content-Type": "application/json;charset=utf-8"
-            },
-            patch: {
-              "Content-Type": "application/json;charset=utf-8"
-            }
-          }
-        };
 
         function isSuccess(status) {
           return 200 <= status && status < 300;
