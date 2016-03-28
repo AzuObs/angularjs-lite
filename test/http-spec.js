@@ -469,5 +469,17 @@
       });
       expect(requests[0].requestBody).toBe('[1,"two",3]');
     });
+
+
+    it('does not serialize form data for requests', function() {
+      var formData = new FormData();
+      formData.append('aField', 'aValue');
+      $http({
+        method: 'POST',
+        url: 'http://teropa.info',
+        data: formData
+      });
+      expect(requests[0].requestBody).toBe(formData);
+    });
   });
 })();

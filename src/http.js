@@ -19,7 +19,9 @@
       },
       transformRequest: [function(data) {
         // is object-like
-        if (typeof data === "object" && data !== null) {
+        // and is not a blob, file, or form 
+        if ((typeof data === "object" && data !== null) &&
+          !isBlob(data) && !isFile(data) && !isFormData(data)) {
           return JSON.stringify(data);
         }
         else {
@@ -27,6 +29,19 @@
         }
       }]
     };
+
+    function isBlob(object) {
+      return object.toString() === "[object Blob]";
+    }
+
+    function isFile(object) {
+      return object.toString() === "[object File]";
+    }
+
+    function isFormData(object) {
+      return object.toString() === "[object FormData]";
+    }
+
 
     this.$get = ["$httpBackend", "$q", "$rootScope",
       function $get($httpBackend, $q, $rootScope) {
