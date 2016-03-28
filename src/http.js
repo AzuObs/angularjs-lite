@@ -27,13 +27,24 @@
         }
 
         function mergeHeaders(reqConf) {
-          return Object.assign({},
-            defaults.headers.common,
-            defaults.headers[(reqConf.method || "get").toLowerCase()],
-            reqConf.headers
-          );
-        }
+          var reqHeaders = Object.assign({}, reqConf.headers);
+          var defHeaders = Object.assign({}, defaults.headers.common,
+            defaults.headers[(reqConf.method || "get").toLowerCase()]);
 
+          //if request header doesn't exist, assign the default value to it
+          Object.keys(defHeaders).forEach(function(key) {
+            //check whether the header exists
+            var headerExists = Object.keys(reqHeaders).some(function(k) {
+              return k.toLowerCase() === key.toLowerCase();
+            });
+
+            if (!headerExists) {
+              reqHeaders[key] = defHeaders[key];
+            }
+          });
+
+          return reqHeaders;
+        }
 
         function $http(requestConfig) {
           var deferred = $q.defer();
