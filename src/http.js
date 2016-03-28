@@ -75,13 +75,21 @@
           return result;
         }
 
-
         function headersGetter(headers) {
           var headersObj;
           return function(name) {
             headersObj = headersObj || parseHeaders(headers);
             return name ? headersObj[name.toLowerCase()] : headersObj;
           };
+        }
+
+        function transformData(data, transform) {
+          if (typeof transform === "function") {
+            return transform(data);
+          }
+          else {
+            return data;
+          }
         }
 
 
@@ -97,20 +105,21 @@
           }, requestConfig);
           config.headers = mergeHeaders(requestConfig);
 
+          // add the default behavior for withCredentials
+          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
+            config.withCredentials = defaults.withCredentials;
+          }
+
+          var reqData = transformData(config.data, config.transformRequest);
+
           // remove "Content-Type" header if there is not data to save size
-          if (requestConfig.data === undefined) {
+          if (reqData === undefined) {
             Object.keys(config.headers).forEach(function(k) {
               if (k.toLowerCase() === "content-type") {
                 delete config.headers[k];
               }
             });
           }
-
-          // add the default behavior for withCredentials
-          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
-            config.withCredentials = defaults.withCredentials;
-          }
-
 
           function done(status, response, headersString, statusText) {
             //Math.max returns the largest number of the args passed it
@@ -133,7 +142,7 @@
           $httpBackend(
             config.method,
             config.url,
-            config.data,
+            reqData,
             done,
             config.headers,
             config.withCredentials

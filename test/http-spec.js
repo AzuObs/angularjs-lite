@@ -224,7 +224,7 @@
       $http.defaults.headers.post["Content-Type"] = contentTypeSpy;
       var request = {
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: 42
       };
       $http(request);
@@ -238,7 +238,7 @@
       $http.defaults.headers.post["Cache-Control"] = cacheControlSpy;
       var request = {
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: 42
       };
       $http(request);
@@ -251,7 +251,7 @@
       var response;
       $http({
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: 42
       }).then(function(r) {
         response = r;
@@ -270,7 +270,7 @@
       var response;
       $http({
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: 42
       }).then(function(r) {
         response = r;
@@ -287,7 +287,7 @@
     it("allows setting withCredentials", function() {
       $http({
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: 42,
         withCredentials: true
       });
@@ -299,10 +299,23 @@
       $http.defaults.withCredentials = true;
       $http({
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: 42
       });
       expect(requests[0].withCredentials).toBe(true);
+    });
+
+
+    it("allows transforming requests with functions", function() {
+      $http({
+        method: "POST",
+        url: "http://domain.com",
+        data: 42,
+        transformRequest: function(data) {
+          return "*" + data + "*";
+        }
+      });
+      expect(requests[0].requestBody).toBe("*42*");
     });
   });
 })();
