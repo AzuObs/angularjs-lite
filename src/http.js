@@ -3,30 +3,29 @@
 
   function $HttpProvider() {
     this.$get = ["$httpBackend", "$q", "$rootScope",
-      function($httpBackend, $q, $rootScope) {
+      function $get($httpBackend, $q, $rootScope) {
+        var defaults = {
+          headers: {
+            common: {
+              Accept: "application/json, text/plain, */*"
+            },
+            post: {
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            put: {
+              "Content-Type": "application/json;charset=utf-8"
+            },
+            patch: {
+              "Content-Type": "application/json;charset=utf-8"
+            }
+          }
+        };
 
         function isSuccess(status) {
           return 200 <= status && status < 300;
         }
 
         function mergeHeaders(reqConf) {
-          var defaults = {
-            headers: {
-              common: {
-                Accept: "application/json, text/plain, */*"
-              },
-              post: {
-                "Content-Type": "application/json;charset=utf-8"
-              },
-              put: {
-                "Content-Type": "application/json;charset=utf-8"
-              },
-              patch: {
-                "Content-Type": "application/json;charset=utf-8"
-              }
-            }
-          };
-
           return Object.assign({},
             defaults.headers.common,
             defaults.headers[(reqConf.method || "get").toLowerCase()],
@@ -35,7 +34,7 @@
         }
 
 
-        return function $http(requestConfig) {
+        function $http(requestConfig) {
           var deferred = $q.defer();
 
           //assign takes the requestConfig and copies all of it's properties to 
@@ -66,7 +65,10 @@
 
           $httpBackend(config.method, config.url, config.data, done, config.headers);
           return deferred.promise;
-        };
+        }
+
+        $http.defaults = defaults;
+        return $http;
       }
     ];
   }
