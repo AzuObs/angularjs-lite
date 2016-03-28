@@ -282,5 +282,16 @@
         "content-type": "text/plain"
       });
     });
+
+
+    it('allows setting withCredentials', function() {
+      $http({
+        method: 'POST',
+        url: 'http://teropa.info',
+        data: 42,
+        withCredentials: true
+      });
+      expect(requests[0].withCredentials).toBe(true);
+    });
   });
 })();

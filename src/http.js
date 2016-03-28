@@ -124,7 +124,14 @@
             }
           }
 
-          $httpBackend(config.method, config.url, config.data, done, config.headers);
+          $httpBackend(
+            config.method,
+            config.url,
+            config.data,
+            done,
+            config.headers,
+            config.withCredentials
+          );
           return deferred.promise;
         }
 

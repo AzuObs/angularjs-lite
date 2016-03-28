@@ -3,7 +3,7 @@
 
   function $HttpBackendProvider() {
     this.$get = function() {
-      return function $httpBackend(method, url, post, callback, headers) {
+      return function $httpBackend(method, url, post, callback, headers, withCredentials) {
         var xhr = new window.XMLHttpRequest();
         xhr.open(method, url, true);
 
@@ -11,6 +11,10 @@
           Object.keys(headers).forEach(function(key) {
             xhr.setRequestHeader(key, headers[key]);
           });
+        }
+
+        if (withCredentials) {
+          xhr.withCredentials = true;
         }
 
 
