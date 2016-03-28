@@ -9,16 +9,29 @@
           return 200 <= status && status < 300;
         }
 
-        function mergeHeaders(requestConfig) {
+        function mergeHeaders(reqConf) {
           var defaults = {
             headers: {
               common: {
                 Accept: "application/json, text/plain, */*"
+              },
+              post: {
+                "Content-Type": "application/json;charset=utf-8"
+              },
+              put: {
+                "Content-Type": "application/json;charset=utf-8"
+              },
+              patch: {
+                "Content-Type": "application/json;charset=utf-8"
               }
             }
           };
 
-          return Object.assign({}, defaults.headers.common, requestConfig.headers);
+          return Object.assign({},
+            defaults.headers.common,
+            defaults.headers[(reqConf.method || "get").toLowerCase()],
+            reqConf.headers
+          );
         }
 
 
