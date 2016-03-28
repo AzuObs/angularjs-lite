@@ -16,7 +16,16 @@
         patch: {
           "Content-Type": "application/json;charset=utf-8"
         }
-      }
+      },
+      transformRequest: [function(data) {
+        // is object-like
+        if (typeof data === "object" && data !== null) {
+          return JSON.stringify(data);
+        }
+        else {
+          return data;
+        }
+      }]
     };
 
     this.$get = ["$httpBackend", "$q", "$rootScope",
