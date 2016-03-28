@@ -232,5 +232,18 @@
       expect(requests[0].requestHeaders["Content-Type"]).toBe(
         "text/plain;charset=utf-8");
     });
+
+    it("ignores header function value when null/undefined", function() {
+      var cacheControlSpy = jasmine.createSpy().and.returnValue(null);
+      $http.defaults.headers.post["Cache-Control"] = cacheControlSpy;
+      var request = {
+        method: "POST",
+        url: "http://teropa.info",
+        data: 42
+      };
+      $http(request);
+      expect(cacheControlSpy).toHaveBeenCalledWith(request);
+      expect(requests[0].requestHeaders["Cache-Control"]).toBeUndefined();
+    });
   });
 })();

@@ -30,6 +30,9 @@
           Object.keys(headers).forEach(function(key) {
             if (typeof headers[key] === "function") {
               headers[key] = headers[key](config);
+              if (headers[key] === undefined || headers[key] === null) {
+                delete headers[key];
+              }
             }
           });
 
