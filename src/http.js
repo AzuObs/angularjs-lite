@@ -46,6 +46,7 @@
           return reqHeaders;
         }
 
+
         function $http(requestConfig) {
           var deferred = $q.defer();
 
@@ -57,6 +58,15 @@
             method: "GET"
           }, requestConfig);
           config.headers = mergeHeaders(requestConfig);
+
+          // remove "Content-Type" header if there is not data to save size
+          if (requestConfig.data === undefined) {
+            Object.keys(config.headers).forEach(function(k) {
+              if (k.toLowerCase() === "content-type") {
+                delete config.headers[k];
+              }
+            });
+          }
 
           function done(status, response, statusText) {
             //Math.max returns the largest number of the args passed it

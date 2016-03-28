@@ -190,7 +190,7 @@
     it("merges default headers case-insensitively", function() {
       $http({
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.com",
         data: "42",
         headers: {
           "content-type": "text/plain;charset=utf-8"
@@ -201,6 +201,20 @@
       expect(requests[0].requestHeaders["content-type"]).toBe(
         "text/plain;charset=utf-8");
       expect(requests[0].requestHeaders["Content-Type"]).toBeUndefined();
+    });
+
+
+    it("does not send content-type header when no data", function() {
+      $http({
+        method: "POST",
+        url: "http://domain.com",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        }
+      });
+      expect(requests.length).toBe(1);
+      expect(requests[0].requestHeaders["Content-Type"]).not.toBe(
+        "application/json;charset=utf-8");
     });
   });
 })();
