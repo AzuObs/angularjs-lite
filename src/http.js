@@ -182,11 +182,18 @@
             if (response.data) {
               response.data = transformData(response.data, response.headers, config.transformResponse);
             }
+            if (isSuccess(response.status)) {
+              return response;
+            }
+            else {
+              return $q.reject(response);
+            }
+
             return response;
           }
 
           return sendReq(config, reqData)
-            .then(transformResponse);
+            .then(transformResponse, transformResponse);
         }
 
         $http.defaults = defaults;
