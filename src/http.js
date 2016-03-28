@@ -80,7 +80,7 @@
           var headersObj;
           return function(name) {
             headersObj = headersObj || parseHeaders(headers);
-            return headersObj[name.toLowerCase()];
+            return name ? headersObj[name.toLowerCase()] : headersObj;
           };
         }
 
