@@ -9,6 +9,19 @@
           return 200 <= status && status < 300;
         }
 
+        function mergeHeaders(requestConfig) {
+          var defaults = {
+            headers: {
+              common: {
+                Accept: "application/json, text/plain, */*"
+              }
+            }
+          };
+
+          return Object.assign({}, defaults.headers.common, requestConfig.headers);
+        }
+
+
         return function $http(requestConfig) {
           var deferred = $q.defer();
 
@@ -19,6 +32,7 @@
           var config = Object.assign({
             method: "GET"
           }, requestConfig);
+          config.headers = mergeHeaders(requestConfig);
 
           function done(status, response, statusText) {
             //Math.max returns the largest number of the args passed it
