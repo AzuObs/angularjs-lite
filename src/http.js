@@ -113,39 +113,8 @@
           }
         }
 
-
-        function $http(requestConfig) {
+        function sendReq(config, reqData) {
           var deferred = $q.defer();
-
-          //assign takes the requestConfig and copies all of it's properties to 
-          //{method:"GET"} object and will override if there are any conflicts
-          //eg. if they both have a "method" property, it's the property of requestConfig
-          //that will overite the property of the anonymous object 
-          var config = Object.assign({
-            method: "GET",
-            transformRequest: defaults.transformRequest
-          }, requestConfig);
-          config.headers = mergeHeaders(requestConfig);
-
-          // add the default behavior for withCredentials
-          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
-            config.withCredentials = defaults.withCredentials;
-          }
-
-          var reqData = transformData(
-            config.data,
-            headersGetter(config.headers),
-            config.transformRequest
-          );
-
-          // remove "Content-Type" header if there is not data to save size
-          if (reqData === undefined) {
-            Object.keys(config.headers).forEach(function(k) {
-              if (k.toLowerCase() === "content-type") {
-                delete config.headers[k];
-              }
-            });
-          }
 
           function done(status, response, headersString, statusText) {
             //Math.max returns the largest number of the args passed it
@@ -174,6 +143,50 @@
             config.withCredentials
           );
           return deferred.promise;
+        }
+
+        function $http(requestConfig) {
+
+          //assign takes the requestConfig and copies all of it's properties to 
+          //{method:"GET"} object and will override if there are any conflicts
+          //eg. if they both have a "method" property, it's the property of requestConfig
+          //that will overite the property of the anonymous object 
+          var config = Object.assign({
+            method: "GET",
+            transformRequest: defaults.transformRequest,
+            transformResponse: defaults.transformResponse
+          }, requestConfig);
+          config.headers = mergeHeaders(requestConfig);
+
+          // add the default behavior for withCredentials
+          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
+            config.withCredentials = defaults.withCredentials;
+          }
+
+          var reqData = transformData(
+            config.data,
+            headersGetter(config.headers),
+            config.transformRequest
+          );
+
+          // remove "Content-Type" header if there is not data to save size
+          if (reqData === undefined) {
+            Object.keys(config.headers).forEach(function(k) {
+              if (k.toLowerCase() === "content-type") {
+                delete config.headers[k];
+              }
+            });
+          }
+
+          function transformResponse(response) {
+            if (response.data) {
+              response.data = transformData(response.data, response.headers, config.transformResponse);
+            }
+            return response;
+          }
+
+          return sendReq(config, reqData)
+            .then(transformResponse);
         }
 
         $http.defaults = defaults;

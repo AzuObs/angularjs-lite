@@ -368,5 +368,61 @@
       });
       expect(requests[0].requestBody).toBe("*42*");
     });
+
+
+    it('allows transforming responses with functions', function() {
+      var response;
+      $http({
+        url: 'http://teropa.info',
+        transformResponse: function(data) {
+          return '*' + data + '*';
+        }
+      }).then(function(r) {
+        response = r;
+      });
+      requests[0].respond(200, {
+        'Content-Type': 'text/plain'
+      }, 'Hello');
+      expect(response.data).toEqual('*Hello*');
+    });
+
+
+    it('passes response headers to transform functions', function() {
+      var response;
+      $http({
+        url: 'http://teropa.info',
+        transformResponse: function(data, headers) {
+          if (headers('content-type') === 'text/decorated') {
+            return '*' + data + '*';
+          }
+          else {
+            return data;
+          }
+        }
+      }).then(function(r) {
+        response = r;
+      });
+      requests[0].respond(200, {
+        'Content-Type': 'text/decorated'
+      }, 'Hello');
+      expect(response.data).toEqual('*Hello*');
+    });
+
+
+    it('allows setting default response transforms', function() {
+      $http.defaults.transformResponse = [function(data) {
+        return '*' + data + '*';
+      }];
+      var response;
+      $http({
+        url: 'http://teropa.info'
+      }).then(function(r) {
+        response = r;
+      });
+      requests[0].respond(200, {
+        'Content-Type': 'text/plain'
+      }, 'Hello');
+      expect(response.data).toEqual('*Hello*');
+    });
   });
 })();
