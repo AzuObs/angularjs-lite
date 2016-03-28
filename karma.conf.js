@@ -28,8 +28,7 @@
         "test/injector-spec.js",
         "test/angular-public-spec.js",
         "test/q-spec.js",
-        "test/http-spec.js",
-        "test/http-backend-spec.js"
+        "test/http-spec.js"
       ],
       frameworks: ["jasmine", "sinon"],
       // browsers: ["PhantomJS"],

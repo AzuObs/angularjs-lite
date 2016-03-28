@@ -5,12 +5,20 @@
     this.$get = ["$httpBackend", "$q", "$rootScope",
       function($httpBackend, $q, $rootScope) {
 
-        return function $http(config) {
+        function isSuccess(status) {
+          return 200 <= status && status < 300;
+        }
+
+        return function $http(requestConfig) {
           var deferred = $q.defer();
 
-          function isSuccess(status) {
-            return 200 <= status && status < 300;
-          }
+          //assign takes the requestConfig and copies all of it's properties to 
+          //{method:"GET"} object and will override if there are any conflicts
+          //eg. if they both have a "method" property, it's the property of requestConfig
+          //that will overite the property of the anonymous object 
+          var config = Object.assign({
+            method: "GET"
+          }, requestConfig);
 
           function done(status, response, statusText) {
             //Math.max returns the largest number of the args passed it
@@ -29,7 +37,7 @@
             }
           }
 
-          $httpBackend(config.method, config.url, config.data, done);
+          $httpBackend(config.method, config.url, config.data, done, config.headers);
           return deferred.promise;
         };
       }

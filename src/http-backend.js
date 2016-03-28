@@ -3,7 +3,7 @@
 
   function $HttpBackendProvider() {
     this.$get = function() {
-      return function $httpBackend(method, url, post, callback) {
+      return function $httpBackend(method, url, post, callback, headers) {
         var xhr = new window.XMLHttpRequest();
         xhr.open(method, url, true);
         xhr.send(post || null);
