@@ -106,6 +106,12 @@
             });
           }
 
+          // add the default behavior for withCredentials
+          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
+            config.withCredentials = defaults.withCredentials;
+          }
+
+
           function done(status, response, headersString, statusText) {
             //Math.max returns the largest number of the args passed it
             //eg Math.max(-1,0, 200, -100) returns 200
