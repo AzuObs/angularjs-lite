@@ -87,6 +87,12 @@
           if (typeof transform === "function") {
             return transform(data);
           }
+          else if (toString.call(transform) === "[object Array]") {
+            // debugger;
+            return transform.reduce(function(fn1, fn0) {
+              return fn0(fn1(data));
+            });
+          }
           else {
             return data;
           }
