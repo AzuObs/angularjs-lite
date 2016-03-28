@@ -27,7 +27,8 @@
         else {
           return data;
         }
-      }]
+      }],
+      transformResponse: [defaultHttpResponseTransform]
     };
 
     function isBlob(object) {
@@ -40,6 +41,16 @@
 
     function isFormData(object) {
       return object.toString() === "[object FormData]";
+    }
+
+    function defaultHttpResponseTransform(data, headers) {
+      if (typeof data === "string") {
+        var contentType = headers("Content-Type");
+        if (contentType && (contentType.indexOf("application/json") === 0)) {
+          return JSON.parse(data);
+        }
+      }
+      return data;
     }
 
 

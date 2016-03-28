@@ -449,10 +449,10 @@
     });
 
 
-    it('serializes object data to JSON for requests', function() {
+    it("serializes object data to JSON for requests", function() {
       $http({
-        method: 'POST',
-        url: 'http://teropa.info',
+        method: "POST",
+        url: "http://domain.com",
         data: {
           aKey: 42
         }
@@ -461,25 +461,44 @@
     });
 
 
-    it('serializes array data to JSON for requests', function() {
+    it("serializes array data to JSON for requests", function() {
       $http({
-        method: 'POST',
-        url: 'http://teropa.info',
-        data: [1, 'two', 3]
+        method: "POST",
+        url: "http://domain.com",
+        data: [1, "two", 3]
       });
       expect(requests[0].requestBody).toBe('[1,"two",3]');
     });
 
 
-    it('does not serialize form data for requests', function() {
+    it("does not serialize form data for requests", function() {
       var formData = new FormData();
-      formData.append('aField', 'aValue');
+      formData.append("aField", "aValue");
       $http({
-        method: 'POST',
-        url: 'http://teropa.info',
+        method: "POST",
+        url: "http://domain.com",
         data: formData
       });
       expect(requests[0].requestBody).toBe(formData);
+    });
+
+
+    it("parses JSON data for JSON responses", function() {
+      var response;
+      $http({
+        method: "GET",
+        url: "http://domain.com"
+      }).then(function(r) {
+        response = r;
+      });
+      requests[0].respond(
+        200, {
+          "Content-Type": "application/json"
+        },
+        "{'message':'hello'}"
+      );
+      expect(_.isObject(response.data)).toBe(true);
+      expect(response.data.message).toBe("hello");
     });
   });
 })();
