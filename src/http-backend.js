@@ -19,7 +19,12 @@
         xhr.onload = function() {
           var response = ("response" in xhr) ? xhr.response : xhr.responseText;
           var statusText = xhr.statusText || "";
-          callback(xhr.status, response, statusText);
+          callback(
+            xhr.status,
+            response,
+            xhr.getAllResponseHeaders(),
+            statusText
+          );
         };
 
         xhr.onerror = function() {

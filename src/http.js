@@ -59,6 +59,31 @@
           return executeHeaderFns(reqHeaders, reqConf);
         }
 
+        function parseHeaders(headers) {
+          var lines = headers.split("\n");
+          var result = {};
+
+          lines.forEach(function(line) {
+            var seperatorAt = line.indexOf(":");
+            var name = line.substr(0, seperatorAt).trim().toLowerCase();
+            var value = line.substr(seperatorAt + 1).trim().toLowerCase();
+            if (name) {
+              result[name] = value;
+            }
+          });
+
+          return result;
+        }
+
+
+        function headersGetter(headers) {
+          var headersObj;
+          return function(name) {
+            headersObj = headersObj || parseHeaders(headers);
+            return headersObj[name.toLowerCase()];
+          };
+        }
+
 
         function $http(requestConfig) {
           var deferred = $q.defer();
@@ -81,13 +106,14 @@
             });
           }
 
-          function done(status, response, statusText) {
+          function done(status, response, headersString, statusText) {
             //Math.max returns the largest number of the args passed it
             //eg Math.max(-1,0, 200, -100) returns 200
             status = Math.max(status, 0);
             deferred[isSuccess(status) ? "resolve" : "reject"]({
               status: status,
               data: response,
+              headers: headersGetter(headersString),
               statusText: statusText,
               config: config
             });
