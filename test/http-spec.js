@@ -216,5 +216,21 @@
       expect(requests[0].requestHeaders["Content-Type"]).not.toBe(
         "application/json;charset=utf-8");
     });
+
+
+    it("supports functions as header values", function() {
+      var contentTypeSpy = jasmine.createSpy().and.returnValue(
+        "text/plain;charset=utf-8");
+      $http.defaults.headers.post["Content-Type"] = contentTypeSpy;
+      var request = {
+        method: "POST",
+        url: "http://teropa.info",
+        data: 42
+      };
+      $http(request);
+      expect(contentTypeSpy).toHaveBeenCalledWith(request);
+      expect(requests[0].requestHeaders["Content-Type"]).toBe(
+        "text/plain;charset=utf-8");
+    });
   });
 })();

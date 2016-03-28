@@ -26,6 +26,16 @@
           return 200 <= status && status < 300;
         }
 
+        function executeHeaderFns(headers, config) {
+          Object.keys(headers).forEach(function(key) {
+            if (typeof headers[key] === "function") {
+              headers[key] = headers[key](config);
+            }
+          });
+
+          return headers;
+        }
+
         function mergeHeaders(reqConf) {
           var reqHeaders = Object.assign({}, reqConf.headers);
           var defHeaders = Object.assign({}, defaults.headers.common,
@@ -43,7 +53,7 @@
             }
           });
 
-          return reqHeaders;
+          return executeHeaderFns(reqHeaders, reqConf);
         }
 
 
