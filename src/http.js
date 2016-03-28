@@ -13,6 +13,9 @@
           }
 
           function done(status, response, statusText) {
+            //Math.max returns the largest number of the args passed it
+            //eg Math.max(-1,0, 200, -100) returns 200
+            status = Math.max(status, 0);
             deferred[isSuccess(status) ? "resolve" : "reject"]({
               status: status,
               data: response,

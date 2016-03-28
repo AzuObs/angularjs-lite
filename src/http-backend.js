@@ -12,6 +12,9 @@
           var statusText = xhr.statusText || "";
           callback(xhr.status, response, statusText);
         };
+        xhr.onerror = function() {
+          callback(-1, null, "");
+        };
       };
     };
   }
