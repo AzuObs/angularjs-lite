@@ -93,19 +93,19 @@
           };
         }
 
-        function transformData(data, headers, transform) {
+        function transformData(data, headers, status, transform) {
           if (typeof transform === "function") {
-            return transform(data, headers);
+            return transform(data, headers, status);
           }
           else if (toString.call(transform) === "[object Array]") {
             if (transform.length === 1) {
-              return transform[0](data, headers);
+              return transform[0](data, headers, status);
             }
 
             // reduce takes an array and reduces it to one variable
             // fn1 is the "previous" element in the array and fn0 is the "current"
             return transform.reduce(function(fn1, fn0) {
-              return fn0(fn1(data, headers));
+              return fn0(fn1(data, headers, status));
             });
           }
           else {
@@ -166,6 +166,7 @@
           var reqData = transformData(
             config.data,
             headersGetter(config.headers),
+            undefined,
             config.transformRequest
           );
 
@@ -180,7 +181,11 @@
 
           function transformResponse(response) {
             if (response.data) {
-              response.data = transformData(response.data, response.headers, config.transformResponse);
+              response.data = transformData(
+                response.data,
+                response.headers,
+                response.status,
+                config.transformResponse);
             }
             if (isSuccess(response.status)) {
               return response;

@@ -370,30 +370,30 @@
     });
 
 
-    it('allows transforming responses with functions', function() {
+    it("allows transforming responses with functions", function() {
       var response;
       $http({
-        url: 'http://teropa.info',
+        url: "http://domain.info",
         transformResponse: function(data) {
-          return '*' + data + '*';
+          return "*" + data + "*";
         }
       }).then(function(r) {
         response = r;
       });
       requests[0].respond(200, {
-        'Content-Type': 'text/plain'
-      }, 'Hello');
-      expect(response.data).toEqual('*Hello*');
+        "Content-Type": "text/plain"
+      }, "Hello");
+      expect(response.data).toEqual("*Hello*");
     });
 
 
-    it('passes response headers to transform functions', function() {
+    it("passes response headers to transform functions", function() {
       var response;
       $http({
-        url: 'http://teropa.info',
+        url: "http://domain.info",
         transformResponse: function(data, headers) {
-          if (headers('content-type') === 'text/decorated') {
-            return '*' + data + '*';
+          if (headers("content-type") === "text/decorated") {
+            return "*" + data + "*";
           }
           else {
             return data;
@@ -403,26 +403,49 @@
         response = r;
       });
       requests[0].respond(200, {
-        'Content-Type': 'text/decorated'
-      }, 'Hello');
-      expect(response.data).toEqual('*Hello*');
+        "Content-Type": "text/decorated"
+      }, "Hello");
+      expect(response.data).toEqual("*Hello*");
     });
 
 
-    it('allows setting default response transforms', function() {
+    it("allows setting default response transforms", function() {
       $http.defaults.transformResponse = [function(data) {
-        return '*' + data + '*';
+        return "*" + data + "*";
       }];
       var response;
       $http({
-        url: 'http://teropa.info'
+        url: "http://domain.info"
       }).then(function(r) {
         response = r;
       });
       requests[0].respond(200, {
-        'Content-Type': 'text/plain'
-      }, 'Hello');
-      expect(response.data).toEqual('*Hello*');
+        "Content-Type": "text/plain"
+      }, "Hello");
+      expect(response.data).toEqual("*Hello*");
+    });
+
+
+    it("passes HTTP status to response transformers", function() {
+      var response;
+      $http({
+        url: "http://domain.info",
+        transformResponse: function(data, headers, status) {
+          if (status === 401) {
+            return "unauthorized";
+          }
+          else {
+            return data;
+          }
+        }
+      }).catch(function(r) {
+        response = r;
+      });
+      // window.debug = true;
+      requests[0].respond(401, {
+        "Content-Type": "text/plain"
+      }, "Fail");
+      expect(response.data).toEqual("unauthorized");
     });
   });
 })();
