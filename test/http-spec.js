@@ -322,7 +322,7 @@
     it("allows multiple request transform functions", function() {
       $http({
         method: "POST",
-        url: "http://teropa.info",
+        url: "http://domain.info",
         data: 42,
         transformRequest: [function(data) {
           return "*" + data + "*";
@@ -331,6 +331,42 @@
         }]
       });
       expect(requests[0].requestBody).toBe("-*42*-");
+    });
+
+
+    it("allows settings transforms in defaults", function() {
+      $http.defaults.transformRequest = [function(data) {
+        return "*" + data + "*";
+      }];
+
+      $http({
+        method: "POST",
+        url: "http://domain.info",
+        data: 42
+      });
+      expect(requests[0].requestBody).toBe("*42*");
+    });
+
+
+    it("passes request headers getter to transforms", function() {
+      $http.defaults.transformRequest = [function(data, headers) {
+        if (headers("Content-Type") === "text/emphasized") {
+          return "*" + data + "*";
+        }
+        else {
+          return data;
+        }
+      }];
+
+      $http({
+        method: "POST",
+        url: "http://domain.info",
+        data: 42,
+        headers: {
+          "content-type": "text/emphasized"
+        }
+      });
+      expect(requests[0].requestBody).toBe("*42*");
     });
   });
 })();

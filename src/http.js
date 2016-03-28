@@ -60,17 +60,27 @@
         }
 
         function parseHeaders(headers) {
-          var lines = headers.split("\n");
           var result = {};
 
-          lines.forEach(function(line) {
-            var seperatorAt = line.indexOf(":");
-            var name = line.substr(0, seperatorAt).trim().toLowerCase();
-            var value = line.substr(seperatorAt + 1).trim().toLowerCase();
-            if (name) {
-              result[name] = value;
-            }
-          });
+          if (toString.call(headers) === "[object Object]") {
+            Object.keys(headers).forEach(function(k) {
+              result[k.trim().toLowerCase()] = headers[k].trim();
+            });
+
+            return result;
+          }
+
+          else {
+            var lines = headers.split("\n");
+            lines.forEach(function(line) {
+              var seperatorAt = line.indexOf(":");
+              var name = line.substr(0, seperatorAt).trim().toLowerCase();
+              var value = line.substr(seperatorAt + 1).trim().toLowerCase();
+              if (name) {
+                result[name] = value;
+              }
+            });
+          }
 
           return result;
         }
@@ -83,14 +93,19 @@
           };
         }
 
-        function transformData(data, transform) {
+        function transformData(data, headers, transform) {
           if (typeof transform === "function") {
-            return transform(data);
+            return transform(data, headers);
           }
           else if (toString.call(transform) === "[object Array]") {
-            // debugger;
+            if (transform.length === 1) {
+              return transform[0](data, headers);
+            }
+
+            // reduce takes an array and reduces it to one variable
+            // fn1 is the "previous" element in the array and fn0 is the "current"
             return transform.reduce(function(fn1, fn0) {
-              return fn0(fn1(data));
+              return fn0(fn1(data, headers));
             });
           }
           else {
@@ -107,7 +122,8 @@
           //eg. if they both have a "method" property, it's the property of requestConfig
           //that will overite the property of the anonymous object 
           var config = Object.assign({
-            method: "GET"
+            method: "GET",
+            transformRequest: defaults.transformRequest
           }, requestConfig);
           config.headers = mergeHeaders(requestConfig);
 
@@ -116,7 +132,11 @@
             config.withCredentials = defaults.withCredentials;
           }
 
-          var reqData = transformData(config.data, config.transformRequest);
+          var reqData = transformData(
+            config.data,
+            headersGetter(config.headers),
+            config.transformRequest
+          );
 
           // remove "Content-Type" header if there is not data to save size
           if (reqData === undefined) {
