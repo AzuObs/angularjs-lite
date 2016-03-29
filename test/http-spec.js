@@ -695,19 +695,33 @@
         });
         expect(requests[0].url).toEqual('http://teropa.info?a=42&b=43');
       });
-    });
 
 
-    it('uses square brackets in arrays', function() {
-      $http({
-        url: 'http://teropa.info',
-        params: {
-          a: [42, 43]
-        },
-        paramSerializer: '$httpParamSerializerJQLike'
+      it('uses square brackets in arrays', function() {
+        $http({
+          url: 'http://teropa.info',
+          params: {
+            a: [42, 43]
+          },
+          paramSerializer: '$httpParamSerializerJQLike'
+        });
+        expect(requests[0].url).toEqual('http://teropa.info?a%5B%5D=42&a%5B%5D=43');
       });
-      expect(requests[0].url).toEqual('http://teropa.info?a%5B%5D=42&a%5B%5D=43');
-    });
 
+
+      it('uses square brackets in objects', function() {
+        $http({
+          url: 'http://teropa.info',
+          params: {
+            a: {
+              b: 42,
+              c: 43
+            }
+          },
+          paramSerializer: '$httpParamSerializerJQLike'
+        });
+        expect(requests[0].url).toEqual('http://teropa.info?a%5Bb%5D=42&a%5Bc%5D=43');
+      });
+    });
   });
 })();

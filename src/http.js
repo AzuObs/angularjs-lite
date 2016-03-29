@@ -310,12 +310,25 @@
         var parts = [];
         if (params) {
           Object.keys(params).forEach(function(k) {
+            // if null or undefined
             if (params[k] === undefined || params[k] === null) {
               return;
             }
+            // if array
             if (toString.call(params[k]) === "[object Array]") {
               params[k].forEach(function(value) {
                 parts.push(encodeURIComponent(k + "[]") + "=" + encodeURIComponent(value));
+              });
+            }
+            // if object but not date object
+            else if (toString.call(params[k]) === "[object Object]" &&
+              toString.call(params[k]) !== "[object Date]") {
+              Object.keys(params[k]).forEach(function(kk) {
+                parts.push(
+                  encodeURIComponent(k + "[" + kk + "]") +
+                  "=" +
+                  encodeURIComponent(params[k][kk])
+                );
               });
             }
             else {
