@@ -259,6 +259,7 @@
             config.headers,
             config.withCredentials
           );
+
           return deferred.promise;
         } // end sendReq
 
@@ -282,7 +283,11 @@
             config.paramSerializer = $injector.get(config.paramSerializer);
           }
 
-          return serverRequest(config);
+          var promise = $q.resolve(config);
+          interceptors.forEach(function(interceptor) {
+            promise = promise.then(interceptor.request);
+          });
+          return promise.then(serverRequest);
         } //end $http
 
 
