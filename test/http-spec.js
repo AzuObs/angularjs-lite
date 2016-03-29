@@ -754,5 +754,16 @@
         expect(requests[0].url).toEqual('http://domain.com?a%5B0%5D%5Bb%5D=42');
       });
     });
+
+
+    it('supports shorthand method for GET', function() {
+      $http.get('http://teropa.info', {
+        params: {
+          q: 42
+        }
+      });
+      expect(requests[0].url).toBe('http://teropa.info?q=42');
+      expect(requests[0].method).toBe('GET');
+    });
   });
 })();

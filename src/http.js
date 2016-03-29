@@ -272,6 +272,12 @@
         }
 
         $http.defaults = defaults;
+        $http.get = function(url, config) {
+          return $http(Object.assign(config || {}, {
+            method: "GET",
+            url: url
+          }));
+        };
         return $http;
       }
     ];
