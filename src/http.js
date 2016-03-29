@@ -310,7 +310,17 @@
         var parts = [];
         if (params) {
           Object.keys(params).forEach(function(k) {
-            parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
+            if (params[k] === undefined || params[k] === null) {
+              return;
+            }
+            if (toString.call(params[k]) === "[object Array]") {
+              params[k].forEach(function(value) {
+                parts.push(encodeURIComponent(k + "[]") + "=" + encodeURIComponent(value));
+              });
+            }
+            else {
+              parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
+            }
           });
         }
 

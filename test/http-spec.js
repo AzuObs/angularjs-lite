@@ -697,5 +697,17 @@
       });
     });
 
+
+    it('uses square brackets in arrays', function() {
+      $http({
+        url: 'http://teropa.info',
+        params: {
+          a: [42, 43]
+        },
+        paramSerializer: '$httpParamSerializerJQLike'
+      });
+      expect(requests[0].url).toEqual('http://teropa.info?a%5B%5D=42&a%5B%5D=43');
+    });
+
   });
 })();
