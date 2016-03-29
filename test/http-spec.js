@@ -491,6 +491,7 @@
       }).then(function(r) {
         response = r;
       });
+      // window.debug = true;
       requests[0].respond(
         200, {
           "Content-Type": "application/json"
@@ -624,6 +625,23 @@
         }
       });
       expect(requests[0].url).toBe('http://teropa.info?a=%7B%22b%22%3A42%7D');
+    });
+
+
+    it('allows substituting param serializer', function() {
+      $http({
+        url: 'http://teropa.info',
+        params: {
+          a: 42,
+          b: 43
+        },
+        paramSerializer: function(params) {
+          return _.map(params, function(v, k) {
+            return k + '=' + v + 'lol';
+          }).join('&');
+        }
+      });
+      expect(requests[0].url).toEqual('http://teropa.info?a=42lol&b=43lol');
     });
   });
 })();

@@ -28,8 +28,10 @@
           return data;
         }
       }],
-      transformResponse: [defaultHttpResponseTransform]
+      transformResponse: [defaultHttpResponseTransform],
+      paramSerializer: serializeParams
     };
+
 
     function isBlob(object) {
       return object.toString() === "[object Blob]";
@@ -69,129 +71,132 @@
     }
 
 
+    function isSuccess(status) {
+      return 200 <= status && status < 300;
+    }
+
+    function executeHeaderFns(headers, config) {
+      Object.keys(headers).forEach(function(key) {
+        if (typeof headers[key] === "function") {
+          headers[key] = headers[key](config);
+          if (headers[key] === undefined || headers[key] === null) {
+            delete headers[key];
+          }
+        }
+      });
+
+      return headers;
+    }
+
+    function mergeHeaders(reqConf) {
+      var reqHeaders = Object.assign({}, reqConf.headers);
+      var defHeaders = Object.assign({}, defaults.headers.common,
+        defaults.headers[(reqConf.method || "get").toLowerCase()]);
+
+      //if request header doesn't exist, assign the default value to it
+      Object.keys(defHeaders).forEach(function(key) {
+        //check whether the header exists
+        var headerExists = Object.keys(reqHeaders).some(function(k) {
+          return k.toLowerCase() === key.toLowerCase();
+        });
+
+        if (!headerExists) {
+          reqHeaders[key] = defHeaders[key];
+        }
+      });
+
+      return executeHeaderFns(reqHeaders, reqConf);
+    }
+
+    function parseHeaders(headers) {
+      var result = {};
+
+      if (toString.call(headers) === "[object Object]") {
+        Object.keys(headers).forEach(function(k) {
+          result[k.trim().toLowerCase()] = headers[k].trim();
+        });
+
+        return result;
+      }
+
+      else {
+        var lines = headers.split("\n");
+        lines.forEach(function(line) {
+          var seperatorAt = line.indexOf(":");
+          var name = line.substr(0, seperatorAt).trim().toLowerCase();
+          var value = line.substr(seperatorAt + 1).trim().toLowerCase();
+          if (name) {
+            result[name] = value;
+          }
+        });
+      }
+
+      return result;
+    }
+
+    function headersGetter(headers) {
+      var headersObj;
+      return function(name) {
+        headersObj = headersObj || parseHeaders(headers);
+        return name ? headersObj[name.toLowerCase()] : headersObj;
+      };
+    }
+
+    function transformData(data, headers, status, transform) {
+      if (typeof transform === "function") {
+        return transform(data, headers, status);
+      }
+      else if (toString.call(transform) === "[object Array]") {
+        if (transform.length === 1) {
+          return transform[0](data, headers, status);
+        }
+
+        // reduce takes an array and reduces it to one variable
+        // fn1 is the "previous" element in the array and fn0 is the "current"
+        return transform.reduce(function(fn1, fn0) {
+          return fn0(fn1(data, headers, status));
+        });
+      }
+      else {
+        return data;
+      }
+    }
+
+    function buildUrl(url, serializedParams) {
+      if (serializedParams.length) {
+        url += (url.indexOf("?") === -1) ? "?" : "&";
+        url += serializedParams;
+      }
+      return url;
+    }
+
+    function serializeParams(params) {
+      var parts = [];
+      if (params) {
+        Object.keys(params).forEach(function(k) {
+          if (params[k] === null || params[k] === undefined) {
+            return;
+          }
+          if (toString.call(params[k]) !== "[object Array]") {
+            params[k] = [params[k]];
+          }
+          params[k].forEach(function(value) {
+            if (toString.call(value) === "[object Object]") {
+              value = JSON.stringify(value);
+            }
+            parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(value));
+          });
+        });
+      }
+      return parts.join("&");
+    }
+
+
+    ///////////////
+    // this.$get //
+    ///////////////
     this.$get = ["$httpBackend", "$q", "$rootScope",
       function $get($httpBackend, $q, $rootScope) {
-
-        function isSuccess(status) {
-          return 200 <= status && status < 300;
-        }
-
-        function executeHeaderFns(headers, config) {
-          Object.keys(headers).forEach(function(key) {
-            if (typeof headers[key] === "function") {
-              headers[key] = headers[key](config);
-              if (headers[key] === undefined || headers[key] === null) {
-                delete headers[key];
-              }
-            }
-          });
-
-          return headers;
-        }
-
-        function mergeHeaders(reqConf) {
-          var reqHeaders = Object.assign({}, reqConf.headers);
-          var defHeaders = Object.assign({}, defaults.headers.common,
-            defaults.headers[(reqConf.method || "get").toLowerCase()]);
-
-          //if request header doesn't exist, assign the default value to it
-          Object.keys(defHeaders).forEach(function(key) {
-            //check whether the header exists
-            var headerExists = Object.keys(reqHeaders).some(function(k) {
-              return k.toLowerCase() === key.toLowerCase();
-            });
-
-            if (!headerExists) {
-              reqHeaders[key] = defHeaders[key];
-            }
-          });
-
-          return executeHeaderFns(reqHeaders, reqConf);
-        }
-
-        function parseHeaders(headers) {
-          var result = {};
-
-          if (toString.call(headers) === "[object Object]") {
-            Object.keys(headers).forEach(function(k) {
-              result[k.trim().toLowerCase()] = headers[k].trim();
-            });
-
-            return result;
-          }
-
-          else {
-            var lines = headers.split("\n");
-            lines.forEach(function(line) {
-              var seperatorAt = line.indexOf(":");
-              var name = line.substr(0, seperatorAt).trim().toLowerCase();
-              var value = line.substr(seperatorAt + 1).trim().toLowerCase();
-              if (name) {
-                result[name] = value;
-              }
-            });
-          }
-
-          return result;
-        }
-
-        function headersGetter(headers) {
-          var headersObj;
-          return function(name) {
-            headersObj = headersObj || parseHeaders(headers);
-            return name ? headersObj[name.toLowerCase()] : headersObj;
-          };
-        }
-
-        function transformData(data, headers, status, transform) {
-          if (typeof transform === "function") {
-            return transform(data, headers, status);
-          }
-          else if (toString.call(transform) === "[object Array]") {
-            if (transform.length === 1) {
-              return transform[0](data, headers, status);
-            }
-
-            // reduce takes an array and reduces it to one variable
-            // fn1 is the "previous" element in the array and fn0 is the "current"
-            return transform.reduce(function(fn1, fn0) {
-              return fn0(fn1(data, headers, status));
-            });
-          }
-          else {
-            return data;
-          }
-        }
-
-        function buildUrl(url, serializedParams) {
-          if (serializedParams.length) {
-            url += (url.indexOf("?") === -1) ? "?" : "&";
-            url += serializedParams;
-          }
-          return url;
-        }
-
-        function serializeParams(params) {
-          var parts = [];
-          if (params) {
-            Object.keys(params).forEach(function(k) {
-              if (params[k] === null || params[k] === undefined) {
-                return;
-              }
-              if (toString.call(params[k]) !== "[object Array]") {
-                params[k] = [params[k]];
-              }
-              params[k].forEach(function(value) {
-                if (toString.call(value) === "[object Object]") {
-                  value = JSON.stringify(value);
-                }
-                parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(value));
-              });
-            });
-          }
-          return parts.join("&");
-        }
-
 
         function sendReq(config, reqData) {
           var deferred = $q.defer();
@@ -214,7 +219,7 @@
             }
           }
 
-          var url = buildUrl(config.url, serializeParams(config.params));
+          var url = buildUrl(config.url, config.paramSerializer(config.params));
 
           $httpBackend(
             config.method,
@@ -229,6 +234,23 @@
 
 
         function $http(requestConfig) {
+          function transformResponse(response) {
+            if (response.data) {
+              response.data = transformData(
+                response.data,
+                response.headers,
+                response.status,
+                config.transformResponse);
+            }
+            if (isSuccess(response.status)) {
+              return response;
+            }
+            else {
+              return $q.reject(response);
+            }
+            return response;
+          }
+
           //assign takes the requestConfig and copies all of it's properties to 
           //{method:"GET"} object and will override if there are any conflicts
           //eg. if they both have a "method" property, it's the property of requestConfig
@@ -236,7 +258,8 @@
           var config = Object.assign({
             method: "GET",
             transformRequest: defaults.transformRequest,
-            transformResponse: defaults.transformResponse
+            transformResponse: defaults.transformResponse,
+            paramSerializer: defaults.paramSerializer
           }, requestConfig);
           config.headers = mergeHeaders(requestConfig);
 
@@ -259,24 +282,6 @@
                 delete config.headers[k];
               }
             });
-          }
-
-          function transformResponse(response) {
-            if (response.data) {
-              response.data = transformData(
-                response.data,
-                response.headers,
-                response.status,
-                config.transformResponse);
-            }
-            if (isSuccess(response.status)) {
-              return response;
-            }
-            else {
-              return $q.reject(response);
-            }
-
-            return response;
           }
 
           return sendReq(config, reqData)
