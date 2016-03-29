@@ -578,5 +578,16 @@
       });
       expect(requests[0].url).toBe('http://domain.com?a=42&b=42');
     });
+
+
+    it('escapes url characters in params', function() {
+      $http({
+        url: 'http://teropa.info',
+        params: {
+          '==': '&&'
+        }
+      });
+      expect(requests[0].url).toBe('http://teropa.info?%3D%3D=%26%26');
+    });
   });
 })();

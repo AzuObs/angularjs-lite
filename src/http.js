@@ -175,7 +175,7 @@
           var parts = [];
           if (params) {
             Object.keys(params).forEach(function(k) {
-              parts.push(k + "=" + params[k]);
+              parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
             });
           }
           return parts.join("&");
