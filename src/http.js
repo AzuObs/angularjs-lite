@@ -195,8 +195,8 @@
     ///////////////
     // this.$get //
     ///////////////
-    this.$get = ["$httpBackend", "$q", "$rootScope",
-      function $get($httpBackend, $q, $rootScope) {
+    this.$get = ["$httpBackend", "$q", "$rootScope", "$injector",
+      function $get($httpBackend, $q, $rootScope, $injector) {
 
         function sendReq(config, reqData) {
           var deferred = $q.defer();
@@ -262,6 +262,10 @@
             paramSerializer: defaults.paramSerializer
           }, requestConfig);
           config.headers = mergeHeaders(requestConfig);
+          //DI paramSerializer if it's the name of an instance
+          if (typeof config.paramSerializer === "string") {
+            config.paramSerializer = $injector.get(config.paramSerializer);
+          }
 
           // add the default behavior for withCredentials
           if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
