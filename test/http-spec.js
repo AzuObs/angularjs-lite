@@ -681,5 +681,21 @@
       });
     });
 
+
+    describe('JQ-like param serialization', function() {
+
+      it('is possible', function() {
+        $http({
+          url: 'http://teropa.info',
+          params: {
+            a: 42,
+            b: 43
+          },
+          paramSerializer: '$httpParamSerializerJQLike'
+        });
+        expect(requests[0].url).toEqual('http://teropa.info?a=42&b=43');
+      });
+    });
+
   });
 })();

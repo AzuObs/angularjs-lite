@@ -304,6 +304,23 @@
   }
 
 
+  function $HttpParamSerializerJQLikeProvider() {
+    this.$get = function() {
+      return function serializeParams(params) {
+        var parts = [];
+        if (params) {
+          Object.keys(params).forEach(function(k) {
+            parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
+          });
+        }
+
+        return parts.join("&");
+      };
+    };
+  }
+
+
+  window.$HttpParamSerializerJQLikeProvider = $HttpParamSerializerJQLikeProvider;
   window.$HttpParamSerializerProvider = $HttpParamSerializerProvider;
   window.$HttpProvider = $HttpProvider;
 })();
