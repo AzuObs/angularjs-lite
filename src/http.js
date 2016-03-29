@@ -308,27 +308,54 @@
     this.$get = function() {
       return function serializeParams(params) {
         var parts = [];
+
+        function serialize(value, prefix) {
+          // undefined || null
+          if (value === null || value === undefined) {
+            return;
+          }
+
+          // []
+          if (toString.call(value) === "[object Array]") {
+            value.forEach(function(v) {
+              serialize(v, prefix + "[]");
+            });
+          }
+
+          // {} && !Date
+          else if (toString.call(value) === "[object Object]" &&
+            toString.call(value) !== "[object Date]"
+          ) {
+            Object.keys(value).forEach(function(k) {
+              serialize(value[k], prefix + "[" + k + "]");
+            });
+          }
+          else {
+            parts.push(encodeURIComponent(prefix) + '=' + encodeURIComponent(value));
+          }
+        }
+
+
         if (params) {
           Object.keys(params).forEach(function(k) {
             // if null or undefined
             if (params[k] === undefined || params[k] === null) {
               return;
             }
+
             // if array
             if (toString.call(params[k]) === "[object Array]") {
               params[k].forEach(function(value) {
-                parts.push(encodeURIComponent(k + "[]") + "=" + encodeURIComponent(value));
+                serialize(value, k + "[]");
               });
             }
+
             // if object but not date object
             else if (toString.call(params[k]) === "[object Object]" &&
-              toString.call(params[k]) !== "[object Date]") {
+              toString.call(params[k]) !== "[object Date]"
+            ) {
               Object.keys(params[k]).forEach(function(kk) {
-                parts.push(
-                  encodeURIComponent(k + "[" + kk + "]") +
-                  "=" +
-                  encodeURIComponent(params[k][kk])
-                );
+                serialize(params[k][kk], k + "[" + kk + "]");
               });
             }
             else {
