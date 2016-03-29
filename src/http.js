@@ -44,12 +44,19 @@
     }
 
     function isJsonLike(data) {
-      // data starts with "{" or "["
-      return data.match(/^\{/) || data.match(/^\[/);
+      // data starts with "{" but not "{{"
+      if (data.match(/^\{(?!\{)/)) {
+        // if data ends with "}"
+        return data.match(/\}$/);
+      }
+      // data starts with "["
+      if (data.match(/^\[/)) {
+        // end with ]
+        return data.match(/\]$/);
+      }
     }
 
     function defaultHttpResponseTransform(data, headers) {
-      if (window.debug) debugger;
       if (typeof data === "string") {
         var contentType = headers("Content-Type");
         if (contentType &&

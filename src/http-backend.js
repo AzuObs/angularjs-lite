@@ -17,7 +17,6 @@
           xhr.withCredentials = true;
         }
 
-
         xhr.send(post || null);
 
         xhr.onload = function() {

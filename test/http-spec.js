@@ -529,5 +529,32 @@
       expect(_.isArray(response.data)).toBe(true);
       expect(response.data).toEqual([1, 2, 3]);
     });
+
+
+    it("does not choke on response resembling JSON but not valid", function() {
+      var response;
+      $http({
+        method: "GET",
+        url: "http://teropa.info"
+      }).then(function(r) {
+        response = r;
+      });
+      requests[0].respond(200, {}, "{1, 2, 3]");
+      expect(response.data).toEqual("{1, 2, 3]");
+    });
+
+
+    it("does not try to parse interpolation expr as JSON", function() {
+      var response;
+      $http({
+        method: "GET",
+        url: "http://teropa.info"
+      }).then(function(r) {
+        response = r;
+      });
+      window.debug = true;
+      requests[0].respond(200, {}, "{{expr}}");
+      expect(response.data).toEqual("{{expr}}");
+    });
   });
 })();
