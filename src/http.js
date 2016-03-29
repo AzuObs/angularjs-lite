@@ -283,11 +283,23 @@
             config.paramSerializer = $injector.get(config.paramSerializer);
           }
 
+          // pass "config" object to next .then
           var promise = $q.resolve(config);
+
+          // for each interceptor, apply the request method
           interceptors.forEach(function(interceptor) {
             promise = promise.then(interceptor.request);
           });
-          return promise.then(serverRequest);
+
+          // send request
+          promise = promise.then(serverRequest);
+
+          // for each interceptor, apply the response method
+          interceptors.forEach(function(interceptor) {
+            promise = promise.then(interceptor.response);
+          });
+
+          return promise;
         } //end $http
 
 

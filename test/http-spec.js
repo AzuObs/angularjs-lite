@@ -919,5 +919,26 @@
       $rootScope.$apply();
       expect(requests[0].url).toBe('http://teropa.info?intercepted=true');
     });
+
+
+    it('allows intercepting responses', function() {
+      var injector = createInjector(['ng', function($httpProvider) {
+        $httpProvider.interceptors.push(_.constant({
+          response: function(response) {
+            response.intercepted = true;
+            return response;
+          }
+        }));
+      }]);
+      $http = injector.get('$http');
+      $rootScope = injector.get('$rootScope');
+      var response;
+      $http.get('http://teropa.info').then(function(r) {
+        response = r;
+      });
+      $rootScope.$apply();
+      requests[0].respond(200, {}, 'Hello');
+      expect(response.intercepted).toBe(true);
+    });
   });
 })();
