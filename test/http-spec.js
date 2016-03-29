@@ -2,7 +2,7 @@
   "use strict";
 
   describe("$http", function() {
-    var $http, $rootScope;
+    var $http, $rootScope, $q;
     var xhr, requests;
 
     beforeEach(function() {
@@ -10,6 +10,7 @@
       var injector = createInjector(["ng"]);
       $http = injector.get("$http");
       $rootScope = injector.get("$rootScope");
+      $q = injector.get("$q");
     });
 
     beforeEach(function() {
@@ -22,6 +23,14 @@
 
     afterEach(function() {
       xhr.restore();
+    });
+
+    beforeEach(function() {
+      jasmine.clock().install();
+    });
+
+    afterEach(function() {
+      jasmine.clock().uninstall();
     });
 
 
@@ -1022,6 +1031,18 @@
       expect(status).toBe(401);
       expect(headers('Cache-Control')).toBe('no-cache');
       expect(config.method).toBe('GET');
+    });
+
+
+    it('allows aborting a request with a Promise', function() {
+      var timeout = $q.defer();
+      $http.get('http://teropa.info', {
+        timeout: timeout.promise
+      });
+      $rootScope.$apply();
+      timeout.resolve();
+      $rootScope.$apply();
+      expect(requests[0].aborted).toBe(true);
     });
   });
 })();

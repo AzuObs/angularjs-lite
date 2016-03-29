@@ -3,7 +3,7 @@
 
   function $HttpBackendProvider() {
     this.$get = function() {
-      return function $httpBackend(method, url, post, callback, headers, withCredentials) {
+      return function $httpBackend(method, url, post, callback, headers, timeout, withCredentials) {
         var xhr = new window.XMLHttpRequest();
         xhr.open(method, url, true);
 
@@ -33,6 +33,12 @@
         xhr.onerror = function() {
           callback(-1, null, "");
         };
+
+        if (timeout) {
+          timeout.then(function() {
+            xhr.abort();
+          });
+        }
       };
     };
   }
