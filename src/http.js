@@ -2,37 +2,6 @@
   "use strict";
 
   function $HttpProvider() {
-    var defaults = this.defaults = {
-      headers: {
-        common: {
-          Accept: "application/json, text/plain, */*"
-        },
-        post: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        put: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        patch: {
-          "Content-Type": "application/json;charset=utf-8"
-        }
-      },
-      transformRequest: [function(data) {
-        // is object-like
-        // and is not a blob, file, or form 
-        if ((typeof data === "object" && data !== null) &&
-          !isBlob(data) && !isFile(data) && !isFormData(data)) {
-          return JSON.stringify(data);
-        }
-        else {
-          return data;
-        }
-      }],
-      transformResponse: [defaultHttpResponseTransform],
-      paramSerializer: "$httpParamSerializer"
-    };
-
-
     function isBlob(object) {
       return object.toString() === "[object Blob]";
     }
@@ -171,6 +140,46 @@
     }
 
 
+    ///////////////////////
+    // this.incerceptors //
+    ///////////////////////
+    var interceptorFactories = this.interceptors = [];
+
+
+    ///////////////////
+    // this.defaults //
+    ///////////////////
+    var defaults = this.defaults = {
+      headers: {
+        common: {
+          Accept: "application/json, text/plain, */*"
+        },
+        post: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        put: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        patch: {
+          "Content-Type": "application/json;charset=utf-8"
+        }
+      },
+      transformRequest: [function(data) {
+        // is object-like
+        // and is not a blob, file, or form 
+        if ((typeof data === "object" && data !== null) &&
+          !isBlob(data) && !isFile(data) && !isFormData(data)) {
+          return JSON.stringify(data);
+        }
+        else {
+          return data;
+        }
+      }],
+      transformResponse: [defaultHttpResponseTransform],
+      paramSerializer: "$httpParamSerializer"
+    };
+
+
     ///////////////
     // this.$get //
     ///////////////
@@ -210,7 +219,6 @@
           );
           return deferred.promise;
         }
-
 
         function $http(requestConfig) {
           function transformResponse(response) {
@@ -271,6 +279,11 @@
             .then(transformResponse, transformResponse);
         }
 
+        // create instances
+        var interceptors = interceptorFactories.map(function(fn) {
+          // allow for dependency injection
+          return $injector.invoke(fn);
+        });
 
         // access to defaults
         $http.defaults = defaults;
