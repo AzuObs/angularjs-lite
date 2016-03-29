@@ -271,13 +271,28 @@
             .then(transformResponse, transformResponse);
         }
 
+
+        // access to defaults
         $http.defaults = defaults;
-        $http.get = function(url, config) {
-          return $http(Object.assign(config || {}, {
-            method: "GET",
-            url: url
-          }));
-        };
+        // access to shorthand $http.get, $http.head, $http.delete methods
+        ["get", "head", "delete"].forEach(function(method) {
+          $http[method] = function(url, config) {
+            return $http(Object.assign(config || {}, {
+              method: method.toUpperCase(),
+              url: url
+            }));
+          };
+        });
+        // access to shorthand $http.post, $http.put, $http.patch methods
+        ["post", "put", "patch"].forEach(function(method) {
+          $http[method] = function(url, data, config) {
+            return $http(Object.assign(config || {}, {
+              method: method.toUpperCase(),
+              url: url,
+              data: data
+            }));
+          };
+        });
         return $http;
       }
     ];
