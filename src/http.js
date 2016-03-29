@@ -186,6 +186,48 @@
     this.$get = ["$httpBackend", "$q", "$rootScope", "$injector",
       function $get($httpBackend, $q, $rootScope, $injector) {
 
+        function serverRequest(config) {
+          // add the default behavior for withCredentials
+          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
+            config.withCredentials = defaults.withCredentials;
+          }
+
+          var reqData = transformData(
+            config.data,
+            headersGetter(config.headers),
+            undefined,
+            config.transformRequest
+          );
+          // remove "Content-Type" header if there is not data to save size
+          if (reqData === undefined) {
+            Object.keys(config.headers).forEach(function(k) {
+              if (k.toLowerCase() === "content-type") {
+                delete config.headers[k];
+              }
+            });
+          }
+
+          function transformResponse(response) {
+            if (response.data) {
+              response.data = transformData(
+                response.data,
+                response.headers,
+                response.status,
+                config.transformResponse);
+            }
+            if (isSuccess(response.status)) {
+              return response;
+            }
+            else {
+              return $q.reject(response);
+            }
+          }
+
+          return sendReq(config, reqData)
+            .then(transformResponse, transformResponse);
+        } //end serverRequest
+
+
         function sendReq(config, reqData) {
           var deferred = $q.defer();
 
@@ -205,7 +247,7 @@
             if (!$rootScope.$$phase) {
               $rootScope.$apply();
             }
-          }
+          } //end done
 
           var url = buildUrl(config.url, config.paramSerializer(config.params));
 
@@ -218,26 +260,10 @@
             config.withCredentials
           );
           return deferred.promise;
-        }
+        } // end sendReq
+
 
         function $http(requestConfig) {
-          function transformResponse(response) {
-            if (response.data) {
-              response.data = transformData(
-                response.data,
-                response.headers,
-                response.status,
-                config.transformResponse);
-            }
-            if (isSuccess(response.status)) {
-              return response;
-            }
-            else {
-              return $q.reject(response);
-            }
-            return response;
-          }
-
           //assign takes the requestConfig and copies all of it's properties to 
           //{method:"GET"} object and will override if there are any conflicts
           //eg. if they both have a "method" property, it's the property of requestConfig
@@ -248,36 +274,17 @@
             transformResponse: defaults.transformResponse,
             paramSerializer: defaults.paramSerializer
           }, requestConfig);
+
           config.headers = mergeHeaders(requestConfig);
+
           //DI paramSerializer if it's the name of an instance
           if (typeof config.paramSerializer === "string") {
             config.paramSerializer = $injector.get(config.paramSerializer);
           }
 
-          // add the default behavior for withCredentials
-          if (config.withCredentials === undefined && defaults.withCredentials !== undefined) {
-            config.withCredentials = defaults.withCredentials;
-          }
+          return serverRequest(config);
+        } //end $http
 
-          var reqData = transformData(
-            config.data,
-            headersGetter(config.headers),
-            undefined,
-            config.transformRequest
-          );
-
-          // remove "Content-Type" header if there is not data to save size
-          if (reqData === undefined) {
-            Object.keys(config.headers).forEach(function(k) {
-              if (k.toLowerCase() === "content-type") {
-                delete config.headers[k];
-              }
-            });
-          }
-
-          return sendReq(config, reqData)
-            .then(transformResponse, transformResponse);
-        }
 
         // create instances
         var interceptors = interceptorFactories.map(function(fn) {
