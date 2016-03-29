@@ -198,7 +198,8 @@
             undefined,
             config.transformRequest
           );
-          // remove "Content-Type" header if there is not data to save size
+
+          // remove "Content-Type" header if there is not data, to save bandwidth
           if (reqData === undefined) {
             Object.keys(config.headers).forEach(function(k) {
               if (k.toLowerCase() === "content-type") {
@@ -247,7 +248,7 @@
             if (!$rootScope.$$phase) {
               $rootScope.$apply();
             }
-          } //end done
+          }
 
           var url = buildUrl(config.url, config.paramSerializer(config.params));
 
@@ -288,7 +289,7 @@
 
           // for each interceptor, apply the request method
           interceptors.forEach(function(interceptor) {
-            promise = promise.then(interceptor.request);
+            promise = promise.then(interceptor.request, interceptor.requestError);
           });
 
           // send request
