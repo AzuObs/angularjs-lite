@@ -601,5 +601,16 @@
       });
       expect(requests[0].url).toBe('http://teropa.info');
     });
+
+
+    it('attaches multiple params from arrays', function() {
+      $http({
+        url: 'http://teropa.info',
+        params: {
+          a: [42, 43]
+        }
+      });
+      expect(requests[0].url).toBe('http://teropa.info?a=42&a=43');
+    });
   });
 })();

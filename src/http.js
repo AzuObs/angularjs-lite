@@ -178,7 +178,12 @@
               if (params[k] === null || params[k] === undefined) {
                 return;
               }
-              parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
+              if (toString.call(params[k]) !== "[object Array]") {
+                params[k] = [params[k]];
+              }
+              params[k].forEach(function(value) {
+                parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(value));
+              });
             });
           }
           return parts.join("&");
