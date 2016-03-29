@@ -282,7 +282,7 @@
         // create instances
         var interceptors = interceptorFactories.map(function(fn) {
           // allow for dependency injection
-          return $injector.invoke(fn);
+          return (typeof fn === "string" ? $injector.get(fn) : $injector.invoke(fn));
         });
 
         // access to defaults

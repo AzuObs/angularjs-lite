@@ -844,5 +844,16 @@
       var $rootScope = injector.get('$rootScope');
       expect(interceptorFactorySpy).toHaveBeenCalledWith($rootScope);
     });
+
+
+    it('allows referencing existing interceptor factories', function() {
+      var interceptorFactorySpy = jasmine.createSpy().and.returnValue({});
+      var injector = createInjector(['ng', function($provide, $httpProvider) {
+        $provide.factory('myInterceptor', interceptorFactorySpy);
+        $httpProvider.interceptors.push('myInterceptor');
+      }]);
+      $http = injector.get('$http');
+      expect(interceptorFactorySpy).toHaveBeenCalled();
+    });
   });
 })();
