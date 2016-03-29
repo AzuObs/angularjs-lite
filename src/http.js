@@ -163,6 +163,25 @@
           }
         }
 
+        function buildUrl(url, serializedParams) {
+          if (serializedParams.length) {
+            url += (url.indexOf("?") === -1) ? "?" : "&";
+            url += serializedParams;
+          }
+          return url;
+        }
+
+        function serializeParams(params) {
+          var parts = [];
+          if (params) {
+            Object.keys(params).forEach(function(k) {
+              parts.push(k + "=" + params[k]);
+            });
+          }
+          return parts.join("&");
+        }
+
+
         function sendReq(config, reqData) {
           var deferred = $q.defer();
 
@@ -184,9 +203,11 @@
             }
           }
 
+          var url = buildUrl(config.url, serializeParams(config.params));
+
           $httpBackend(
             config.method,
-            config.url,
+            url,
             reqData,
             done,
             config.headers,
@@ -195,8 +216,8 @@
           return deferred.promise;
         }
 
-        function $http(requestConfig) {
 
+        function $http(requestConfig) {
           //assign takes the requestConfig and copies all of it's properties to 
           //{method:"GET"} object and will override if there are any conflicts
           //eg. if they both have a "method" property, it's the property of requestConfig

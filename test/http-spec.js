@@ -506,7 +506,7 @@
       var response;
       $http({
         method: "GET",
-        url: "http://teropa.info"
+        url: "http://domain.com"
       }).then(function(r) {
         response = r;
       });
@@ -521,7 +521,7 @@
       var response;
       $http({
         method: "GET",
-        url: "http://teropa.info"
+        url: "http://domain.com"
       }).then(function(r) {
         response = r;
       });
@@ -535,7 +535,7 @@
       var response;
       $http({
         method: "GET",
-        url: "http://teropa.info"
+        url: "http://domain.com"
       }).then(function(r) {
         response = r;
       });
@@ -548,13 +548,35 @@
       var response;
       $http({
         method: "GET",
-        url: "http://teropa.info"
+        url: "http://domain.com"
       }).then(function(r) {
         response = r;
       });
       window.debug = true;
       requests[0].respond(200, {}, "{{expr}}");
       expect(response.data).toEqual("{{expr}}");
+    });
+
+
+    it("adds params to URL", function() {
+      $http({
+        url: "http://domain.com",
+        params: {
+          a: 42
+        }
+      });
+      expect(requests[0].url).toBe('http://domain.com?a=42');
+    });
+
+
+    it('adds additional params to URL', function() {
+      $http({
+        url: 'http://domain.com?a=42',
+        params: {
+          b: 42
+        }
+      });
+      expect(requests[0].url).toBe('http://domain.com?a=42&b=42');
     });
   });
 })();
