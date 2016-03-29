@@ -961,5 +961,27 @@
       expect(requests.length).toBe(0);
       expect(requestErrorSpy).toHaveBeenCalledWith('fail');
     });
+
+
+    it('allows intercepting response errors', function() {
+      var responseErrorSpy = jasmine.createSpy();
+      var injector = createInjector(['ng', function($httpProvider) {
+        $httpProvider.interceptors.push(_.constant({
+          responseError: responseErrorSpy
+        }));
+        $httpProvider.interceptors.push(_.constant({
+          response: function() {
+            throw 'fail';
+          }
+        }));
+      }]);
+      $http = injector.get('$http');
+      $rootScope = injector.get('$rootScope');
+      $http.get('http://teropa.info');
+      $rootScope.$apply();
+      requests[0].respond(200, {}, 'Hello');
+      $rootScope.$apply();
+      expect(responseErrorSpy).toHaveBeenCalledWith('fail');
+    });
   });
 })();

@@ -297,7 +297,7 @@
 
           // for each interceptor, apply the response method
           interceptors.forEach(function(interceptor) {
-            promise = promise.then(interceptor.response);
+            promise = promise.then(interceptor.response, interceptor.responseError);
           });
 
           return promise;
