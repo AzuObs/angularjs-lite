@@ -309,7 +309,7 @@
       return function serializeParams(params) {
         var parts = [];
 
-        function serialize(value, prefix) {
+        function serialize(value, prefix, topLevel) {
           // undefined || null
           if (value === null || value === undefined) {
             return;
@@ -317,8 +317,13 @@
 
           // []
           if (toString.call(value) === "[object Array]") {
-            value.forEach(function(v) {
-              serialize(v, prefix + "[]");
+            value.forEach(function(v, i) {
+              serialize(
+                v,
+                prefix + "[" +
+                (_.isObject(v) ? i : "") +
+                "]"
+              );
             });
           }
 
@@ -327,7 +332,12 @@
             toString.call(value) !== "[object Date]"
           ) {
             Object.keys(value).forEach(function(k) {
-              serialize(value[k], prefix + "[" + k + "]");
+              serialize(
+                value[k],
+                prefix +
+                (topLevel ? "" : "[") + k +
+                (topLevel ? "" : "]")
+              );
             });
           }
           else {
@@ -335,34 +345,7 @@
           }
         }
 
-
-        if (params) {
-          Object.keys(params).forEach(function(k) {
-            // if null or undefined
-            if (params[k] === undefined || params[k] === null) {
-              return;
-            }
-
-            // if array
-            if (toString.call(params[k]) === "[object Array]") {
-              params[k].forEach(function(value) {
-                serialize(value, k + "[]");
-              });
-            }
-
-            // if object but not date object
-            else if (toString.call(params[k]) === "[object Object]" &&
-              toString.call(params[k]) !== "[object Date]"
-            ) {
-              Object.keys(params[k]).forEach(function(kk) {
-                serialize(params[k][kk], k + "[" + kk + "]");
-              });
-            }
-            else {
-              parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
-            }
-          });
-        }
+        serialize(params, "", true);
 
         return parts.join("&");
       };

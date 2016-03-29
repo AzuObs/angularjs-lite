@@ -583,54 +583,55 @@
 
     it('escapes url characters in params', function() {
       $http({
-        url: 'http://teropa.info',
+        url: 'http://domain.com',
         params: {
           '==': '&&'
         }
       });
-      expect(requests[0].url).toBe('http://teropa.info?%3D%3D=%26%26');
+      expect(requests[0].url).toBe('http://domain.com?%3D%3D=%26%26');
     });
 
 
     it('does not attach null or undefined params', function() {
       $http({
-        url: 'http://teropa.info',
+        url: 'http://domain.com',
         params: {
           a: null,
           b: undefined
         }
       });
-      expect(requests[0].url).toBe('http://teropa.info');
+      expect(requests[0].url).toBe('http://domain.com');
     });
 
 
     it('attaches multiple params from arrays', function() {
       $http({
-        url: 'http://teropa.info',
+        url: 'http://domain.com',
         params: {
           a: [42, 43]
         }
       });
-      expect(requests[0].url).toBe('http://teropa.info?a=42&a=43');
+      expect(requests[0].url).toBe('http://domain.com?a=42&a=43');
     });
 
 
     it('serializes objects to json', function() {
       $http({
-        url: 'http://teropa.info',
+        url: 'http://domain.com',
         params: {
           a: {
             b: 42
           }
         }
       });
-      expect(requests[0].url).toBe('http://teropa.info?a=%7B%22b%22%3A42%7D');
+
+      expect(requests[0].url).toBe('http://domain.com?a=%7B%22b%22%3A42%7D');
     });
 
 
     it('allows substituting param serializer', function() {
       $http({
-        url: 'http://teropa.info',
+        url: 'http://domain.com',
         params: {
           a: 42,
           b: 43
@@ -641,7 +642,7 @@
           }).join('&');
         }
       });
-      expect(requests[0].url).toEqual('http://teropa.info?a=42lol&b=43lol');
+      expect(requests[0].url).toEqual('http://domain.com?a=42lol&b=43lol');
     });
 
 
@@ -657,7 +658,7 @@
       }]);
       injector.invoke(function($http) {
         $http({
-          url: 'http://teropa.info',
+          url: 'http://domain.com',
           params: {
             a: 42,
             b: 43
@@ -665,7 +666,7 @@
           paramSerializer: 'mySpecialSerializer'
         });
         expect(requests[0].url)
-          .toEqual('http://teropa.info?a=42lol&b=43lol');
+          .toEqual('http://domain.com?a=42lol&b=43lol');
       });
     });
 
@@ -686,32 +687,32 @@
 
       it('is possible', function() {
         $http({
-          url: 'http://teropa.info',
+          url: 'http://domain.com',
           params: {
             a: 42,
             b: 43
           },
           paramSerializer: '$httpParamSerializerJQLike'
         });
-        expect(requests[0].url).toEqual('http://teropa.info?a=42&b=43');
+        expect(requests[0].url).toEqual('http://domain.com?a=42&b=43');
       });
 
 
       it('uses square brackets in arrays', function() {
         $http({
-          url: 'http://teropa.info',
+          url: 'http://domain.com',
           params: {
             a: [42, 43]
           },
           paramSerializer: '$httpParamSerializerJQLike'
         });
-        expect(requests[0].url).toEqual('http://teropa.info?a%5B%5D=42&a%5B%5D=43');
+        expect(requests[0].url).toEqual('http://domain.com?a%5B%5D=42&a%5B%5D=43');
       });
 
 
       it('uses square brackets in objects', function() {
         $http({
-          url: 'http://teropa.info',
+          url: 'http://domain.com',
           params: {
             a: {
               b: 42,
@@ -720,13 +721,13 @@
           },
           paramSerializer: '$httpParamSerializerJQLike'
         });
-        expect(requests[0].url).toEqual('http://teropa.info?a%5Bb%5D=42&a%5Bc%5D=43');
+        expect(requests[0].url).toEqual('http://domain.com?a%5Bb%5D=42&a%5Bc%5D=43');
       });
 
 
       it('supports nesting in objects', function() {
         $http({
-          url: 'http://teropa.info',
+          url: 'http://domain.com',
           params: {
             a: {
               b: {
@@ -736,7 +737,21 @@
           },
           paramSerializer: '$httpParamSerializerJQLike'
         });
-        expect(requests[0].url).toEqual('http://teropa.info?a%5Bb%5D%5Bc%5D=42');
+        expect(requests[0].url).toEqual('http://domain.com?a%5Bb%5D%5Bc%5D=42');
+      });
+
+
+      it('appends array indexes when items are objects', function() {
+        $http({
+          url: 'http://domain.com',
+          params: {
+            a: [{
+              b: 42
+            }]
+          },
+          paramSerializer: '$httpParamSerializerJQLike'
+        });
+        expect(requests[0].url).toEqual('http://domain.com?a%5B0%5D%5Bb%5D=42');
       });
     });
   });
