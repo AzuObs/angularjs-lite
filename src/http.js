@@ -29,7 +29,7 @@
         }
       }],
       transformResponse: [defaultHttpResponseTransform],
-      paramSerializer: serializeParams
+      paramSerializer: "$httpParamSerializer"
     };
 
 
@@ -170,27 +170,6 @@
       return url;
     }
 
-    function serializeParams(params) {
-      var parts = [];
-      if (params) {
-        Object.keys(params).forEach(function(k) {
-          if (params[k] === null || params[k] === undefined) {
-            return;
-          }
-          if (toString.call(params[k]) !== "[object Array]") {
-            params[k] = [params[k]];
-          }
-          params[k].forEach(function(value) {
-            if (toString.call(value) === "[object Object]") {
-              value = JSON.stringify(value);
-            }
-            parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(value));
-          });
-        });
-      }
-      return parts.join("&");
-    }
-
 
     ///////////////
     // this.$get //
@@ -299,5 +278,32 @@
   }
 
 
+  function $HttpParamSerializerProvider() {
+    this.$get = function() {
+      return function serializeParams(params) {
+        var parts = [];
+        if (params) {
+          Object.keys(params).forEach(function(k) {
+            if (params[k] === null || params[k] === undefined) {
+              return;
+            }
+            if (toString.call(params[k]) !== "[object Array]") {
+              params[k] = [params[k]];
+            }
+            params[k].forEach(function(value) {
+              if (toString.call(value) === "[object Object]") {
+                value = JSON.stringify(value);
+              }
+              parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(value));
+            });
+          });
+        }
+        return parts.join("&");
+      };
+    };
+  }
+
+
+  window.$HttpParamSerializerProvider = $HttpParamSerializerProvider;
   window.$HttpProvider = $HttpProvider;
 })();

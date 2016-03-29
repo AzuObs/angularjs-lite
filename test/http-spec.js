@@ -669,5 +669,17 @@
       });
     });
 
+
+    it('makes default param serializer available through DI', function() {
+      var injector = createInjector(['ng']);
+      injector.invoke(function($httpParamSerializer) {
+        var result = $httpParamSerializer({
+          a: 42,
+          b: 43
+        });
+        expect(result).toEqual('a=42&b=43');
+      });
+    });
+
   });
 })();

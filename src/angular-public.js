@@ -10,8 +10,9 @@
     ngModule.provider("$rootScope", $RootScopeProvider);
     ngModule.provider("$q", $QProvider);
     ngModule.provider("$$q", $$QProvider);
-    ngModule.provider("$httpBackend", $HttpBackendProvider);
     ngModule.provider("$http", $HttpProvider);
+    ngModule.provider("$httpBackend", $HttpBackendProvider);
+    ngModule.provider("$httpParamSerializer", $HttpParamSerializerProvider);
   }
 
   window.publishExternalAPI = publishExternalAPI;
