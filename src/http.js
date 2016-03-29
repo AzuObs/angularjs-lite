@@ -300,6 +300,20 @@
             promise = promise.then(interceptor.response, interceptor.responseError);
           });
 
+          //custom promise.success and promise.error handlers
+          promise.success = function(fn) {
+            promise.then(function(response) {
+              fn(response.data, response.status, response.headers, config);
+            });
+            return promise;
+          };
+          promise.error = function(fn) {
+            promise.catch(function(response) {
+              fn(response.data, response.status, response.headers, config);
+            });
+            return promise;
+          };
+
           return promise;
         } //end $http
 

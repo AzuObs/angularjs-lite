@@ -967,12 +967,12 @@
       var responseErrorSpy = jasmine.createSpy();
       var injector = createInjector(['ng', function($httpProvider) {
         $httpProvider.interceptors.push(_.constant({
-          responseError: responseErrorSpy
-        }));
-        $httpProvider.interceptors.push(_.constant({
           response: function() {
             throw 'fail';
           }
+        }));
+        $httpProvider.interceptors.push(_.constant({
+          responseError: responseErrorSpy
         }));
       }]);
       $http = injector.get('$http');
@@ -982,6 +982,46 @@
       requests[0].respond(200, {}, 'Hello');
       $rootScope.$apply();
       expect(responseErrorSpy).toHaveBeenCalledWith('fail');
+    });
+
+
+    it('allows attaching success handlers', function() {
+      var data, status, headers, config;
+      $http.get('http://teropa.info').success(function(d, s, h, c) {
+        data = d;
+        status = s;
+        headers = h;
+        config = c;
+      });
+      $rootScope.$apply();
+      requests[0].respond(200, {
+        'Cache-Control': 'no-cache'
+      }, 'Hello');
+      $rootScope.$apply();
+      expect(data).toBe('Hello');
+      expect(status).toBe(200);
+      expect(headers('Cache-Control')).toBe('no-cache');
+      expect(config.method).toBe('GET');
+    });
+
+
+    it('allows attaching error handlers', function() {
+      var data, status, headers, config;
+      $http.get('http://teropa.info').error(function(d, s, h, c) {
+        data = d;
+        status = s;
+        headers = h;
+        config = c;
+      });
+      $rootScope.$apply();
+      requests[0].respond(401, {
+        'Cache-Control': 'no-cache'
+      }, 'Fail');
+      $rootScope.$apply();
+      expect(data).toBe('Fail');
+      expect(status).toBe(401);
+      expect(headers('Cache-Control')).toBe('no-cache');
+      expect(config.method).toBe('GET');
     });
   });
 })();
