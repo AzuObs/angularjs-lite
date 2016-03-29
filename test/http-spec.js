@@ -612,5 +612,18 @@
       });
       expect(requests[0].url).toBe('http://teropa.info?a=42&a=43');
     });
+
+
+    it('serializes objects to json', function() {
+      $http({
+        url: 'http://teropa.info',
+        params: {
+          a: {
+            b: 42
+          }
+        }
+      });
+      expect(requests[0].url).toBe('http://teropa.info?a=%7B%22b%22%3A42%7D');
+    });
   });
 })();

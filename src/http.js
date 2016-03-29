@@ -182,6 +182,9 @@
                 params[k] = [params[k]];
               }
               params[k].forEach(function(value) {
+                if (toString.call(value) === "[object Object]") {
+                  value = JSON.stringify(value);
+                }
                 parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(value));
               });
             });
