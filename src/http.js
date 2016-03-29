@@ -175,6 +175,9 @@
           var parts = [];
           if (params) {
             Object.keys(params).forEach(function(k) {
+              if (params[k] === null || params[k] === undefined) {
+                return;
+              }
               parts.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
             });
           }
