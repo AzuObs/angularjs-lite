@@ -5,6 +5,9 @@
     var hasDirectives = {};
 
     this.directive = function(name, directiveFactory) {
+      if (name === "hasOwnProperty") {
+        throw "hasOwnProperty is not a valid directive name";
+      }
       if (!hasDirectives.hasOwnProperty(name)) {
         hasDirectives[name] = [];
 

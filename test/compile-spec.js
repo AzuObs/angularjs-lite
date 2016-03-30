@@ -35,7 +35,15 @@
       expect(result[0].d).toEqual('one');
       expect(result[1].d).toEqual('two');
     });
+
+
+    it('does not allow a directive called hasOwnProperty', function() {
+      var myModule = window.angular.module('myModule', []);
+      myModule.directive('hasOwnProperty', function() {});
+      expect(function() {
+        createInjector(['ng', 'myModule']);
+      }).toThrow();
+    });
+
   });
-
-
 })();
