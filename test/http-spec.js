@@ -1044,5 +1044,17 @@
       $rootScope.$apply();
       expect(requests[0].aborted).toBe(true);
     });
+
+
+    it('allows aborting a request after a timeout', function() {
+      $http.get('http://teropa.info', {
+        timeout: 5000
+      });
+      $rootScope.$apply();
+      jasmine.clock().tick(5001);
+      expect(requests[0].aborted).toBe(true);
+    });
+
+
   });
 })();

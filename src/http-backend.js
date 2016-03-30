@@ -34,10 +34,17 @@
           callback(-1, null, "");
         };
 
-        if (timeout) {
+        // if timeout exists and timeout is a promise
+        if (timeout && timeout.then) {
           timeout.then(function() {
             xhr.abort();
           });
+        }
+        // if timeout is a number
+        else if (timeout > 0) {
+          setTimeout(function() {
+            xhr.abort();
+          }, timeout);
         }
       };
     };
