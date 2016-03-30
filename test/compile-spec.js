@@ -86,7 +86,6 @@
 
 
     it("compiles element directives found from several elements", function() {
-      window.debug = true;
       var idx = 1;
       var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
@@ -279,6 +278,23 @@
         var el = $('<div data:ng-attr-my-directive></div>');
         $compile(el);
         expect(el.data('hasCompiled')).toBe(true);
+      });
+    });
+
+
+    it('compiles comment directives', function() {
+      var hasCompiled;
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: function(element) {
+            hasCompiled = true;
+          }
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<!-- directive: my-directive -->');
+        $compile(el);
+        expect(hasCompiled).toBe(true);
       });
     });
 
