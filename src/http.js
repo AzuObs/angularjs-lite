@@ -146,6 +146,21 @@
     var interceptorFactories = this.interceptors = [];
 
 
+    ////////////////////////
+    // this.useApplyAsync //
+    ////////////////////////
+    var useApplyAsync = false;
+    this.useApplyAsync = function(flag) {
+      if (flag === undefined) {
+        return useApplyAsync;
+      }
+      else {
+        useApplyAsync = !!flag;
+        return this;
+      }
+    };
+
+
     ///////////////////
     // this.defaults //
     ///////////////////
@@ -247,17 +262,24 @@
             //Math.max returns the largest number of the args passed it
             //eg Math.max(-1,0, 200, -100) returns 200
             status = Math.max(status, 0);
-            deferred[isSuccess(status) ? "resolve" : "reject"]({
-              status: status,
-              data: response,
-              headers: headersGetter(headersString),
-              statusText: statusText,
-              config: config
-            });
-            // we call $apply instead of $evalAsync/$applyAsync because we don't want 
-            // to be asynchronous, we want this to resolve straight away
-            if (!$rootScope.$$phase) {
-              $rootScope.$apply();
+
+            function resolvePromise() {
+              deferred[isSuccess(status) ? "resolve" : "reject"]({
+                status: status,
+                data: response,
+                headers: headersGetter(headersString),
+                statusText: statusText,
+                config: config
+              });
+            }
+
+            if (useApplyAsync) {
+              $rootScope.$applyAsync(resolvePromise);
+            }
+            else {
+              if (!$rootScope.$$phase) {
+                $rootScope.$apply();
+              }
             }
           }
 

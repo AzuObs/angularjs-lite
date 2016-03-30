@@ -151,7 +151,8 @@
           }
         },
 
-
+        // the expr gets executed in the NEXT $digest if this is called
+        // dugin a CURRENT $digest
         $applyAsync: function(expr) {
           var self = this;
 
@@ -302,6 +303,8 @@
         },
 
 
+        // gets called during the CURRENT $digest if this is called 
+        // in a listenerFn
         $evalAsync: function(expr) {
           var self = this;
 
