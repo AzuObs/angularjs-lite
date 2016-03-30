@@ -1,9 +1,18 @@
 (function() {
   "use strict";
 
+  function nodeName(element) {
+    return element.nodeName ? element.nodeName : element[0].nodeName;
+  }
+
+
   function $CompileProvider($provide) {
     var hasDirectives = {};
 
+
+    ////////////////////
+    // this.directive //
+    ////////////////////
     this.directive = function(name, directiveFactory) {
       if (typeof name === "string") {
         if (name === "hasOwnProperty") {
@@ -35,10 +44,59 @@
       }
     };
 
-    this.$get = function() {
-      return "";
-    };
-  }
+
+    ////////////////////////////
+    // this.$get aka $compile //
+    ////////////////////////////
+    this.$get = ["$injector", function($injector) {
+
+      // $compileNodes = jqLite wrapped html
+      function compile($compileNodes) {
+        return compileNodes($compileNodes);
+      }
+
+      function compileNodes($compileNodes) {
+        Object.keys($compileNodes).forEach(function(k) {
+          //jQuery gives us an object with an enumerable length property
+          //thx, jQuery
+          if (k === "length") {
+            return;
+          }
+
+          var node = $compileNodes[k];
+          // get custom-directives from the node
+          var directives = collectDirectives(node);
+          // apply changes to the node
+          applyDirectivesToNode(directives, node);
+        });
+      }
+
+      function collectDirectives(node) {
+        var directives = [];
+        var normalizeNodeName = _.camelCase(nodeName(node).toLowerCase());
+        addDirective(directives, normalizeNodeName);
+        return directives;
+      }
+
+      function addDirective(directives, name) {
+        if (hasDirectives.hasOwnProperty(name)) {
+          directives.push.apply(directives, $injector.get(name + "Directive"));
+        }
+      }
+
+      function applyDirectivesToNode(directives, compileNode) {
+        var $compileNode = $(compileNode);
+        directives.forEach(function(directive) {
+          if (directive.compile) {
+            directive.compile($compileNode);
+          }
+        });
+      }
+
+
+      return compile;
+    }]; //end this.$get
+  } //end $CompileProvider
   $CompileProvider.$inject = ["$provide"];
 
 
