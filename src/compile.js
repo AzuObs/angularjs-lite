@@ -68,6 +68,11 @@
           var directives = collectDirectives(node);
           // apply changes to the node
           applyDirectivesToNode(directives, node);
+
+          //recurse on children
+          if (node.childNodes && node.childNodes.length) {
+            compileNodes(node.childNodes);
+          }
         });
       }
 
