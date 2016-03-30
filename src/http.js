@@ -277,6 +277,7 @@
               $rootScope.$applyAsync(resolvePromise);
             }
             else {
+              resolvePromise();
               if (!$rootScope.$$phase) {
                 $rootScope.$apply();
               }

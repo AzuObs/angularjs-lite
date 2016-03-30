@@ -601,62 +601,62 @@
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://domain.com?a=42');
+      expect(requests[0].url).toBe("http://domain.com?a=42");
     });
 
 
-    it('adds additional params to URL', function() {
+    it("adds additional params to URL", function() {
       $http({
-        url: 'http://domain.com?a=42',
+        url: "http://domain.com?a=42",
         params: {
           b: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://domain.com?a=42&b=42');
+      expect(requests[0].url).toBe("http://domain.com?a=42&b=42");
     });
 
 
-    it('escapes url characters in params', function() {
+    it("escapes url characters in params", function() {
       $http({
-        url: 'http://domain.com',
+        url: "http://domain.com",
         params: {
-          '==': '&&'
+          "==": "&&"
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://domain.com?%3D%3D=%26%26');
+      expect(requests[0].url).toBe("http://domain.com?%3D%3D=%26%26");
     });
 
 
-    it('does not attach null or undefined params', function() {
+    it("does not attach null or undefined params", function() {
       $http({
-        url: 'http://domain.com',
+        url: "http://domain.com",
         params: {
           a: null,
           b: undefined
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://domain.com');
+      expect(requests[0].url).toBe("http://domain.com");
     });
 
 
-    it('attaches multiple params from arrays', function() {
+    it("attaches multiple params from arrays", function() {
       $http({
-        url: 'http://domain.com',
+        url: "http://domain.com",
         params: {
           a: [42, 43]
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://domain.com?a=42&a=43');
+      expect(requests[0].url).toBe("http://domain.com?a=42&a=43");
     });
 
 
-    it('serializes objects to json', function() {
+    it("serializes objects to json", function() {
       $http({
-        url: 'http://domain.com',
+        url: "http://domain.com",
         params: {
           a: {
             b: 42
@@ -664,114 +664,114 @@
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://domain.com?a=%7B%22b%22%3A42%7D');
+      expect(requests[0].url).toBe("http://domain.com?a=%7B%22b%22%3A42%7D");
     });
 
 
-    it('allows substituting param serializer', function() {
+    it("allows substituting param serializer", function() {
       $http({
-        url: 'http://domain.com',
+        url: "http://domain.com",
         params: {
           a: 42,
           b: 43
         },
         paramSerializer: function(params) {
           return _.map(params, function(v, k) {
-            return k + '=' + v + 'lol';
-          }).join('&');
+            return k + "=" + v + "lol";
+          }).join("&");
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toEqual('http://domain.com?a=42lol&b=43lol');
+      expect(requests[0].url).toEqual("http://domain.com?a=42lol&b=43lol");
     });
 
 
-    it('allows substituting param serializer through DI', function() {
-      var injector = createInjector(['ng', function($provide) {
-        $provide.factory('mySpecialSerializer', function() {
+    it("allows substituting param serializer through DI", function() {
+      var injector = createInjector(["ng", function($provide) {
+        $provide.factory("mySpecialSerializer", function() {
           return function(params) {
             return _.map(params, function(v, k) {
-              return k + '=' + v + 'lol';
-            }).join('&');
+              return k + "=" + v + "lol";
+            }).join("&");
           };
         });
       }]);
       injector.invoke(function($http, $rootScope) {
         $http({
-          url: 'http://domain.com',
+          url: "http://domain.com",
           params: {
             a: 42,
             b: 43
           },
-          paramSerializer: 'mySpecialSerializer'
+          paramSerializer: "mySpecialSerializer"
         });
         $rootScope.$apply();
         expect(requests[0].url)
-          .toEqual('http://domain.com?a=42lol&b=43lol');
+          .toEqual("http://domain.com?a=42lol&b=43lol");
       });
     });
 
 
-    it('makes default param serializer available through DI', function() {
-      var injector = createInjector(['ng']);
+    it("makes default param serializer available through DI", function() {
+      var injector = createInjector(["ng"]);
       injector.invoke(function($httpParamSerializer) {
         var result = $httpParamSerializer({
           a: 42,
           b: 43
         });
-        expect(result).toEqual('a=42&b=43');
+        expect(result).toEqual("a=42&b=43");
       });
     });
 
 
-    describe('JQ-like param serialization', function() {
+    describe("JQ-like param serialization", function() {
 
-      it('is possible', function() {
+      it("is possible", function() {
         $http({
-          url: 'http://domain.com',
+          url: "http://domain.com",
           params: {
             a: 42,
             b: 43
           },
-          paramSerializer: '$httpParamSerializerJQLike'
+          paramSerializer: "$httpParamSerializerJQLike"
         });
         $rootScope.$apply();
-        expect(requests[0].url).toEqual('http://domain.com?a=42&b=43');
+        expect(requests[0].url).toEqual("http://domain.com?a=42&b=43");
       });
 
 
-      it('uses square brackets in arrays', function() {
+      it("uses square brackets in arrays", function() {
         $http({
-          url: 'http://domain.com',
+          url: "http://domain.com",
           params: {
             a: [42, 43]
           },
-          paramSerializer: '$httpParamSerializerJQLike'
+          paramSerializer: "$httpParamSerializerJQLike"
         });
         $rootScope.$apply();
-        expect(requests[0].url).toEqual('http://domain.com?a%5B%5D=42&a%5B%5D=43');
+        expect(requests[0].url).toEqual("http://domain.com?a%5B%5D=42&a%5B%5D=43");
       });
 
 
-      it('uses square brackets in objects', function() {
+      it("uses square brackets in objects", function() {
         $http({
-          url: 'http://domain.com',
+          url: "http://domain.com",
           params: {
             a: {
               b: 42,
               c: 43
             }
           },
-          paramSerializer: '$httpParamSerializerJQLike'
+          paramSerializer: "$httpParamSerializerJQLike"
         });
         $rootScope.$apply();
-        expect(requests[0].url).toEqual('http://domain.com?a%5Bb%5D=42&a%5Bc%5D=43');
+        expect(requests[0].url).toEqual("http://domain.com?a%5Bb%5D=42&a%5Bc%5D=43");
       });
 
 
-      it('supports nesting in objects', function() {
+      it("supports nesting in objects", function() {
         $http({
-          url: 'http://domain.com',
+          url: "http://domain.com",
           params: {
             a: {
               b: {
@@ -779,138 +779,138 @@
               }
             }
           },
-          paramSerializer: '$httpParamSerializerJQLike'
+          paramSerializer: "$httpParamSerializerJQLike"
         });
         $rootScope.$apply();
-        expect(requests[0].url).toEqual('http://domain.com?a%5Bb%5D%5Bc%5D=42');
+        expect(requests[0].url).toEqual("http://domain.com?a%5Bb%5D%5Bc%5D=42");
       });
 
 
-      it('appends array indexes when items are objects', function() {
+      it("appends array indexes when items are objects", function() {
         $http({
-          url: 'http://domain.com',
+          url: "http://domain.com",
           params: {
             a: [{
               b: 42
             }]
           },
-          paramSerializer: '$httpParamSerializerJQLike'
+          paramSerializer: "$httpParamSerializerJQLike"
         });
         $rootScope.$apply();
-        expect(requests[0].url).toEqual('http://domain.com?a%5B0%5D%5Bb%5D=42');
+        expect(requests[0].url).toEqual("http://domain.com?a%5B0%5D%5Bb%5D=42");
       });
     });
 
 
-    it('supports shorthand method for GET', function() {
-      $http.get('http://teropa.info', {
+    it("supports shorthand method for GET", function() {
+      $http.get("http://domain.com", {
         params: {
           q: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?q=42');
-      expect(requests[0].method).toBe('GET');
+      expect(requests[0].url).toBe("http://domain.com?q=42");
+      expect(requests[0].method).toBe("GET");
     });
 
 
-    it('supports shorthand method for HEAD', function() {
-      $http.head('http://teropa.info', {
+    it("supports shorthand method for HEAD", function() {
+      $http.head("http://domain.com", {
         params: {
           q: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?q=42');
-      expect(requests[0].method).toBe('HEAD');
+      expect(requests[0].url).toBe("http://domain.com?q=42");
+      expect(requests[0].method).toBe("HEAD");
     });
 
 
-    it('supports shorthand method for DELETE', function() {
-      $http.delete('http://teropa.info', {
+    it("supports shorthand method for DELETE", function() {
+      $http.delete("http://domain.com", {
         params: {
           q: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?q=42');
-      expect(requests[0].method).toBe('DELETE');
+      expect(requests[0].url).toBe("http://domain.com?q=42");
+      expect(requests[0].method).toBe("DELETE");
     });
 
 
-    it('supports shorthand method for POST with data', function() {
-      $http.post('http://teropa.info', 'data', {
+    it("supports shorthand method for POST with data", function() {
+      $http.post("http://domain.com", "data", {
         params: {
           q: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?q=42');
-      expect(requests[0].method).toBe('POST');
-      expect(requests[0].requestBody).toBe('data');
+      expect(requests[0].url).toBe("http://domain.com?q=42");
+      expect(requests[0].method).toBe("POST");
+      expect(requests[0].requestBody).toBe("data");
     });
 
 
-    it('supports shorthand method for PUT with data', function() {
-      $http.put('http://teropa.info', 'data', {
+    it("supports shorthand method for PUT with data", function() {
+      $http.put("http://domain.com", "data", {
         params: {
           q: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?q=42');
-      expect(requests[0].method).toBe('PUT');
-      expect(requests[0].requestBody).toBe('data');
+      expect(requests[0].url).toBe("http://domain.com?q=42");
+      expect(requests[0].method).toBe("PUT");
+      expect(requests[0].requestBody).toBe("data");
     });
 
 
-    it('supports shorthand method for PATCH with data', function() {
-      $http.patch('http://teropa.info', 'data', {
+    it("supports shorthand method for PATCH with data", function() {
+      $http.patch("http://domain.com", "data", {
         params: {
           q: 42
         }
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?q=42');
-      expect(requests[0].method).toBe('PATCH');
-      expect(requests[0].requestBody).toBe('data');
+      expect(requests[0].url).toBe("http://domain.com?q=42");
+      expect(requests[0].method).toBe("PATCH");
+      expect(requests[0].requestBody).toBe("data");
     });
 
 
-    it('allows attaching interceptor factories', function() {
+    it("allows attaching interceptor factories", function() {
       var interceptorFactorySpy = jasmine.createSpy();
-      var injector = createInjector(['ng', function($httpProvider) {
+      var injector = createInjector(["ng", function($httpProvider) {
         $httpProvider.interceptors.push(interceptorFactorySpy);
       }]);
-      $http = injector.get('$http');
+      $http = injector.get("$http");
       expect(interceptorFactorySpy).toHaveBeenCalled();
     });
 
 
-    it('uses DI to instantiate interceptors', function() {
+    it("uses DI to instantiate interceptors", function() {
       var interceptorFactorySpy = jasmine.createSpy();
-      var injector = createInjector(['ng', function($httpProvider) {
-        $httpProvider.interceptors.push(['$rootScope', interceptorFactorySpy]);
+      var injector = createInjector(["ng", function($httpProvider) {
+        $httpProvider.interceptors.push(["$rootScope", interceptorFactorySpy]);
       }]);
-      $http = injector.get('$http');
-      var $rootScope = injector.get('$rootScope');
+      $http = injector.get("$http");
+      var $rootScope = injector.get("$rootScope");
       expect(interceptorFactorySpy).toHaveBeenCalledWith($rootScope);
     });
 
 
-    it('allows referencing existing interceptor factories', function() {
+    it("allows referencing existing interceptor factories", function() {
       var interceptorFactorySpy = jasmine.createSpy().and.returnValue({});
-      var injector = createInjector(['ng', function($provide, $httpProvider) {
-        $httpProvider.interceptors.push('myInterceptor');
-        $provide.factory('myInterceptor', interceptorFactorySpy);
+      var injector = createInjector(["ng", function($provide, $httpProvider) {
+        $httpProvider.interceptors.push("myInterceptor");
+        $provide.factory("myInterceptor", interceptorFactorySpy);
       }]);
-      $http = injector.get('$http');
+      $http = injector.get("$http");
       expect(interceptorFactorySpy).toHaveBeenCalled();
     });
 
 
-    it('allows intercepting requests', function() {
-      var injector = createInjector(['ng', function($httpProvider) {
+    it("allows intercepting requests", function() {
+      var injector = createInjector(["ng", function($httpProvider) {
         $httpProvider.interceptors.push(function() {
           return {
             request: function(config) {
@@ -920,18 +920,18 @@
           };
         });
       }]);
-      $http = injector.get('$http');
-      $rootScope = injector.get('$rootScope');
-      $http.get('http://teropa.info', {
+      $http = injector.get("$http");
+      $rootScope = injector.get("$rootScope");
+      $http.get("http://domain.com", {
         params: {}
       });
       $rootScope.$apply();
-      expect(requests[0].url).toBe('http://teropa.info?intercepted=true');
+      expect(requests[0].url).toBe("http://domain.com?intercepted=true");
     });
 
 
-    it('allows intercepting responses', function() {
-      var injector = createInjector(['ng', function($httpProvider) {
+    it("allows intercepting responses", function() {
+      var injector = createInjector(["ng", function($httpProvider) {
         $httpProvider.interceptors.push(_.constant({
           response: function(response) {
             response.intercepted = true;
@@ -939,64 +939,64 @@
           }
         }));
       }]);
-      $http = injector.get('$http');
-      $rootScope = injector.get('$rootScope');
+      $http = injector.get("$http");
+      $rootScope = injector.get("$rootScope");
       var response;
-      $http.get('http://teropa.info').then(function(r) {
+      $http.get("http://domain.com").then(function(r) {
         response = r;
       });
       $rootScope.$apply();
-      requests[0].respond(200, {}, 'Hello');
+      requests[0].respond(200, {}, "Hello");
       expect(response.intercepted).toBe(true);
     });
 
 
-    it('allows intercepting request errors', function() {
+    it("allows intercepting request errors", function() {
       var requestErrorSpy = jasmine.createSpy();
-      var injector = createInjector(['ng', function($httpProvider) {
+      var injector = createInjector(["ng", function($httpProvider) {
         $httpProvider.interceptors.push(_.constant({
           request: function(config) {
-            throw 'fail';
+            throw "fail";
           }
         }));
         $httpProvider.interceptors.push(_.constant({
           requestError: requestErrorSpy
         }));
       }]);
-      $http = injector.get('$http');
-      $rootScope = injector.get('$rootScope');
-      $http.get('http://teropa.info');
+      $http = injector.get("$http");
+      $rootScope = injector.get("$rootScope");
+      $http.get("http://domain.com");
       $rootScope.$apply();
       expect(requests.length).toBe(0);
-      expect(requestErrorSpy).toHaveBeenCalledWith('fail');
+      expect(requestErrorSpy).toHaveBeenCalledWith("fail");
     });
 
 
-    it('allows intercepting response errors', function() {
+    it("allows intercepting response errors", function() {
       var responseErrorSpy = jasmine.createSpy();
-      var injector = createInjector(['ng', function($httpProvider) {
+      var injector = createInjector(["ng", function($httpProvider) {
         $httpProvider.interceptors.push(_.constant({
           response: function() {
-            throw 'fail';
+            throw "fail";
           }
         }));
         $httpProvider.interceptors.push(_.constant({
           responseError: responseErrorSpy
         }));
       }]);
-      $http = injector.get('$http');
-      $rootScope = injector.get('$rootScope');
-      $http.get('http://teropa.info');
+      $http = injector.get("$http");
+      $rootScope = injector.get("$rootScope");
+      $http.get("http://domain.com");
       $rootScope.$apply();
-      requests[0].respond(200, {}, 'Hello');
+      requests[0].respond(200, {}, "Hello");
       $rootScope.$apply();
-      expect(responseErrorSpy).toHaveBeenCalledWith('fail');
+      expect(responseErrorSpy).toHaveBeenCalledWith("fail");
     });
 
 
-    it('allows attaching success handlers', function() {
+    it("allows attaching success handlers", function() {
       var data, status, headers, config;
-      $http.get('http://teropa.info').success(function(d, s, h, c) {
+      $http.get("http://domain.com").success(function(d, s, h, c) {
         data = d;
         status = s;
         headers = h;
@@ -1004,19 +1004,19 @@
       });
       $rootScope.$apply();
       requests[0].respond(200, {
-        'Cache-Control': 'no-cache'
-      }, 'Hello');
+        "Cache-Control": "no-cache"
+      }, "Hello");
       $rootScope.$apply();
-      expect(data).toBe('Hello');
+      expect(data).toBe("Hello");
       expect(status).toBe(200);
-      expect(headers('Cache-Control')).toBe('no-cache');
-      expect(config.method).toBe('GET');
+      expect(headers("Cache-Control")).toBe("no-cache");
+      expect(config.method).toBe("GET");
     });
 
 
-    it('allows attaching error handlers', function() {
+    it("allows attaching error handlers", function() {
       var data, status, headers, config;
-      $http.get('http://teropa.info').error(function(d, s, h, c) {
+      $http.get("http://domain.com").error(function(d, s, h, c) {
         data = d;
         status = s;
         headers = h;
@@ -1024,19 +1024,19 @@
       });
       $rootScope.$apply();
       requests[0].respond(401, {
-        'Cache-Control': 'no-cache'
-      }, 'Fail');
+        "Cache-Control": "no-cache"
+      }, "Fail");
       $rootScope.$apply();
-      expect(data).toBe('Fail');
+      expect(data).toBe("Fail");
       expect(status).toBe(401);
-      expect(headers('Cache-Control')).toBe('no-cache');
-      expect(config.method).toBe('GET');
+      expect(headers("Cache-Control")).toBe("no-cache");
+      expect(config.method).toBe("GET");
     });
 
 
-    it('allows aborting a request with a Promise', function() {
+    it("allows aborting a request with a Promise", function() {
       var timeout = $q.defer();
-      $http.get('http://teropa.info', {
+      $http.get("http://domain.com", {
         timeout: timeout.promise
       });
       $rootScope.$apply();
@@ -1046,8 +1046,8 @@
     });
 
 
-    it('allows aborting a request after a timeout', function() {
-      $http.get('http://teropa.info', {
+    it("allows aborting a request after a timeout", function() {
+      $http.get("http://domain.com", {
         timeout: 5000
       });
       $rootScope.$apply();
@@ -1056,24 +1056,24 @@
     });
 
 
-    describe('pending requests', function() {
+    describe("pending requests", function() {
 
-      it('are in the collection while pending', function() {
-        $http.get('http://teropa.info');
+      it("are in the collection while pending", function() {
+        $http.get("http://domain.com");
         $rootScope.$apply();
         expect($http.pendingRequests).toBeDefined();
         expect($http.pendingRequests.length).toBe(1);
-        expect($http.pendingRequests[0].url).toBe('http://teropa.info');
-        requests[0].respond(200, {}, 'OK');
+        expect($http.pendingRequests[0].url).toBe("http://domain.com");
+        requests[0].respond(200, {}, "OK");
         $rootScope.$apply();
         expect($http.pendingRequests.length).toBe(0);
       });
 
 
-      it('are also cleared on failure', function() {
-        $http.get('http://teropa.info');
+      it("are also cleared on failure", function() {
+        $http.get("http://domain.com");
         $rootScope.$apply();
-        requests[0].respond(404, {}, 'Not found');
+        requests[0].respond(404, {}, "Not found");
         $rootScope.$apply();
         expect($http.pendingRequests.length).toBe(0);
       });
@@ -1083,27 +1083,27 @@
     describe("useApplyAsync", function() {
 
       beforeEach(function() {
-        var injector = createInjector(["ng"], function($httpProvider) {
+        var injector = createInjector(["ng", function($httpProvider) {
           $httpProvider.useApplyAsync(true);
-        });
+        }]);
         $http = injector.get("$http");
         $rootScope = injector.get("$rootScope");
       });
 
       it("does not resolve promise immediately when enabled", function() {
         var resolvedSpy = jasmine.createSpy();
-        $http.get('http://teropa.info').then(resolvedSpy);
+        $http.get("http://domain.com").then(resolvedSpy);
         $rootScope.$apply();
-        requests[0].respond(200, {}, 'OK');
+        requests[0].respond(200, {}, "OK");
         expect(resolvedSpy).not.toHaveBeenCalled();
       });
 
 
-      it('resolves promise later when enabled', function() {
+      it("resolves promise later when enabled", function() {
         var resolvedSpy = jasmine.createSpy();
-        $http.get('http://teropa.info').then(resolvedSpy);
+        $http.get("http://domain.com").then(resolvedSpy);
         $rootScope.$apply();
-        requests[0].respond(200, {}, 'OK');
+        requests[0].respond(200, {}, "OK");
         jasmine.clock().tick(100);
         expect(resolvedSpy).toHaveBeenCalled();
       });
