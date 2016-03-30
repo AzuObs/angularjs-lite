@@ -63,14 +63,7 @@
       }
 
       function compileNodes($compileNodes) {
-        Object.keys($compileNodes).forEach(function(k) {
-          //jQuery gives us an object with an enumerable length property
-          //thx, jQuery
-          if (k === "length") {
-            return;
-          }
-
-          var node = $compileNodes[k];
+        _.forEach($compileNodes, function(node) {
           // get custom-directives from the node
           var directives = collectDirectives(node);
           // apply changes to the node
@@ -84,17 +77,24 @@
       }
 
       function collectDirectives(node) {
+        function addDirective(directives, name) {
+          if (hasDirectives.hasOwnProperty(name)) {
+            directives.push.apply(directives, $injector.get(name + "Directive"));
+          }
+        }
+
         var directives = [];
-        var normalizeNodeName = directiveNormalize(nodeName(node).toLowerCase());
-        addDirective(directives, normalizeNodeName);
+        var normalizedNodeName = directiveNormalize(nodeName(node).toLowerCase());
+        addDirective(directives, normalizedNodeName);
+
+        _.forEach(node.attributes, function(attr) {
+          var normalizedAttrName = directiveNormalize(attr.name.toLowerCase());
+          addDirective(directives, normalizedAttrName);
+        });
+
         return directives;
       }
 
-      function addDirective(directives, name) {
-        if (hasDirectives.hasOwnProperty(name)) {
-          directives.push.apply(directives, $injector.get(name + "Directive"));
-        }
-      }
 
       function applyDirectivesToNode(directives, compileNode) {
         var $compileNode = $(compileNode);
