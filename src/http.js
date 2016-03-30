@@ -232,6 +232,17 @@
         function sendReq(config, reqData) {
           var deferred = $q.defer();
 
+          // add request to pending request
+          $http.pendingRequests.push(config);
+
+          // remove request on promise resolution
+          deferred.promise.then(function() {
+            $http.pendingRequests.splice($http.pendingRequests.indexOf(config), 1);
+          }, function() {
+            $http.pendingRequests.splice($http.pendingRequests.indexOf(config), 1);
+          });
+
+
           function done(status, response, headersString, statusText) {
             //Math.max returns the largest number of the args passed it
             //eg Math.max(-1,0, 200, -100) returns 200
@@ -327,6 +338,8 @@
 
         // access to defaults
         $http.defaults = defaults;
+        $http.pendingRequests = [];
+
         // access to shorthand $http.get, $http.head, $http.delete methods
         ["get", "head", "delete"].forEach(function(method) {
           $http[method] = function(url, config) {

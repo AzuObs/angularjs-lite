@@ -5,6 +5,8 @@
     this.$get = function() {
       return function $httpBackend(method, url, post, callback, headers, timeout, withCredentials) {
         var xhr = new window.XMLHttpRequest();
+        var timeoutId;
+
         xhr.open(method, url, true);
 
         if (headers) {
@@ -20,6 +22,11 @@
         xhr.send(post || null);
 
         xhr.onload = function() {
+          // if there is a timeout planned, clear it
+          if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+          }
+
           var response = ("response" in xhr) ? xhr.response : xhr.responseText;
           var statusText = xhr.statusText || "";
           callback(
@@ -31,6 +38,11 @@
         };
 
         xhr.onerror = function() {
+          // if there is a timeout planned, clear it
+          if (timeoutId !== undefined) {
+            clearTimeout(timeoutId);
+          }
+
           callback(-1, null, "");
         };
 
@@ -42,7 +54,7 @@
         }
         // if timeout is a number
         else if (timeout > 0) {
-          setTimeout(function() {
+          timeoutId = setTimeout(function() {
             xhr.abort();
           }, timeout);
         }
