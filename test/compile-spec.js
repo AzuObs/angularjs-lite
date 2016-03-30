@@ -250,5 +250,36 @@
       });
     });
 
+
+    it('compiles attribute directives with ng-attr prefix', function() {
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: function(element) {
+            element.data('hasCompiled', true);
+          }
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<div ng-attr-my-directive></div>');
+        $compile(el);
+        expect(el.data('hasCompiled')).toBe(true);
+      });
+    });
+
+
+    it('compiles attribute directives with data:ng-attr prefix', function() {
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: function(element) {
+            element.data('hasCompiled', true);
+          }
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<div data:ng-attr-my-directive></div>');
+        $compile(el);
+        expect(el.data('hasCompiled')).toBe(true);
+      });
+    });
   });
 })();

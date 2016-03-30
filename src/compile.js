@@ -89,6 +89,9 @@
 
         _.forEach(node.attributes, function(attr) {
           var normalizedAttrName = directiveNormalize(attr.name.toLowerCase());
+          if (/^ngAttr[A-Z]/.test(normalizedAttrName)) {
+            normalizedAttrName = normalizedAttrName[6].toLowerCase() + normalizedNodeName.substr(7);
+          }
           addDirective(directives, normalizedAttrName);
         });
 
