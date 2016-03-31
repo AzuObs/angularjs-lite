@@ -12,6 +12,26 @@
     return element.nodeName ? element.nodeName : element[0].nodeName;
   }
 
+  // a and b are directiveDefinitionObjects 
+  function byPriority(a, b) {
+    var diff = b.priority - a.priority;
+    // if priorities are not the same, the highest priority goes first
+    if (diff !== 0) {
+      return diff;
+    }
+    // else we sort by directive name
+    else {
+      // if name are not equal, first unicode char (numbers coerced to char) order goes first
+      if (a.name !== b.name) {
+        return (a.name < b.name ? -1 : 1);
+      }
+      // else we sort by order of registration
+      else {
+        return a.index - b.index;
+      }
+    }
+  }
+
 
   function $CompileProvider($provide, $rootScopeProvider) {
     // key: "myDirective + 'Directive'"
@@ -38,9 +58,11 @@
           $provide.factory(name + "Directive", ["$injector", function($injector) {
             var factories = hasDirectives[name];
 
-            return factories.map(function(factory) {
+            return factories.map(function(factory, i) {
               var directive = $injector.invoke(factory);
               directive.restrict = directive.restrict || "EA";
+              directive.name = directive.name || name;
+              directive.index = i;
               return directive;
             });
           }]);
@@ -128,6 +150,10 @@
           }
         }
 
+        //sort by priority
+        //then sort by name
+        //then sort by order in which is was declared
+        directives.sort(byPriority);
         return directives;
       }
 
