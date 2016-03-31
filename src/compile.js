@@ -61,6 +61,7 @@
             return factories.map(function(factory, i) {
               var directive = $injector.invoke(factory);
               directive.restrict = directive.restrict || "EA";
+              directive.priority = directive.priority || 0;
               directive.name = directive.name || name;
               directive.index = i;
               return directive;

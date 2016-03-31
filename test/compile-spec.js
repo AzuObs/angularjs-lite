@@ -589,5 +589,32 @@
         expect(compilations).toEqual(['first', 'second']);
       });
     });
+
+
+    it('uses default priority when one not given', function() {
+      var compilations = [];
+      var myModule = window.angular.module('myModule', []);
+      myModule.directive('firstDirective', function() {
+        return {
+          priority: 1,
+          compile: function(element) {
+            compilations.push('first');
+          }
+        };
+      });
+      myModule.directive('secondDirective', function() {
+        return {
+          compile: function(element) {
+            compilations.push('second');
+          }
+        };
+      });
+      var injector = createInjector(['ng', 'myModule']);
+      injector.invoke(function($compile) {
+        var el = $('<div second-directive first-directive></div>');
+        $compile(el);
+        expect(compilations).toEqual(['first', 'second']);
+      });
+    });
   });
 })();
