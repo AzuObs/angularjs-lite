@@ -616,5 +616,63 @@
         expect(compilations).toEqual(['first', 'second']);
       });
     });
+
+
+    it('stops compiling at a terminal directive', function() {
+      var compilations = [];
+      var myModule = window.angular.module('myModule', []);
+      myModule.directive('firstDirective', function() {
+        return {
+          priority: 1,
+          terminal: true,
+          compile: function(element) {
+            compilations.push('first');
+          }
+        };
+      });
+      myModule.directive('secondDirective', function() {
+        return {
+          priority: 0,
+          compile: function(element) {
+            compilations.push('second');
+          }
+        };
+      });
+      var injector = createInjector(['ng', 'myModule']);
+      injector.invoke(function($compile) {
+        var el = $('<div first-directive second-directive></div>');
+        $compile(el);
+        expect(compilations).toEqual(['first']);
+      });
+    });
+
+
+    it('still compiles directives with same priority after terminal', function() {
+      var compilations = [];
+      var myModule = window.angular.module('myModule', []);
+      myModule.directive('firstDirective', function() {
+        return {
+          priority: 1,
+          terminal: true,
+          compile: function(element) {
+            compilations.push('first');
+          }
+        };
+      });
+      myModule.directive('secondDirective', function() {
+        return {
+          priority: 1,
+          compile: function(element) {
+            compilations.push('second');
+          }
+        };
+      });
+      var injector = createInjector(['ng', 'myModule']);
+      injector.invoke(function($compile) {
+        var el = $('<div first-directive second-directive></div>');
+        $compile(el);
+        expect(compilations).toEqual(['first', 'second']);
+      });
+    });
   });
 })();

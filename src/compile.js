@@ -162,9 +162,18 @@
       // apply array of directive object to node
       function applyDirectivesToNode(directives, compileNode) {
         var $compileNode = $(compileNode);
+        var terminalPriority = -Number.MAX_VALUE;
+
         directives.forEach(function(directive) {
+          if (directive.priority < terminalPriority) {
+            return false;
+          }
+
           if (directive.compile) {
             directive.compile($compileNode);
+          }
+          if (directive.terminal) {
+            terminalPriority = directive.terminal;
           }
         });
       }
