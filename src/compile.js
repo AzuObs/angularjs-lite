@@ -39,7 +39,9 @@
             var factories = hasDirectives[name];
 
             return factories.map(function(factory) {
-              return $injector.invoke(factory);
+              var directive = $injector.invoke(factory);
+              directive.restrict = directive.restrict || "EA";
+              return directive;
             });
           }]);
         }

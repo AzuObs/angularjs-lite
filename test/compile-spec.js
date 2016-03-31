@@ -454,5 +454,56 @@
         }); // end forEach
       }); // end describe ("restrict to EA")
     }); // end forEach
+
+
+    it('applies to attributes when no restrict given', function() {
+      var hasCompiled = false;
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: function(element) {
+            hasCompiled = true;
+          }
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<div my-directive></div>');
+        $compile(el);
+        expect(hasCompiled).toBe(true);
+      });
+    });
+
+
+    it('applies to elements when no restrict given', function() {
+      var hasCompiled = false;
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: function(element) {
+            hasCompiled = true;
+          }
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<my-directive></my-directive>');
+        $compile(el);
+        expect(hasCompiled).toBe(true);
+      });
+    });
+
+
+    it('does not apply to classes when no restrict given', function() {
+      var hasCompiled = false;
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: function(element) {
+            hasCompiled = true;
+          }
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<div class="my-directive"></div>');
+        $compile(el);
+        expect(hasCompiled).toBe(false);
+      });
+    });
   });
 })();
