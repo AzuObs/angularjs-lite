@@ -3,11 +3,12 @@
 
   // x || data followed by : || - || _ 
   var PREFIX_REGEXP = /(x[\:\-_]|data[\:\-_])/i;
-
+  // strip prefix from directives and convert to camelCase
   function directiveNormalize(name) {
     return _.camelCase(name.replace(PREFIX_REGEXP, ""));
   }
 
+  // get name of a node
   function nodeName(element) {
     return element.nodeName ? element.nodeName : element[0].nodeName;
   }
@@ -30,6 +31,35 @@
         return a.index - b.index;
       }
     }
+  }
+
+  // scans a node for the nodes containing startAttr, endAttr, and everything in between
+  function groupScan(node, startAttr, endAttr) {
+    var nodes = [];
+    if (startAttr && node && node.hasAttribute(startAttr)) {
+      //use for nested multi-elements
+      //<div a-start></div>
+      //<div a-start></div>
+      //<div a-end></div>
+      //<div a-end></div>
+      var depth = 0;
+      do {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.hasAttribute(startAttr)) {
+            depth++;
+          }
+          else if (node.hasAttribute(endAttr)) {
+            depth--;
+          }
+        }
+        nodes.push(node);
+        node = node.nextSibling;
+      } while (depth > 0);
+    }
+    else {
+      nodes.push(node);
+    }
+    return $(nodes);
   }
 
 
@@ -85,6 +115,18 @@
     // this.$get aka $compile //
     ////////////////////////////
     this.$get = ["$injector", function($injector) {
+      function directiveIsMultiElement(name) {
+        if (hasDirectives.hasOwnProperty(name)) {
+          var directives = $injector.get(name + "Directive");
+          return directives.some(function(dir) {
+            return dir.multiElement === true;
+          });
+        }
+        else {
+          return false;
+        }
+      }
+
 
       // $compileNodes = jqLite wrapped html
       function compile($compileNodes) {
@@ -108,19 +150,29 @@
 
       // return array of directive objects
       function collectDirectives(node) {
-        function addDirective(directives, name, mode) {
+        // holds directive object (not factories!)
+        var directives = [];
+
+        function addDirective(directives, name, mode, attrStartName, attrEndName) {
           if (hasDirectives.hasOwnProperty(name)) {
             // array of directive objects
             var foundDirectives = $injector.get(name + "Directive");
             var applicableDirectives = foundDirectives.filter(function(dir) {
               return dir.restrict.indexOf(mode) !== -1;
             });
-            directives.push.apply(directives, applicableDirectives);
+
+            //check if multi-element
+            applicableDirectives.forEach(function(directive) {
+              if (attrStartName) {
+                directive = _.create(directive, {
+                  $$start: attrStartName,
+                  $$end: attrEndName
+                });
+              }
+              directives.push(directive);
+            });
           }
         }
-
-        // holds directive object (not factories!)
-        var directives = [];
 
         if (node.nodeType === Node.ELEMENT_NODE) {
           // node element
@@ -129,11 +181,30 @@
 
           // node attr
           _.forEach(node.attributes, function(attr) {
-            var normalizedAttrName = directiveNormalize(attr.name.toLowerCase());
+            // multi-element vars
+            var attrStartName, attrEndName;
+            var name = attr.name;
+            var normalizedAttrName = directiveNormalize(name.toLowerCase());
+
+            //strip normalized "ng-attr" prefix
             if (/^ngAttr[A-Z]/.test(normalizedAttrName)) {
-              normalizedAttrName = normalizedAttrName[6].toLowerCase() + normalizedAttrName.substr(7);
+              // this-is-kebab-case
+              name = _.kebabCase(normalizedAttrName[6].toLowerCase() + normalizedAttrName.substr(7));
             }
-            addDirective(directives, normalizedAttrName, "A");
+
+            // multi-element test
+            var directiveNName = normalizedAttrName.replace(/(Start|End)$/, "");
+            if (directiveIsMultiElement(directiveNName)) {
+              // ends with "Start"
+              if (/Start$/.test(normalizedAttrName)) {
+                attrStartName = name;
+                attrEndName = name.substring(0, name.length - 5) + "end";
+                name = name.substring(0, name.length - 6);
+              }
+            }
+
+            normalizedAttrName = directiveNormalize(name.toLowerCase());
+            addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
           });
 
           // node class
@@ -162,10 +233,15 @@
       // apply array of directive object to node
       function applyDirectivesToNode(directives, compileNode) {
         var $compileNode = $(compileNode);
-        var termnial = false;
+        var terminal = false;
         var terminalPriority = -Number.MAX_VALUE;
 
         directives.forEach(function(directive) {
+          // multi-element
+          if (directive.$$start) {
+            $compileNode = groupScan(compileNode, directive.$$start, directive.$$end);
+          }
+
           if (directive.priority < terminalPriority) {
             return false;
           }
