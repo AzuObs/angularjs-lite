@@ -13,7 +13,11 @@
   }
 
 
-  function $CompileProvider($provide) {
+  function $CompileProvider($provide, $rootScopeProvider) {
+    // key: "myDirective + 'Directive'"
+    // value: directiveFactory -> returns: directive object 
+    // we keep track of these here, as we cannot get the provider that are held
+    // in the providerCache outside of config code
     var hasDirectives = {};
 
 
@@ -76,37 +80,49 @@
         });
       }
 
+
+      // return array of directive objects
       function collectDirectives(node) {
-        function addDirective(directives, name) {
+        function addDirective(directives, name, mode) {
           if (hasDirectives.hasOwnProperty(name)) {
-            directives.push.apply(directives, $injector.get(name + "Directive"));
+            // array of directive objects
+            var foundDirectives = $injector.get(name + "Directive");
+            var applicableDirectives = foundDirectives.filter(function(dir) {
+              return dir.restrict.indexOf(mode) !== -1;
+            });
+            directives.push.apply(directives, applicableDirectives);
           }
         }
 
+        // holds directive object (not factories!)
         var directives = [];
 
         if (node.nodeType === Node.ELEMENT_NODE) {
+          // node element
           var normalizedNodeName = directiveNormalize(nodeName(node).toLowerCase());
-          addDirective(directives, normalizedNodeName);
+          addDirective(directives, normalizedNodeName, "E");
 
+          // node attr
           _.forEach(node.attributes, function(attr) {
             var normalizedAttrName = directiveNormalize(attr.name.toLowerCase());
             if (/^ngAttr[A-Z]/.test(normalizedAttrName)) {
               normalizedAttrName = normalizedAttrName[6].toLowerCase() + normalizedAttrName.substr(7);
             }
-            addDirective(directives, normalizedAttrName);
+            addDirective(directives, normalizedAttrName, "A");
           });
 
+          // node class
           _.forEach(node.classList, function(cls) {
             var normalizedClassName = directiveNormalize(cls);
-            addDirective(directives, normalizedClassName);
+            addDirective(directives, normalizedClassName, "C");
           });
         }
 
+        // comment node
         else if (node.nodeType === Node.COMMENT_NODE) {
           var match = /^\s*directive\:\s*([\d\w\-_]+)/.exec(node.nodeValue);
           if (match) {
-            addDirective(directives, directiveNormalize(match[1]));
+            addDirective(directives, directiveNormalize(match[1]), "M");
           }
         }
 
@@ -114,6 +130,7 @@
       }
 
 
+      // apply array of directive object to node
       function applyDirectivesToNode(directives, compileNode) {
         var $compileNode = $(compileNode);
         directives.forEach(function(directive) {
