@@ -96,10 +96,10 @@
           // get custom-directives from the node
           var directives = collectDirectives(node);
           // apply changes to the node
-          applyDirectivesToNode(directives, node);
+          var terminal = applyDirectivesToNode(directives, node);
 
           //recurse on children
-          if (node.childNodes && node.childNodes.length) {
+          if (!terminal && node.childNodes && node.childNodes.length) {
             compileNodes(node.childNodes);
           }
         });
@@ -162,6 +162,7 @@
       // apply array of directive object to node
       function applyDirectivesToNode(directives, compileNode) {
         var $compileNode = $(compileNode);
+        var termnial = false;
         var terminalPriority = -Number.MAX_VALUE;
 
         directives.forEach(function(directive) {
@@ -173,9 +174,12 @@
             directive.compile($compileNode);
           }
           if (directive.terminal) {
+            terminal = true;
             terminalPriority = directive.terminal;
           }
         });
+
+        return terminal;
       }
 
 
