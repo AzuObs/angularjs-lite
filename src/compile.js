@@ -146,6 +146,7 @@
       Attributes.prototype = {
         $set: function(key, value) {
           this[key] = value;
+          this.$$element.attr(key, value);
         }
       };
 

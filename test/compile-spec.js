@@ -805,6 +805,18 @@
           }
         );
       });
+
+
+      it('sets attributes to DOM', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive attr="true"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('attr', 'false');
+            expect(element.attr('attr')).toEqual('false');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
