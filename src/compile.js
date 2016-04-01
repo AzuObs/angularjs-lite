@@ -139,7 +139,7 @@
     ////////////////////////////
     // this.$get aka $compile //
     ////////////////////////////
-    this.$get = ["$injector", function($injector) {
+    this.$get = ["$injector", "$rootScope", function($injector, $rootScope) {
       function Attributes(element) {
         this.$$element = element;
         this.$attr = {};
@@ -182,9 +182,13 @@
         },
 
         $observe: function(key, fn) {
+          var self = this;
           this.$$observers = this.$$observers || {};
           this.$$observers[key] = this.$$observers[key] || [];
           this.$$observers[key].push(fn);
+          $rootScope.$evalAsync(function() {
+            fn(self[key]);
+          });
         }
       };
 

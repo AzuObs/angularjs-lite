@@ -12,10 +12,10 @@
         }
       };
     });
-    injector.invoke(function($compile) {
+    injector.invoke(function($compile, $rootScope) {
       var el = $(domString);
       $compile(el);
-      callback(el, givenAttrs);
+      callback(el, givenAttrs, $rootScope);
     });
   }
 
@@ -954,6 +954,22 @@
             });
             attrs.$set('someAttribute', '43');
             expect(gotValue).toEqual('43');
+          }
+        );
+      });
+
+
+      it('calls observer on next $digest after registration', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive some-attribute="42"></my-directive>',
+          function(element, attrs, $rootScope) {
+            var gotValue;
+            attrs.$observe('someAttribute', function(value) {
+              gotValue = value;
+            });
+            $rootScope.$digest();
+            expect(gotValue).toEqual('42');
           }
         );
       });
