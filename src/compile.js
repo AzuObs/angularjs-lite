@@ -142,6 +142,7 @@
     this.$get = ["$injector", function($injector) {
       function Attributes(element) {
         this.$$element = element;
+        this.$attr = {};
       }
       Attributes.prototype = {
         $set: function(key, value, writeAttr, attrName) {
@@ -151,8 +152,16 @@
             this.$$element.prop(key, value);
           }
 
+          if (!attrName) {
+            if (this.$attr[key]) {
+              attrName = this.$attr[key];
+            }
+            else {
+              attrName = this.$attr[key] = _.kebabCase(key);
+            }
+          }
+
           if (writeAttr !== false) {
-            attrName = attrName || _.kebabCase(key);
             this.$$element.attr(attrName, value);
           }
         }
@@ -233,7 +242,10 @@
             if (isNgAttr) {
               // this-is-kebab-case
               name = _.kebabCase(normalizedAttrName[6].toLowerCase() + normalizedAttrName.substr(7));
+              normalizedAttrName = directiveNormalize(name.toLowerCase());
             }
+
+            attrs.$attr[normalizedAttrName] = name;
 
             var directiveNName = normalizedAttrName.replace(/(Start|End)$/, "");
             if (directiveIsMultiElement(directiveNName)) {

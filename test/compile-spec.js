@@ -903,6 +903,30 @@
           }
         );
       });
+
+
+      it('denormalizes attribute by using original attribute name', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive x-some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('someAttribute', '43');
+            expect(element.attr('x-some-attribute')).toEqual('43');
+          }
+        );
+      });
+
+
+      it('does not use ng-attr- prefix in denormalized names', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive ng-attr-some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('someAttribute', 43);
+            expect(element.attr('some-attribute')).toEqual('43');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
