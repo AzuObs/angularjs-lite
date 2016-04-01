@@ -1003,6 +1003,17 @@
           }
         );
       });
+
+
+      it('does not add attribute from class without a directive', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive class="some-class"></my-directive>',
+          function(element, attrs) {
+            expect(attrs.hasOwnProperty('someClass')).toBe(false);
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();

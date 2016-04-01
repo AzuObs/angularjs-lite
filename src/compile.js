@@ -214,6 +214,8 @@
 
 
       function addDirective(directives, name, mode, attrStartName, attrEndName) {
+        var match;
+
         if (hasDirectives.hasOwnProperty(name)) {
           // array of directive objects
           var foundDirectives = $injector.get(name + "Directive");
@@ -221,8 +223,8 @@
             return dir.restrict.indexOf(mode) !== -1;
           });
 
-          //check if multi-element
           applicableDirectives.forEach(function(directive) {
+            //check if multi-element
             if (attrStartName) {
               directive = _.create(directive, {
                 $$start: attrStartName,
@@ -230,8 +232,11 @@
               });
             }
             directives.push(directive);
+            match = directive;
           });
         }
+
+        return match;
       }
 
 
@@ -305,8 +310,9 @@
           // class
           _.forEach(node.classList, function(cls) {
             var normalizedClassName = directiveNormalize(cls);
-            addDirective(directives, normalizedClassName, "C");
-            attrs[normalizedClassName] = undefined;
+            if (addDirective(directives, normalizedClassName, "C")) {
+              attrs[normalizedClassName] = undefined;
+            }
           });
         }
 
