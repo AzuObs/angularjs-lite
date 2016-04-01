@@ -197,6 +197,15 @@
               self.$$observers[key].splice(index, 1);
             }
           };
+        },
+
+        $addClass: function(classVal) {
+          this.$$element.addClass(classVal);
+        },
+
+
+        $removeClass: function(classVal) {
+          this.$$element.removeClass(classVal);
         }
       };
 
