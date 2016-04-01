@@ -152,7 +152,7 @@
           }
 
           if (writeAttr !== false) {
-            attrName = attrName || key;
+            attrName = attrName || _.kebabCase(key);
             this.$$element.attr(attrName, value);
           }
         }

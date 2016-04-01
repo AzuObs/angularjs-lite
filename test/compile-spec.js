@@ -891,6 +891,18 @@
           }
         );
       });
+
+
+      it('denormalizes attribute by kebab-casing', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('someAttribute', 43);
+            expect(element.attr('some-attribute')).toEqual('43');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
