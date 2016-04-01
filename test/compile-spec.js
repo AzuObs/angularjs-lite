@@ -992,6 +992,17 @@
           }
         );
       });
+
+
+      it('adds an attribute from a class directive', function() {
+        registerAndCompile(
+          'myDirective',
+          '<div class="my-directive"></div>',
+          function(element, attrs) {
+            expect(attrs.hasOwnProperty('myDirective')).toBe(true);
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();

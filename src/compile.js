@@ -306,6 +306,7 @@
           _.forEach(node.classList, function(cls) {
             var normalizedClassName = directiveNormalize(cls);
             addDirective(directives, normalizedClassName, "C");
+            attrs[normalizedClassName] = undefined;
           });
         }
 
