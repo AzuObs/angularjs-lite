@@ -793,6 +793,18 @@
           }
         );
       });
+
+
+      it('allows setting attributes', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive attr="true"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('attr', 'false');
+            expect(attrs.attr).toEqual('false');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();

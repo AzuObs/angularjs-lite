@@ -140,6 +140,15 @@
     // this.$get aka $compile //
     ////////////////////////////
     this.$get = ["$injector", function($injector) {
+      function Attributes(element) {
+        this.$$element = element;
+      }
+      Attributes.prototype = {
+        $set: function(key, value) {
+          this[key] = value;
+        }
+      };
+
       function directiveIsMultiElement(name) {
         if (hasDirectives.hasOwnProperty(name)) {
           var directives = $injector.get(name + "Directive");
@@ -183,7 +192,7 @@
 
       function compileNodes($compileNodes) {
         _.forEach($compileNodes, function(node) {
-          var attrs = {};
+          var attrs = new Attributes($(node));
           var directives = collectDirectives(node, attrs);
           var terminal = applyDirectivesToNode(directives, node, attrs);
 
