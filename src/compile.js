@@ -160,10 +160,31 @@
               attrName = this.$attr[key] = _.kebabCase(key);
             }
           }
+          else {
+            this.$attr[key] = attrName;
+          }
 
           if (writeAttr !== false) {
             this.$$element.attr(attrName, value);
           }
+
+          if (this.$$observers) {
+            _.forEach(this.$$observers[key], function(observer) {
+              try {
+                observer(value);
+              }
+              catch (e) {
+                console.log(e);
+              }
+            });
+          }
+
+        },
+
+        $observe: function(key, fn) {
+          this.$$observers = this.$$observers || {};
+          this.$$observers[key] = this.$$observers[key] || [];
+          this.$$observers[key].push(fn);
         }
       };
 

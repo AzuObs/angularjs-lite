@@ -927,6 +927,36 @@
           }
         );
       });
+
+
+      it('uses new attribute name after once given', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive x-some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('someAttribute', 43, true, 'some-attribute');
+            attrs.$set('someAttribute', 44);
+            expect(element.attr('some-attribute')).toEqual('44');
+            expect(element.attr('x-some-attribute')).toEqual('42');
+          }
+        );
+      });
+
+
+      it('calls observer immediately when attribute is $set', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            var gotValue;
+            attrs.$observe('someAttribute', function(value) {
+              gotValue = value;
+            });
+            attrs.$set('someAttribute', '43');
+            expect(gotValue).toEqual('43');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
