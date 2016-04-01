@@ -144,7 +144,7 @@
         this.$$element = element;
       }
       Attributes.prototype = {
-        $set: function(key, value, writeAttr) {
+        $set: function(key, value, writeAttr, attrName) {
           this[key] = value;
 
           if (isBooleanAttribute(this.$$element[0], key)) {
@@ -152,7 +152,8 @@
           }
 
           if (writeAttr !== false) {
-            this.$$element.attr(key, value);
+            attrName = attrName || key;
+            this.$$element.attr(attrName, value);
           }
         }
       };

@@ -881,6 +881,16 @@
       });
 
 
+      it('denormalizes attribute name when explicitly given', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('someAttribute', 43, true, 'some-attribute');
+            expect(element.attr('some-attribute')).toEqual('43');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
