@@ -153,10 +153,33 @@
       }
 
 
+      function addDirective(directives, name, mode, attrStartName, attrEndName) {
+        if (hasDirectives.hasOwnProperty(name)) {
+          // array of directive objects
+          var foundDirectives = $injector.get(name + "Directive");
+          var applicableDirectives = foundDirectives.filter(function(dir) {
+            return dir.restrict.indexOf(mode) !== -1;
+          });
+
+          //check if multi-element
+          applicableDirectives.forEach(function(directive) {
+            if (attrStartName) {
+              directive = _.create(directive, {
+                $$start: attrStartName,
+                $$end: attrEndName
+              });
+            }
+            directives.push(directive);
+          });
+        }
+      }
+
+
       // $compileNodes = jqLite wrapped html
       function compile($compileNodes) {
         return compileNodes($compileNodes);
       }
+
 
       function compileNodes($compileNodes) {
         _.forEach($compileNodes, function(node) {
@@ -177,39 +200,19 @@
         // holds directive object (not factories!)
         var directives = [];
 
-        function addDirective(directives, name, mode, attrStartName, attrEndName) {
-          if (hasDirectives.hasOwnProperty(name)) {
-            // array of directive objects
-            var foundDirectives = $injector.get(name + "Directive");
-            var applicableDirectives = foundDirectives.filter(function(dir) {
-              return dir.restrict.indexOf(mode) !== -1;
-            });
-
-            //check if multi-element
-            applicableDirectives.forEach(function(directive) {
-              if (attrStartName) {
-                directive = _.create(directive, {
-                  $$start: attrStartName,
-                  $$end: attrEndName
-                });
-              }
-              directives.push(directive);
-            });
-          }
-        }
-
+        // element
         if (node.nodeType === Node.ELEMENT_NODE) {
-          // node element
           var normalizedNodeName = directiveNormalize(nodeName(node).toLowerCase());
           addDirective(directives, normalizedNodeName, "E");
 
-          // node attr
+          // attr
           _.forEach(node.attributes, function(attr) {
             var attrStartName, attrEndName;
             var name = attr.name;
             var normalizedAttrName = directiveNormalize(name.toLowerCase());
 
-            if (/^ngAttr[A-Z]/.test(normalizedAttrName)) {
+            var isNgAttr = /^ngAttr[A-Z]/.test(normalizedAttrName);
+            if (isNgAttr) {
               // this-is-kebab-case
               name = _.kebabCase(normalizedAttrName[6].toLowerCase() + normalizedAttrName.substr(7));
             }
@@ -224,22 +227,26 @@
             }
 
             normalizedAttrName = directiveNormalize(name.toLowerCase());
-            attrs[normalizedAttrName] = attr.value.trim();
-            if (isBooleanAttribute(node, normalizedAttrName)) {
-              attrs[normalizedAttrName] = true;
+
+            // add to attrs
+            if (isNgAttr || !attrs.hasOwnProperty(normalizedAttrName)) {
+              attrs[normalizedAttrName] = attr.value.trim();
+              if (isBooleanAttribute(node, normalizedAttrName)) {
+                attrs[normalizedAttrName] = true;
+              }
             }
 
             addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
           });
 
-          // node class
+          // class
           _.forEach(node.classList, function(cls) {
             var normalizedClassName = directiveNormalize(cls);
             addDirective(directives, normalizedClassName, "C");
           });
         }
 
-        // comment node
+        // comment
         else if (node.nodeType === Node.COMMENT_NODE) {
           var match = /^\s*directive\:\s*([\d\w\-_]+)/.exec(node.nodeValue);
           if (match) {

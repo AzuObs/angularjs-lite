@@ -20,6 +20,7 @@
         "src/http.js",
         "src/http-backend.js",
         "src/compile.js",
+        "test/compile-spec.js",
         "test/filter-spec.js",
         "test/filter-filter-spec.js",
         "test/parse-spec.js",
@@ -30,7 +31,6 @@
         "test/angular-public-spec.js",
         "test/q-spec.js",
         "test/http-spec.js",
-        "test/compile-spec.js"
       ],
       frameworks: ["jasmine", "sinon"],
       // browsers: ["PhantomJS"],
