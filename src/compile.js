@@ -144,9 +144,11 @@
         this.$$element = element;
       }
       Attributes.prototype = {
-        $set: function(key, value) {
+        $set: function(key, value, writeAttr) {
           this[key] = value;
-          this.$$element.attr(key, value);
+          if (writeAttr !== false) {
+            this.$$element.attr(key, value);
+          }
         }
       };
 

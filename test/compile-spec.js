@@ -817,6 +817,18 @@
           }
         );
       });
+
+
+      it('does not set attributes to DOM when flag is false', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive attr="true"></my-directive>',
+          function(element, attrs) {
+            attrs.$set('attr', 'false', false);
+            expect(element.attr('attr')).toEqual('true');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
