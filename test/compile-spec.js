@@ -1036,6 +1036,18 @@
           }
         );
       });
+
+
+      it('adds an attribute with a value from a comment directive', function() {
+        registerAndCompile(
+          'myDirective',
+          '<!-- directive: my-directive and the attribute value -->',
+          function(element, attrs) {
+            expect(attrs.hasOwnProperty('myDirective')).toBe(true);
+            expect(attrs.myDirective).toEqual('and the attribute value');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();
