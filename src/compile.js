@@ -135,12 +135,11 @@
 
       function compileNodes($compileNodes) {
         _.forEach($compileNodes, function(node) {
-          // get custom-directives from the node
-          var directives = collectDirectives(node);
-          // apply changes to the node
-          var terminal = applyDirectivesToNode(directives, node);
+          var attrs = {};
+          var directives = collectDirectives(node, attrs);
+          var terminal = applyDirectivesToNode(directives, node, attrs);
 
-          //recurse on children
+          // recurse on childrens unless "termnial" eg ng-if
           if (!terminal && node.childNodes && node.childNodes.length) {
             compileNodes(node.childNodes);
           }
@@ -149,7 +148,7 @@
 
 
       // return array of directive objects
-      function collectDirectives(node) {
+      function collectDirectives(node, attrs) {
         // holds directive object (not factories!)
         var directives = [];
 
@@ -204,6 +203,7 @@
             }
 
             normalizedAttrName = directiveNormalize(name.toLowerCase());
+            attrs[normalizedAttrName] = attr.value.trim();
             addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
           });
 
@@ -231,7 +231,7 @@
 
 
       // apply array of directive object to node
-      function applyDirectivesToNode(directives, compileNode) {
+      function applyDirectivesToNode(directives, compileNode, attrs) {
         var $compileNode = $(compileNode);
         var terminal = false;
         var terminalPriority = -Number.MAX_VALUE;
@@ -247,7 +247,7 @@
           }
 
           if (directive.compile) {
-            directive.compile($compileNode);
+            directive.compile($compileNode, attrs);
           }
           if (directive.terminal) {
             terminal = true;
