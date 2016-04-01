@@ -206,6 +206,24 @@
 
         $removeClass: function(classVal) {
           this.$$element.removeClass(classVal);
+        },
+
+        $updateClass: function(newClassVal, oldClassVal) {
+          // regex: "at least one white space"
+          var newClasses = newClassVal.split(/\s+/);
+          var oldClasses = oldClassVal.split(/\s+/);
+
+          // _.difference = substract from first array the values of the second array
+          var addedClasses = _.difference(newClasses, oldClasses);
+          var removedClasses = _.difference(oldClasses, newClasses);
+
+          if (addedClasses.length) {
+            this.$addClass(addedClasses.join(" "));
+          }
+
+          if (removedClasses.length) {
+            this.$removeClass(removedClasses.join(" "));
+          }
         }
       };
 
