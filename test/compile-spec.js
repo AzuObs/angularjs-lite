@@ -1014,6 +1014,28 @@
           }
         );
       });
+
+
+      it('supports values for class directive attributes', function() {
+        registerAndCompile(
+          'myDirective',
+          '<div class="my-directive: my attribute value"></div>',
+          function(element, attrs) {
+            expect(attrs.myDirective).toEqual('my attribute value');
+          }
+        );
+      });
+
+
+      it('terminates class directive attribute value at semicolon', function() {
+        registerAndCompile(
+          'myDirective',
+          '<div class="my-directive: my attribute value; some-other-class"></div>',
+          function(element, attrs) {
+            expect(attrs.myDirective).toEqual('my attribute value');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();

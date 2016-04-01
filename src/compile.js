@@ -264,6 +264,7 @@
       function collectDirectives(node, attrs) {
         // holds directive object (not factories!)
         var directives = [];
+        var match;
 
         // element
         if (node.nodeType === Node.ELEMENT_NODE) {
@@ -304,21 +305,30 @@
               }
             }
 
+            // deleted???
             addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
           });
 
-          // class
-          _.forEach(node.classList, function(cls) {
-            var normalizedClassName = directiveNormalize(cls);
-            if (addDirective(directives, normalizedClassName, "C")) {
-              attrs[normalizedClassName] = undefined;
+          // class 
+          var className = node.className;
+          if (typeof className === "string" && className.length !== 0) {
+            // ([\d\w\-_]+) = match anything contains a letter, digit, "-" or "_"
+            // (?:\:([^;]+))?;? optionally match a ":" that optionally finished with "?"
+            while ((match = /([\d\w\-_]+)(?:\:([^;]+))?;?/.exec(className))) {
+              var normalizedClassName = directiveNormalize(match[1]);
+              if (addDirective(directives, normalizedClassName, "C")) {
+                attrs[normalizedClassName] = match[2] ? match[2].trim() : undefined;
+              }
+
+              // process className so while loop doesn't go on infinitely
+              className = className.substr(match.index + match[0].length);
             }
-          });
+          }
         }
 
         // comment
         else if (node.nodeType === Node.COMMENT_NODE) {
-          var match = /^\s*directive\:\s*([\d\w\-_]+)/.exec(node.nodeValue);
+          match = /^\s*directive\:\s*([\d\w\-_]+)/.exec(node.nodeValue);
           if (match) {
             addDirective(directives, directiveNormalize(match[1]), "M");
           }
