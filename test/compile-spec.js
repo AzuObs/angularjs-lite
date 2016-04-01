@@ -973,6 +973,25 @@
           }
         );
       });
+
+
+      it('lets observers be deregistered', function() {
+        registerAndCompile(
+          'myDirective',
+          '<my-directive some-attribute="42"></my-directive>',
+          function(element, attrs) {
+            var gotValue;
+            var remove = attrs.$observe('someAttribute', function(value) {
+              gotValue = value;
+            });
+            attrs.$set('someAttribute', '43');
+            expect(gotValue).toEqual('43');
+            remove();
+            attrs.$set('someAttribute', '44');
+            expect(gotValue).toEqual('43');
+          }
+        );
+      });
     }); // describe("attributes") end
   }); // describe("$compile") end
 })();

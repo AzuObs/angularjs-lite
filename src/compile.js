@@ -189,6 +189,14 @@
           $rootScope.$evalAsync(function() {
             fn(self[key]);
           });
+
+          //deregisters the observe
+          return function() {
+            var index = self.$$observers[key].indexOf(fn);
+            if (index >= 0) {
+              self.$$observers[key].splice(index, 1);
+            }
+          };
         }
       };
 
