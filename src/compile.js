@@ -146,6 +146,11 @@
       Attributes.prototype = {
         $set: function(key, value, writeAttr) {
           this[key] = value;
+
+          if (isBooleanAttribute(this.$$element[0], key)) {
+            this.$$element.prop(key, value);
+          }
+
           if (writeAttr !== false) {
             this.$$element.attr(key, value);
           }
