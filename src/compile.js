@@ -1,8 +1,28 @@
 (function() {
   "use strict";
 
-  // x || data followed by : || - || _ 
+  // "x" OR "data" followed by ":" OR "-" OR "_"
   var PREFIX_REGEXP = /(x[\:\-_]|data[\:\-_])/i;
+  var BOOLEAN_ELEMENTS = {
+    INPUT: true,
+    SELECT: true,
+    OPTION: true,
+    TEXTAREA: true,
+    BUTTON: true,
+    FORM: true,
+    DETAILS: true
+  };
+  var BOOLEAN_ATTRS = {
+    multiple: true,
+    selected: true,
+    checked: true,
+    disabled: true,
+    readOnly: true,
+    required: true,
+    open: true
+  };
+
+
   // strip prefix from directives and convert to camelCase
   function directiveNormalize(name) {
     return _.camelCase(name.replace(PREFIX_REGEXP, ""));
@@ -11,6 +31,11 @@
   // get name of a node
   function nodeName(element) {
     return element.nodeName ? element.nodeName : element[0].nodeName;
+  }
+
+  // return true if HTML node attribute is a boolean eg "required", "checked", "disabled"
+  function isBooleanAttribute(node, attrName) {
+    return BOOLEAN_ATTRS[attrName] && BOOLEAN_ELEMENTS[node.nodeName];
   }
 
   // a and b are directiveDefinitionObjects 
@@ -180,21 +205,17 @@
 
           // node attr
           _.forEach(node.attributes, function(attr) {
-            // multi-element vars
             var attrStartName, attrEndName;
             var name = attr.name;
             var normalizedAttrName = directiveNormalize(name.toLowerCase());
 
-            //strip normalized "ng-attr" prefix
             if (/^ngAttr[A-Z]/.test(normalizedAttrName)) {
               // this-is-kebab-case
               name = _.kebabCase(normalizedAttrName[6].toLowerCase() + normalizedAttrName.substr(7));
             }
 
-            // multi-element test
             var directiveNName = normalizedAttrName.replace(/(Start|End)$/, "");
             if (directiveIsMultiElement(directiveNName)) {
-              // ends with "Start"
               if (/Start$/.test(normalizedAttrName)) {
                 attrStartName = name;
                 attrEndName = name.substring(0, name.length - 5) + "end";
@@ -204,6 +225,10 @@
 
             normalizedAttrName = directiveNormalize(name.toLowerCase());
             attrs[normalizedAttrName] = attr.value.trim();
+            if (isBooleanAttribute(node, normalizedAttrName)) {
+              attrs[normalizedAttrName] = true;
+            }
+
             addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
           });
 
