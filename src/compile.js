@@ -311,19 +311,25 @@
         });
 
         function compositeLinkFn(scope, linkNodes) {
+          var stableNodeList = [];
+
+          _.forEach(linkFns, function(linkFn) {
+            stableNodeList[linkFn.idx] = linkNodes[linkFn.idx];
+          });
+
           _.forEach(linkFns, function(linkFn) {
             if (linkFn.nodeLinkFn) {
               linkFn.nodeLinkFn(
                 linkFn.childLinkFn,
                 scope,
-                linkNodes[linkFn.idx]);
+                stableNodeList[linkFn.idx]);
             }
             // no directives on current node
             else {
               //link fn is the compositeLinkFn of the child
               linkFn.childLinkFn(
                 scope,
-                linkNodes[linkFn.idx].childNodes);
+                stableNodeList[linkFn.idx].childNodes);
             }
           });
         }
@@ -470,7 +476,8 @@
             childLinkFn(scope, linkNode.childNodes);
           }
 
-          _.forEach(postLinkFns, function(linkFn) {
+          //start from the end
+          _.forEachRight(postLinkFns, function(linkFn) {
             linkFn(scope, $element, attrs);
           });
         }
