@@ -309,8 +309,7 @@
           }
 
           if (nodeLinkFn && nodeLinkFn.scope) {
-            attrs.$$element
-.addClass("ng-scope");
+            attrs.$$element.addClass("ng-scope");
           }
 
           if (nodeLinkFn || childLinkFn) {
@@ -451,19 +450,21 @@
         var terminalPriority = -Number.MAX_VALUE;
         var preLinkFns = [];
         var postLinkFns = [];
-        var newScopeDirective;
+        var newScopeDirective, newIsolateScopeDirective;
 
-        function addLinkFns(preLinkFn, postLinkFn, attrStart, attrEnd) {
+        function addLinkFns(preLinkFn, postLinkFn, attrStart, attrEnd, isolateScope) {
           if (preLinkFn) {
             if (attrStart) {
               preLinkFn = groupElementsLinkFnWrapper(preLinkFn, attrStart, attrEnd);
             }
+            preLinkFn.isolateScope = isolateScope;
             preLinkFns.push(preLinkFn);
           }
           if (postLinkFn) {
             if (attrStart) {
               postLinkFn = groupElementsLinkFnWrapper(postLinkFn, attrStart, attrEnd);
             }
+            postLinkFn.isolateScope = isolateScope;
             postLinkFns.push(postLinkFn);
           }
         }
@@ -479,19 +480,25 @@
           }
 
           if (directive.scope) {
-            newScopeDirective = newScopeDirective || directive;
+            if (_.isObject(directive.scope)) {
+              newIsolateScopeDirective = directive;
+            }
+            else {
+              newScopeDirective = newScopeDirective || directive;
+            }
           }
 
           if (directive.compile) {
+            var isolateScope = (directive === newIsolateScopeDirective);
             var linkFn = directive.compile($compileNode, attrs);
             var attrStart = directive.$$start;
             var attrEnd = directive.$$end;
 
             if (typeof linkFn === "function") {
-              addLinkFns(null, linkFn, attrStart, attrEnd);
+              addLinkFns(null, linkFn, attrStart, attrEnd, isolateScope);
             }
             else if (linkFn) {
-              addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd);
+              addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope);
             }
           }
           if (directive.terminal) {
@@ -503,8 +510,13 @@
         function nodeLinkFn(childLinkFn, scope, linkNode) {
           var $element = $(linkNode);
 
+          var isolateScope;
+          if (newIsolateScopeDirective) {
+            isolateScope = scope.$new(true);
+          }
+
           _.forEach(preLinkFns, function(linkFn) {
-            linkFn(scope, $element, attrs);
+            linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs);
           });
 
           if (childLinkFn) {
@@ -513,7 +525,7 @@
 
           //start from the end
           _.forEachRight(postLinkFns, function(linkFn) {
-            linkFn(scope, $element, attrs);
+            linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs);
           });
         }
 
