@@ -269,7 +269,11 @@
 
       // $compileNodes = jqLite wrapped html
       function compile($compileNodes) {
-        return compileNodes($compileNodes);
+        compileNodes($compileNodes);
+
+        return publicLinkFn() {
+
+        };
       }
 
 

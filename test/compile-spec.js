@@ -1087,6 +1087,22 @@
           }
         );
       });
-    }); // describe("attributes") end
-  }); // describe("$compile") end
+    }); // describe("attributes")
+
+
+    it('returns a public link function from compile', function() {
+      var injector = makeInjectorWithDirectives('myDirective', function() {
+        return {
+          compile: _.noop
+        };
+      });
+      injector.invoke(function($compile) {
+        var el = $('<div my-directive></div>');
+        var linkFn = $compile(el);
+        expect(linkFn).toBeDefined();
+        expect(_.isFunction(linkFn)).toBe(true);
+      });
+    });
+
+  }); // describe("$compile")
 })();
