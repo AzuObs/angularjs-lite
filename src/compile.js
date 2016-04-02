@@ -438,8 +438,14 @@
 
           if (directive.compile) {
             var linkFn = directive.compile($compileNode, attrs);
-            if (linkFn) {
+
+            if (typeof linkFn === "function") {
               linkFns.push(linkFn);
+            }
+
+            // sometimes linkFn can be an object {pre: fn()..., post: fn()...}
+            else if (linkFn) {
+              linkFns.push(linkFn.post);
             }
           }
           if (directive.terminal) {
