@@ -295,14 +295,16 @@
             nodeLinkFn = applyDirectivesToNode(directives, node, attrs);
           }
 
+          var childLinkFn;
           // recurse on childrens unless "termnial" eg ng-if
           if ((!nodeLinkFn || !nodeLinkFn.terminal) && node.childNodes && node.childNodes.length) {
-            compileNodes(node.childNodes);
+            childLinkFn = compileNodes(node.childNodes);
           }
 
-          if (nodeLinkFn) {
+          if (nodeLinkFn || childLinkFn) {
             linkFns.push({
               nodeLinkFn: nodeLinkFn,
+              childLinkFn: childLinkFn,
               idx: i
             });
           }
@@ -310,7 +312,19 @@
 
         function compositeLinkFn(scope, linkNodes) {
           _.forEach(linkFns, function(linkFn) {
-            linkFn.nodeLinkFn(scope, linkNodes[linkFn.idx]);
+            if (linkFn.nodeLinkFn) {
+              linkFn.nodeLinkFn(
+                linkFn.childLinkFn,
+                scope,
+                linkNodes[linkFn.idx]);
+            }
+            // no directives on current node
+            else {
+              //link fn is the compositeLinkFn of the child
+              linkFn.childLinkFn(
+                scope,
+                linkNodes[linkFn.idx].childNodes);
+            }
           });
         }
 
@@ -434,7 +448,11 @@
           }
         });
 
-        function nodeLinkFn(scope, linkNode) {
+        function nodeLinkFn(childLinkFn, scope, linkNode) {
+          if (childLinkFn) {
+            childLinkFn(scope, linkNode.childNodes);
+          }
+
           _.forEach(linkFns, function(linkFn) {
             var $element = $(linkNode);
             linkFn(scope, $element, attrs);
@@ -443,7 +461,7 @@
 
         nodeLinkFn.terminal = terminal;
         return nodeLinkFn;
-      }
+      } // applyDirectives
 
 
       return compile;
