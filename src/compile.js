@@ -119,6 +119,11 @@
               directive.priority = directive.priority || 0;
               directive.name = directive.name || name;
               directive.index = i;
+              if (directive.link && !directive.compile) {
+                directive.compile = function() {
+                  return directive.link;
+                };
+              }
               return directive;
             });
           }]);
