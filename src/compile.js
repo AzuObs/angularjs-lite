@@ -272,7 +272,7 @@
         compileNodes($compileNodes);
 
         return publicLinkFn() {
-
+          $compileNodes.data("$scope", scope);
         };
       }
 

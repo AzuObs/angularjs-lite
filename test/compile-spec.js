@@ -1104,5 +1104,21 @@
       });
     });
 
+
+    describe('linking', function() {
+
+      it('takes a scope and attaches it to elements', function() {
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            compile: _.noop
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          expect(el.data('$scope')).toBe($rootScope);
+        });
+      });
+    }); // describe("linking")
   }); // describe("$compile")
 })();
