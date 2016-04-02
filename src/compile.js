@@ -424,7 +424,8 @@
         var $compileNode = $(compileNode);
         var terminal = false;
         var terminalPriority = -Number.MAX_VALUE;
-        var linkFns = [];
+        var preLinkFns = [];
+        var postLinkFns = [];
 
         directives.forEach(function(directive) {
           // multi-element
@@ -440,12 +441,16 @@
             var linkFn = directive.compile($compileNode, attrs);
 
             if (typeof linkFn === "function") {
-              linkFns.push(linkFn);
+              postLinkFns.push(linkFn);
             }
 
-            // sometimes linkFn can be an object {pre: fn()..., post: fn()...}
             else if (linkFn) {
-              linkFns.push(linkFn.post);
+              if (linkFn.pre) {
+                preLinkFns.push(linkFn.pre);
+              }
+              if (linkFn.post) {
+                postLinkFns.push(linkFn.post);
+              }
             }
           }
           if (directive.terminal) {
@@ -455,12 +460,17 @@
         });
 
         function nodeLinkFn(childLinkFn, scope, linkNode) {
+          var $element = $(linkNode);
+
+          _.forEach(preLinkFns, function(linkFn) {
+            linkFn(scope, $element, attrs);
+          });
+
           if (childLinkFn) {
             childLinkFn(scope, linkNode.childNodes);
           }
 
-          _.forEach(linkFns, function(linkFn) {
-            var $element = $(linkNode);
+          _.forEach(postLinkFns, function(linkFn) {
             linkFn(scope, $element, attrs);
           });
         }
