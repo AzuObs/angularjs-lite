@@ -97,16 +97,18 @@
   function parseIsolateBindings(isolateScope) {
     var bindings = {};
     _.forEach(isolateScope, function(definition, scopeName) {
-      // "@" or "=" or "=*" followed by 0+ characters into another group
+      // "@" or "=" or "=" followed by "*" followed by "?" followed by 0+ characters into another group
       // @ : one way data binding
       // = : two way data binding
       // =* : two way data bindin with a watchCollection
+      // =? : optional attribute
       // & : function
-      var match = definition.match(/\s*(@|=(\*?))\s*(\w*)\s*/);
+      var match = definition.match(/\s*(@|=(\*?))(\??)\s*(\w*)\s*/);
       bindings[scopeName] = {
         mode: match[1][0],
         collection: match[2] === "*",
-        attrName: match[3] || scopeName
+        optional: match[3],
+        attrName: match[4] || scopeName
       };
     });
 
@@ -567,6 +569,9 @@
                     break;
 
                   case "=":
+                    if (definition.optional && !attrs[attrName]) {
+                      break;
+                    }
                     var parentGet = $parse(attrs[attrName]);
                     var lastValue = isolateScope[scopeName] = parentGet(scope);
 
@@ -584,14 +589,18 @@
                       lastValue = parentValue;
                       return lastValue;
                     }
+
+                    var unwatch;
                     //case "=*"
                     if (definition.collection) {
-                      scope.$watchCollection(attrs[attrName], parentValueWatch);
+                      unwatch = scope.$watchCollection(attrs[attrName], parentValueWatch);
                     }
                     //case "="
                     else {
-                      scope.$watch(parentValueWatch);
+                      unwatch = scope.$watch(parentValueWatch);
                     }
+
+                    isolateScope.$on("destroy", unwatch);
                     break;
 
                   case "&":

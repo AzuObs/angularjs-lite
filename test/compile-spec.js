@@ -1768,6 +1768,26 @@
         });
       });
 
+
+      it('does not watch optional missing isolate scope expressions', function() {
+        var givenScope;
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            scope: {
+              myAttr: '=?'
+            },
+            link: function(scope) {
+              givenScope = scope;
+            }
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          expect($rootScope.$$watchers.length).toBe(0);
+        });
+      });
+
     }); // describe("linking")
   }); // describe("$compile")
 })();
