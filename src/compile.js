@@ -108,7 +108,7 @@
       bindings[scopeName] = {
         mode: match[1][0],
         collection: match[2] === "*",
-        optional: match[3],
+        optional: match[3] === "?",
         attrName: match[4] || scopeName
       };
     });
@@ -609,7 +609,7 @@
                     // function
                   case "&":
                     var parentExpr = $parse(attrs[attrName]);
-                    if (parentExpr === _.noop && definition.optional) {
+                    if (definition.optional && parentExpr === Function.prototype) {
                       break;
                     }
                     isolateScope[scopeName] = function(locals) {

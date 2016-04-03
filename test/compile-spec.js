@@ -1337,7 +1337,6 @@
 
 
       it('makes new scope for element when directive asks for it', function() {
-        window.debug = true;
         var givenScope;
         var injector = makeInjectorWithDirectives('myDirective', function() {
           return {
