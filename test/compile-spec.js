@@ -1507,6 +1507,48 @@
           }).toThrow();
         });
       });
+
+
+      it('adds class and data for element with isolated scope', function() {
+        var givenScope;
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            scope: {},
+            link: function(scope) {
+              givenScope = scope;
+            }
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          expect(el.hasClass('ng-isolate-scope')).toBe(true);
+          expect(el.hasClass('ng-scope')).toBe(false);
+          expect(el.data('$isolateScope')).toBe(givenScope);
+        });
+      });
+
+
+      it('allows observing attribute to the isolate scope', function() {
+        var givenScope, givenAttrs;
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            scope: {
+              anAttr: '@'
+            },
+            link: function(scope, element, attrs) {
+              givenScope = scope;
+              givenAttrs = attrs;
+            }
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          givenAttrs.$set('anAttr', '42');
+          expect(givenScope.anAttr).toEqual('42');
+        });
+      });
     }); // describe("linking")
   }); // describe("$compile")
 })();
