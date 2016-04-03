@@ -97,8 +97,11 @@
   function parseIsolateBindings(isolateScope) {
     var bindings = {};
     _.forEach(isolateScope, function(definition, scopeName) {
+      // "@" followed by 0+ characters into another group
+      var match = definition.match(/\s*@\s*(\w*)\s*/);
       bindings[scopeName] = {
-        mode: definition
+        mode: "@",
+        attrName: match[1] || scopeName
       };
     });
 
@@ -543,15 +546,17 @@
 
             // for every property in {a:"=a",b:"&b"} etc
             _.forEach(newIsolateScopeDirective.$$isolateBindings, function(definition, scopeName) {
+              var attrName = definition.attrName;
+
               switch (definition.mode) {
                 case "@":
                   // observe the attr
-                  attrs.$observe(scopeName, function(newAttrValue) {
+                  attrs.$observe(attrName, function(newAttrValue) {
                     isolateScope[scopeName] = newAttrValue;
                   });
                   // initialize scope
-                  if (attrs[scopeName]) {
-                    isolateScope[scopeName] = attrs[scopeName];
+                  if (attrs[attrName]) {
+                    isolateScope[scopeName] = attrs[attrName];
                   }
                   break;
                 case "=":
