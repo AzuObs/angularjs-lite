@@ -545,9 +545,14 @@
             _.forEach(newIsolateScopeDirective.$$isolateBindings, function(definition, scopeName) {
               switch (definition.mode) {
                 case "@":
+                  // observe the attr
                   attrs.$observe(scopeName, function(newAttrValue) {
                     isolateScope[scopeName] = newAttrValue;
                   });
+                  // initialize scope
+                  if (attrs[scopeName]) {
+                    isolateScope[scopeName] = attrs[scopeName];
+                  }
                   break;
                 case "=":
 
