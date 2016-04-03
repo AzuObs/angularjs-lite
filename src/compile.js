@@ -481,9 +481,16 @@
 
           if (directive.scope) {
             if (_.isObject(directive.scope)) {
+              if (newIsolateScopeDirective || newScopeDirective) {
+                throw "Multiple directives asking for new/inherited scopes";
+              }
               newIsolateScopeDirective = directive;
             }
+            // scope:true
             else {
+              if (newIsolateScopeDirective) {
+                throw "Multiple directives asking for new/inherited scopes";
+              }
               newScopeDirective = newScopeDirective || directive;
             }
           }

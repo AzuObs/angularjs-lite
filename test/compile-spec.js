@@ -1463,6 +1463,50 @@
           expect(givenScope).toBe($rootScope);
         });
       });
+
+
+      it('does not allow two isolate scope directives on an element', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              scope: {}
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              scope: {}
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-other-directive></div>');
+          expect(function() {
+            $compile(el);
+          }).toThrow();
+        });
+      });
+
+
+      it('does not allow both isolate and inherited scopes on an element', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              scope: {}
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              scope: true
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-other-directive></div>');
+          expect(function() {
+            $compile(el);
+          }).toThrow();
+        });
+      });
     }); // describe("linking")
   }); // describe("$compile")
 })();
