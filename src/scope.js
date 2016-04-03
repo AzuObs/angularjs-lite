@@ -404,6 +404,9 @@
         },
 
 
+        // shallow watch object properties/element
+        // even if the object changes it will not called the listenerFn
+        // unless the properties are different
         $watchCollection: function(watchFn, listenerFn) {
           var self = this;
           var newValue;
@@ -505,6 +508,8 @@
         },
 
 
+        // expects to watch an array of scope variables
+        // will call the listenerFn if any of the variables change
         $watchGroup: function(watchFns, listenerFn) {
             var self = this;
             var newValues = new Array(watchFns.length);

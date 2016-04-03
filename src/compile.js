@@ -97,11 +97,16 @@
   function parseIsolateBindings(isolateScope) {
     var bindings = {};
     _.forEach(isolateScope, function(definition, scopeName) {
-      // "@" or "=" followed by 0+ characters into another group
-      var match = definition.match(/\s*([@=])\s*(\w*)\s*/);
+      // "@" or "=" or "=*" followed by 0+ characters into another group
+      // @ : one way data binding
+      // = : two way data binding
+      // =* : two way data bindin with a watchCollection
+      // & : function
+      var match = definition.match(/\s*(@|=(\*?))\s*(\w*)\s*/);
       bindings[scopeName] = {
-        mode: match[1],
-        attrName: match[2] || scopeName
+        mode: match[1][0],
+        collection: match[2] === "*",
+        attrName: match[3] || scopeName
       };
     });
 
@@ -579,7 +584,14 @@
                       lastValue = parentValue;
                       return lastValue;
                     }
-                    scope.$watch(parentValueWatch);
+                    //case "=*"
+                    if (definition.collection) {
+                      scope.$watchCollection(attrs[attrName], parentValueWatch);
+                    }
+                    //case "="
+                    else {
+                      scope.$watch(parentValueWatch);
+                    }
                     break;
 
                   case "&":
@@ -587,6 +599,7 @@
                 }
               });
             }
+
 
             _.forEach(preLinkFns, function(linkFn) {
               linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs);
