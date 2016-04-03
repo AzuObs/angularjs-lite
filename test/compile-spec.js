@@ -1837,6 +1837,30 @@
           expect(gotArg).toBe(42);
         });
       });
+
+
+      it('sets missing optional parent scope expression to undefined', function() {
+        var givenScope;
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            scope: {
+              myExpr: '&?'
+            },
+            link: function(scope) {
+              givenScope = scope;
+            }
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var gotArg;
+          $rootScope.parentFunction = function(arg) {
+            gotArg = arg;
+          };
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          expect(givenScope.myExpr).toBeUndefined();
+        });
+      });
     }); // describe("linking")
   }); // describe("$compile")
 })();

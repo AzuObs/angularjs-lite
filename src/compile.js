@@ -100,9 +100,10 @@
       // "@" or "=" or "&" followed by "*" followed by "?" followed by 0+ characters into another group
       // @ : one way data binding
       // = : two way data binding
-      // =* : two way data bindin with a watchCollection
+      // =* : two way data binding with a watchCollection
       // =? : optional attribute
       // & : function
+      // &?: optional function
       var match = definition.match(/\s*([@&]|=(\*?))(\??)\s*(\w*)\s*/);
       bindings[scopeName] = {
         mode: match[1][0],
@@ -608,6 +609,9 @@
                     // function
                   case "&":
                     var parentExpr = $parse(attrs[attrName]);
+                    if (parentExpr === _.noop && definition.optional) {
+                      break;
+                    }
                     isolateScope[scopeName] = function(locals) {
                       return parentExpr(scope, locals);
                     };
