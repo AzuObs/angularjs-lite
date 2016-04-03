@@ -565,6 +565,12 @@
                     var parentGet = $parse(attrs[attrName]);
                     //scope is the parent of isolateScope
                     isolateScope[scopeName] = parentGet(scope);
+                    // anything returned from a $parse can be used as a scope watchFn
+                    // but the properties should be in the {},{} passed to the return fn
+                    scope.$watch(parentGet, function(newValue) {
+                      isolateScope[scopeName] = newValue;
+                    });
+
                     break;
 
                   case "&":

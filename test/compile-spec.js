@@ -1650,6 +1650,28 @@
           expect(givenScope.myAttr).toBe(42);
         });
       });
+
+
+      it('watches isolated scope expressions', function() {
+        var givenScope;
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            scope: {
+              myAttr: '='
+            },
+            link: function(scope) {
+              givenScope = scope;
+            }
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-attr="parentAttr + 1"></div>');
+          $compile(el)($rootScope);
+          $rootScope.parentAttr = 41;
+          $rootScope.$digest();
+          expect(givenScope.myAttr).toBe(42);
+        });
+      });
     }); // describe("linking")
   }); // describe("$compile")
 })();
