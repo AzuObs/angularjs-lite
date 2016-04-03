@@ -608,8 +608,8 @@
                     // function
                   case "&":
                     var parentExpr = $parse(attrs[attrName]);
-                    isolateScope[scopeName] = function() {
-                      return parentExpr(scope);
+                    isolateScope[scopeName] = function(locals) {
+                      return parentExpr(scope, locals);
                     };
                     break;
                 }

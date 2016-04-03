@@ -1810,6 +1810,33 @@
           expect(givenScope.myExpr()).toBe(43);
         });
       });
+
+
+      it('allows passing arguments to parent scope expression', function() {
+        var givenScope;
+        var injector = makeInjectorWithDirectives('myDirective', function() {
+          return {
+            scope: {
+              myExpr: '&'
+            },
+            link: function(scope) {
+              givenScope = scope;
+            }
+          };
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var gotArg;
+          $rootScope.parentFunction = function(arg) {
+            gotArg = arg;
+          };
+          var el = $('<div my-directive my-expr="parentFunction(argFromChild)"></div>');
+          $compile(el)($rootScope);
+          givenScope.myExpr({
+            argFromChild: 42
+          });
+          expect(gotArg).toBe(42);
+        });
+      });
     }); // describe("linking")
   }); // describe("$compile")
 })();
