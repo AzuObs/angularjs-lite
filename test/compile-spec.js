@@ -1995,6 +1995,35 @@
           expect(controllerInvoked).toBe(true);
         });
       });
+
+
+      it('gets scope, element, and attrs through DI', function() {
+        var gotScope, gotElement, gotAttrs;
+
+        function MyController($element, $scope, $attrs) {
+          gotElement = $element;
+          gotScope = $scope;
+          gotAttrs = $attrs;
+        }
+        var injector = createInjector(['ng',
+          function($controllerProvider, $compileProvider) {
+            $controllerProvider.register('MyController', MyController);
+            $compileProvider.directive('myDirective', function() {
+              return {
+                controller: 'MyController'
+              };
+            });
+          }
+        ]);
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive an-attr="abc"></div>');
+          $compile(el)($rootScope);
+          expect(gotElement[0]).toBe(el[0]);
+          expect(gotScope).toBe($rootScope);
+          expect(gotAttrs).toBeDefined();
+          expect(gotAttrs.anAttr).toEqual('abc');
+        });
+      });
     }); // describe("controllers")
   }); // describe("$compile")
 })();

@@ -556,16 +556,20 @@
           function nodeLinkFn(childLinkFn, scope, linkNode) {
             var $element = $(linkNode);
 
-            if (controllerDirectives) {
-              _.forEach(controllerDirectives, function(directive) {
-                var controllerName = directive.controller;
+            _.forEach(controllerDirectives, function(directive) {
+              var controllerName = directive.controller;
+              var locals = {
+                $scope: scope,
+                $element: $element,
+                $attrs: attrs
+              };
 
-                if (controllerName === "@") {
-                  controllerName = attrs[directive.name];
-                }
-                $controller(controllerName);
-              });
-            }
+              if (controllerName === "@") {
+                controllerName = attrs[directive.name];
+              }
+              $controller(controllerName, locals);
+            });
+
 
             var isolateScope;
             if (newIsolateScopeDirective) {
