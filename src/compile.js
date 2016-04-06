@@ -556,10 +556,17 @@
           function nodeLinkFn(childLinkFn, scope, linkNode) {
             var $element = $(linkNode);
 
+            var isolateScope;
+            if (newIsolateScopeDirective) {
+              isolateScope = scope.$new(true);
+              $element.addClass("ng-isolate-scope");
+              $element.data("$isolateScope", isolateScope);
+            }
+
             _.forEach(controllerDirectives, function(directive) {
               var controllerName = directive.controller;
               var locals = {
-                $scope: scope,
+                $scope: newIsolateScopeDirective ? isolateScope : scope,
                 $element: $element,
                 $attrs: attrs
               };
@@ -571,12 +578,7 @@
             });
 
 
-            var isolateScope;
             if (newIsolateScopeDirective) {
-              isolateScope = scope.$new(true);
-              $element.addClass("ng-isolate-scope");
-              $element.data("$isolateScope", isolateScope);
-
               // for every property in {a:"=a",b:"&b"} etc
               _.forEach(newIsolateScopeDirective.$$isolateBindings, function(definition, scopeName) {
                 var attrName = definition.attrName;
