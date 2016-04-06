@@ -22,11 +22,11 @@
     });
 
 
-    it('injects dependencies to controller functions', function() {
-      var injector = createInjector(['ng', function($provide) {
-        $provide.constant('aDep', 42);
+    it("injects dependencies to controller functions", function() {
+      var injector = createInjector(["ng", function($provide) {
+        $provide.constant("aDep", 42);
       }]);
-      var $controller = injector.get('$controller');
+      var $controller = injector.get("$controller");
 
       function MyController(aDep) {
         this.theDep = aDep;
@@ -36,9 +36,9 @@
     });
 
 
-    it('allows injecting locals to controller functions', function() {
-      var injector = createInjector(['ng']);
-      var $controller = injector.get('$controller');
+    it("allows injecting locals to controller functions", function() {
+      var injector = createInjector(["ng"]);
+      var $controller = injector.get("$controller");
 
       function MyController(aDep) {
         this.theDep = aDep;
@@ -47,6 +47,19 @@
         aDep: 42
       });
       expect(controller.theDep).toBe(42);
+    });
+
+
+    it("allows registering controllers at config time", function() {
+      function MyController() {}
+      var injector = createInjector(["ng", function($controllerProvider) {
+        $controllerProvider.register("MyController", MyController);
+      }]);
+
+      var $controller = injector.get("$controller");
+      var controller = $controller("MyController");
+      expect(controller).toBeDefined();
+      expect(controller instanceof MyController).toBe(true);
     });
   });
 })();
