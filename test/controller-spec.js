@@ -61,5 +61,23 @@
       expect(controller).toBeDefined();
       expect(controller instanceof MyController).toBe(true);
     });
+
+
+    it('allows registering several controllers in an object', function() {
+      function MyController() {}
+
+      function MyOtherController() {}
+      var injector = createInjector(['ng', function($controllerProvider) {
+        $controllerProvider.register({
+          MyController: MyController,
+          MyOtherController: MyOtherController
+        });
+      }]);
+      var $controller = injector.get('$controller');
+      var controller = $controller('MyController');
+      var otherController = $controller('MyOtherController');
+      expect(controller instanceof MyController).toBe(true);
+      expect(otherController instanceof MyOtherController).toBe(true);
+    });
   });
 })();

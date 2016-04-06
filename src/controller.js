@@ -5,6 +5,10 @@
     var controllers = {};
 
     this.register = function(name, controller) {
+      if (toString.call(name) === "[object Object]") {
+        Object.assign(controllers, name);
+      }
+
       controllers[name] = controller;
     };
 
