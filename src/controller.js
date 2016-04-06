@@ -1,6 +1,16 @@
 (function() {
   "use strict";
 
+  function addToScope(locals, identifier, instance) {
+    if (locals && _.isObject(locals.$scope)) {
+      locals.$scope[identifier] = instance;
+    }
+    else {
+      throw "Cannot export controller as " + identifier + "! No scope object provided via locals";
+    }
+  }
+
+
   function $ControllerProvider() {
     var controllers = {};
     var globals = false;
@@ -21,7 +31,8 @@
 
 
     this.$get = ["$injector", function($injector) {
-      return function(ctrl, locals) {
+
+      return function(ctrl, locals, identifier) {
         // if it's a string then it's in storage
         if (typeof ctrl === "string") {
           if (controllers.hasOwnProperty(ctrl)) {
@@ -31,8 +42,12 @@
             ctrl = window[ctrl];
           }
         }
+        var instance = $injector.instantiate(ctrl, locals);
+        if (identifier) {
+          addToScope(locals, identifier, instance);
+        }
 
-        return $injector.instantiate(ctrl, locals);
+        return instance;
       };
     }];
   }

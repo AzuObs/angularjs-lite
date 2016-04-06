@@ -159,7 +159,7 @@
         return fn.apply(self, args);
       };
 
-      //
+      // for constructors you must use instantiate
       var instantiate = function(Type, locals) {
         var UnwrappedType = toString.call(Type) === "[object Array]" ?
           Type[Type.length - 1] : Type;
