@@ -176,8 +176,8 @@
     ////////////////////////////
     // this.$get aka $compile //
     ////////////////////////////
-    this.$get = ["$injector", "$rootScope", "$parse",
-      function($injector, $rootScope, $parse) {
+    this.$get = ["$injector", "$rootScope", "$parse", "$controller",
+      function($injector, $rootScope, $parse, $controller) {
         function Attributes(element) {
           this.$$element = element;
           this.$attr = {};
@@ -476,6 +476,7 @@
           var preLinkFns = [];
           var postLinkFns = [];
           var newScopeDirective, newIsolateScopeDirective;
+          var controllerDirectives;
 
           function addLinkFns(preLinkFn, postLinkFn, attrStart, attrEnd, isolateScope) {
             if (preLinkFn) {
@@ -537,15 +538,29 @@
                 addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope);
               }
             }
+
+            // is terminal
             if (directive.terminal) {
               terminal = true;
               terminalPriority = directive.terminal;
+            }
+
+            // has controller
+            if (directive.controller) {
+              controllerDirectives = controllerDirectives || {};
+              controllerDirectives[directive.name] = directive;
             }
           });
 
 
           function nodeLinkFn(childLinkFn, scope, linkNode) {
             var $element = $(linkNode);
+
+            if (controllerDirectives) {
+              _.forEach(controllerDirectives, function(directive) {
+                $controller(directive.controller);
+              });
+            }
 
             var isolateScope;
             if (newIsolateScopeDirective) {
