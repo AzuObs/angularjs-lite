@@ -20,6 +20,8 @@
         "src/http.js",
         "src/http-backend.js",
         "src/compile.js",
+        "src/controller.js",
+        "test/controller-spec.js",
         "test/compile-spec.js",
         "test/filter-spec.js",
         "test/filter-filter-spec.js",

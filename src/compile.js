@@ -117,7 +117,7 @@
   }
 
 
-  function $CompileProvider($provide, $rootScopeProvider) {
+  function $CompileProvider($provide) {
     // key: "myDirective + 'Directive'"
     // value: directiveFactory -> returns: directive object 
     // we keep track of these here, as we cannot get the provider that are held
