@@ -2166,6 +2166,19 @@
         expect(actualController.constructed).toBeDefined();
         expect(actualController.aDep).toBe(42);
       });
+
+
+      it('can bind semi-constructed controller to scope', function() {
+        var injector = createInjector(['ng']);
+        var $controller = injector.get('$controller');
+
+        function MyController() {}
+        var scope = {};
+        var controller = $controller(MyController, {
+          $scope: scope
+        }, true, 'myCtrl');
+        expect(scope.myCtrl).toBe(controller.instance);
+      });
     }); // describe("controllers")
   }); // describe("$compile")
 })();
