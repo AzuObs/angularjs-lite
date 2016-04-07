@@ -25,14 +25,15 @@
       if (toString.call(name) === "[object Object]") {
         Object.assign(controllers, name);
       }
-
-      controllers[name] = controller;
+      else {
+        controllers[name] = controller;
+      }
     };
 
 
     this.$get = ["$injector", function($injector) {
 
-      return function(ctrl, locals, identifier) {
+      return function(ctrl, locals, later, identifier) {
         // if it's a string then it's in storage
         if (typeof ctrl === "string") {
           if (controllers.hasOwnProperty(ctrl)) {
@@ -42,9 +43,23 @@
             ctrl = window[ctrl];
           }
         }
-        var instance = $injector.instantiate(ctrl, locals);
-        if (identifier) {
-          addToScope(locals, identifier, instance);
+
+        var instance;
+        if (later) {
+          var ctrlConstructor = _.isArray(ctrl) ? _.last(ctrl) : ctrl;
+          instance = Object.create(ctrlConstructor.prototype);
+          return _.extend(function() {
+            $injector.invoke(ctrl, instance, locals);
+            return instance;
+          }, {
+            instance: instance
+          });
+        }
+        else {
+          instance = $injector.instantiate(ctrl, locals);
+          if (identifier) {
+            addToScope(locals, identifier, instance);
+          }
         }
 
         return instance;
