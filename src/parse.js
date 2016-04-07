@@ -163,7 +163,7 @@
             return expr;
 
           default:
-            return Function.prototype; //noop
+            return _.noop; //noop
         }
       };
     }];
@@ -1021,9 +1021,9 @@
   };
 
 
-  var APPLY = Function.prototype.apply;
-  var BIND = Function.prototype.bind;
-  var CALL = Function.prototype.call;
+  var APPLY = _.noop.apply;
+  var BIND = _.noop.bind;
+  var CALL = _.noop.call;
   var ensureSafeFunction = function(obj) {
     if (obj) {
       if (obj.constructor === obj) {
