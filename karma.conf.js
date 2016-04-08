@@ -21,6 +21,8 @@
         "src/http-backend.js",
         "src/compile.js",
         "src/controller.js",
+        "src/directives/ng-controller.js",
+        "test/directives/ng-controller-spec.js",
         "test/controller-spec.js",
         "test/compile-spec.js",
         "test/filter-spec.js",

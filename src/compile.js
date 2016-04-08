@@ -528,7 +528,6 @@
                   if (value) {
                     break;
                   }
-                  ca
                   else {
                     $element = $element.parent();
                   }
