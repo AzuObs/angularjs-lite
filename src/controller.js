@@ -47,7 +47,6 @@
             // allow lookup on scope object or on window object
             ctrl = (locals && locals.$scope && locals.$scope[ctrl]) ||
               (globals && window[ctrl]);
-            al
           }
         }
 

@@ -118,7 +118,7 @@
   function parseDirectiveBindings(directive) {
     var bindings = {};
     if (_.isObject(directive.scope)) {
-      if (directive.bindToController) {
+      if (directive.bindToController === true) {
         bindings.bindToController = parseIsolateBindings(directive.scope);
       }
       else {
@@ -161,7 +161,6 @@
               var directive = $injector.invoke(factory);
               directive.restrict = directive.restrict || "EA";
               directive.priority = directive.priority || 0;
-              directive.$$bindings = parseDirectiveBindings(directive);
               directive.require = directive.require || (directive.controller && name);
               directive.name = directive.name || name;
               directive.index = i;
@@ -170,9 +169,10 @@
                   return directive.link;
                 };
               }
-              //isolate scope
+              directive.$$bindings = parseDirectiveBindings(directive);
+              //isolate scope // necessary
               if (_.isObject(directive.scope)) {
-                directive.$$isolateBindings = parseIsolateBindings(directive.scope);
+                directive.$$isolateBindings = directive.$$bindings.isolateScope;
               }
               return directive;
             });
@@ -196,6 +196,7 @@
     ////////////////////////////
     this.$get = ["$injector", "$rootScope", "$parse", "$controller",
       function($injector, $rootScope, $parse, $controller) {
+
         function Attributes(element) {
           this.$$element = element;
           this.$attr = {};
@@ -259,7 +260,6 @@
             this.$$element.addClass(classVal);
           },
 
-
           $removeClass: function(classVal) {
             this.$$element.removeClass(classVal);
           },
@@ -282,6 +282,7 @@
             }
           }
         };
+
 
         function directiveIsMultiElement(name) {
           if (hasDirectives.hasOwnProperty(name)) {
@@ -335,7 +336,7 @@
 
 
         function compileNodes($compileNodes) {
-          // every directive's linkFn of every node
+          // linkFns of every node
           var linkFns = [];
 
           _.forEach($compileNodes, function(node, i) {
@@ -376,11 +377,15 @@
               var node = stableNodeList[linkFn.idx];
 
               if (linkFn.nodeLinkFn) {
+                // if the LINK fn has a scope property, NOT if a DIRECTIVE has one
+                // applyDirective calculates this
                 if (linkFn.nodeLinkFn.scope) {
                   scope = scope.$new();
                   $(node).data("$scope", scope);
                 }
 
+                // if LINK fn doesn't have a scope, it may still be an isolateScope
+                // in which case the linkFn will add this
                 linkFn.nodeLinkFn(
                   linkFn.childLinkFn,
                   scope,
@@ -394,13 +399,12 @@
                   node.childNodes);
               }
             });
-          }
+          } // end compositeLinkFn
 
           return compositeLinkFn;
-        }
+        } // end compileNodes
 
 
-        // return array of directive objects
         function collectDirectives(node, attrs) {
           // holds directive object (not factories!)
           var directives = [];
@@ -445,7 +449,6 @@
                 }
               }
 
-              // deleted???
               addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
             });
 
@@ -484,7 +487,7 @@
           //then sort by order in which is was declared
           directives.sort(byPriority);
           return directives;
-        }
+        } // end collectDirectives
 
 
         function applyDirectivesToNode(directives, compileNode, attrs) {
@@ -496,7 +499,6 @@
           var preLinkFns = [];
           var postLinkFns = [];
           var controllers = {};
-
 
           function getControllers(require, $element) {
             // array
@@ -751,16 +753,23 @@
               }
             }
 
-            // is terminal
-            if (directive.terminal) {
-              terminal = true;
-              terminalPriority = directive.terminal;
-            }
 
             // has controller
             if (directive.controller) {
               controllerDirectives = controllerDirectives || {};
               controllerDirectives[directive.name] = directive;
+            }
+
+            // has template
+            if (directive.template) {
+              $compileNode.html(directive.template);
+            }
+
+
+            // is terminal
+            if (directive.terminal) {
+              terminal = true;
+              terminalPriority = directive.terminal;
             }
           });
 
