@@ -507,11 +507,16 @@
             // string OR wrong input
             else {
               var value;
-              // does it start with a "^" character
-              var match = require.match(/^(\^)?/);
+              // does it start with a "^" or "^^" character
+              // "^" start by looking on current node, then on ancestors
+              // "^^" start by looking on ancestors
+              var match = require.match(/^(\^\^?)?/);
               require = require.substring(match[0].length);
 
               if (match[1]) {
+                if (match[1] === "^^") {
+                  $element = $element.parent();
+                }
                 while ($element.length) {
                   value = $element.data("$" + require + "Controller");
                   if (value) {
