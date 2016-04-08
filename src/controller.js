@@ -36,6 +36,10 @@
       return function(ctrl, locals, later, identifier) {
         // if it's a string then it's in storage
         if (typeof ctrl === "string") {
+          // if syntax used is "MyCtrl as myCtrl"
+          var match = ctrl.match(/^(\S+)(\s+as\s+(\w+))?/);
+          ctrl = match[1];
+          identifier = identifier || match[3];
           if (controllers.hasOwnProperty(ctrl)) {
             ctrl = controllers[ctrl];
           }
