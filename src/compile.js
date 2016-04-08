@@ -507,10 +507,12 @@
             // string OR wrong input
             else {
               var value;
-              // does it start with a "^" or "^^" character
+              // does it start with a "^" followed by "^" or "?" character
+              // "?" optional require
               // "^" start by looking on current node, then on ancestors
               // "^^" start by looking on ancestors
-              var match = require.match(/^(\^\^?)?/);
+              var match = require.match(/^(\^\^?)?(\?)?/);
+              var optional = match[2];
               require = require.substring(match[0].length);
 
               if (match[1]) {
@@ -533,11 +535,11 @@
                 }
               }
 
-              if (!value) {
+              if (!value && !optional) {
                 throw "Controller " + require + " required by directive, cannot be found!";
               }
 
-              return value;
+              return value || null;
             }
           } // end getControllers
 

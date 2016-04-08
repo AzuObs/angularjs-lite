@@ -2460,6 +2460,26 @@
           }).toThrow();
         });
       });
+
+
+      it('does not throw on required missing controller when optional', function() {
+        var gotCtrl;
+        var injector = createInjector(['ng', function($compileProvider) {
+          $compileProvider.directive('myDirective', function() {
+            return {
+              require: '?noSuchDirective',
+              link: function(scope, element, attrs, ctrl) {
+                gotCtrl = ctrl;
+              }
+            };
+          });
+        }]);
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          expect(gotCtrl).toBe(null);
+        });
+      });
     }); // describe("controllers")
   }); // describe("$compile")
 })();
