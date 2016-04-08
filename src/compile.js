@@ -496,12 +496,27 @@
           var postLinkFns = [];
           var controllers = {};
 
-          function addLinkFns(preLinkFn, postLinkFn, attrStart, attrEnd, isolateScope) {
+
+          function getControllers(require){
+            var value;
+            if(controllers[require]){
+              value = controllers[require].instance;
+            }
+            if(!value){
+              throw "Controller " + require + " required by directive, cannot be found!";
+            }
+
+            return value;
+          } // end getControllers
+
+
+          function addLinkFns(preLinkFn, postLinkFn, attrStart, attrEnd, isolateScope, require) {
             if (preLinkFn) {
               if (attrStart) {
                 preLinkFn = groupElementsLinkFnWrapper(preLinkFn, attrStart, attrEnd);
               }
               preLinkFn.isolateScope = isolateScope;
+              preLinkFn.require = require;
               preLinkFns.push(preLinkFn);
             }
             if (postLinkFn) {
@@ -509,9 +524,10 @@
                 postLinkFn = groupElementsLinkFnWrapper(postLinkFn, attrStart, attrEnd);
               }
               postLinkFn.isolateScope = isolateScope;
+              postLinkFn.require= require;
               postLinkFns.push(postLinkFn);
             }
-          }
+          } // end addLinkfns
 
 
           function initializeDirectiveBindings(
@@ -567,65 +583,7 @@
                   break;
               }
             });
-          }
-
-
-          directives.forEach(function(directive) {
-            // is multi-element
-            if (directive.$$start) {
-              $compileNode = groupScan(compileNode, directive.$$start, directive.$$end);
-            }
-
-            // has priority
-            if (directive.priority < terminalPriority) {
-              return false;
-            }
-
-            // has scope
-            if (directive.scope) {
-              // scope: {} (isolate)
-              if (_.isObject(directive.scope)) {
-                if (newIsolateScopeDirective || newScopeDirective) {
-                  throw "Multiple directives asking for new/inherited scopes";
-                }
-                newIsolateScopeDirective = directive;
-              }
-              // scope:true (inherited)
-              else {
-                if (newIsolateScopeDirective) {
-                  throw "Multiple directives asking for new/inherited scopes";
-                }
-                newScopeDirective = newScopeDirective || directive;
-              }
-            }
-
-            // compile
-            if (directive.compile) {
-              var linkFn = directive.compile($compileNode, attrs);
-              var attrEnd = directive.$$end;
-              var attrStart = directive.$$start;
-              var isolateScope = (directive === newIsolateScopeDirective);
-
-              if (typeof linkFn === "function") {
-                addLinkFns(null, linkFn, attrStart, attrEnd, isolateScope);
-              }
-              else if (linkFn) {
-                addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope);
-              }
-            }
-
-            // is terminal
-            if (directive.terminal) {
-              terminal = true;
-              terminalPriority = directive.terminal;
-            }
-
-            // has controller
-            if (directive.controller) {
-              controllerDirectives = controllerDirectives || {};
-              controllerDirectives[directive.name] = directive;
-            }
-          });
+          }// end initializeDirectiveBindings
 
 
           function nodeLinkFn(childLinkFn, scope, linkNode) {
@@ -684,7 +642,12 @@
             });
 
             _.forEach(preLinkFns, function(linkFn) {
-              linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs);
+              linkFn(
+                linkFn.isolateScope ? isolateScope : scope, 
+                $element, 
+                attrs,
+                linkFn.require && getControllers(linkFn.require)
+                );
             });
 
             if (childLinkFn) {
@@ -693,9 +656,73 @@
 
             //start from the end
             _.forEachRight(postLinkFns, function(linkFn) {
-              linkFn(linkFn.isolateScope ? isolateScope : scope, $element, attrs);
+              linkFn(
+                linkFn.isolateScope ? isolateScope : scope, 
+                $element, 
+                attrs,
+                linkFn.require && getControllers(linkFn.require)
+              );
             });
-          }
+          } // end node LinkFn
+
+
+          directives.forEach(function(directive) {
+            // is multi-element
+            if (directive.$$start) {
+              $compileNode = groupScan(compileNode, directive.$$start, directive.$$end);
+            }
+
+            // has priority
+            if (directive.priority < terminalPriority) {
+              return false;
+            }
+
+            // has scope
+            if (directive.scope) {
+              // scope: {} (isolate)
+              if (_.isObject(directive.scope)) {
+                if (newIsolateScopeDirective || newScopeDirective) {
+                  throw "Multiple directives asking for new/inherited scopes";
+                }
+                newIsolateScopeDirective = directive;
+              }
+              // scope:true (inherited)
+              else {
+                if (newIsolateScopeDirective) {
+                  throw "Multiple directives asking for new/inherited scopes";
+                }
+                newScopeDirective = newScopeDirective || directive;
+              }
+            }
+
+            // compile
+            if (directive.compile) {
+              var linkFn = directive.compile($compileNode, attrs);
+              var attrEnd = directive.$$end;
+              var attrStart = directive.$$start;
+              var require = directive.require;
+              var isolateScope = (directive === newIsolateScopeDirective);
+
+              if (typeof linkFn === "function") {
+                addLinkFns(null, linkFn, attrStart, attrEnd, isolateScope, require);
+              }
+              else if (linkFn) {
+                addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope, require);
+              }
+            }
+
+            // is terminal
+            if (directive.terminal) {
+              terminal = true;
+              terminalPriority = directive.terminal;
+            }
+
+            // has controller
+            if (directive.controller) {
+              controllerDirectives = controllerDirectives || {};
+              controllerDirectives[directive.name] = directive;
+            }
+          });
 
           nodeLinkFn.terminal = terminal;
           nodeLinkFn.scope = newScopeDirective && newScopeDirective.scope;
