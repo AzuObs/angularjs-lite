@@ -507,15 +507,19 @@
             // string OR wrong input
             else {
               var value;
-              // does it start with a "^" followed by "^" or "?" character
+              // does it start with a "^" or "^^" that start of finished with "?" character
               // "?" optional require
               // "^" start by looking on current node, then on ancestors
               // "^^" start by looking on ancestors
-              var match = require.match(/^(\^\^?)?(\?)?/);
+              var match = require.match(/^(\^\^?)?(\?)?(\^\^?)?/);
               var optional = match[2];
               require = require.substring(match[0].length);
 
-              if (match[1]) {
+              // you can start or finish your require string with "^" or "^^"
+              if (match[1] || match[3]) {
+                if (match[3] && !match[1]) {
+                  match[1] = match[3];
+                }
                 if (match[1] === "^^") {
                   $element = $element.parent();
                 }
@@ -524,11 +528,13 @@
                   if (value) {
                     break;
                   }
+                  ca
                   else {
                     $element = $element.parent();
                   }
                 }
               }
+
               else {
                 if (controllers[require]) {
                   value = controllers[require].instance;
