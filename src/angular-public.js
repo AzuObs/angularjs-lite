@@ -16,6 +16,7 @@
     ngModule.provider("$httpParamSerializerJQLike", $HttpParamSerializerJQLikeProvider);
     ngModule.provider("$compile", $CompileProvider);
     ngModule.provider("$controller", $ControllerProvider);
+    ngModule.directive("ngController", ngControllerDirective);
   }
 
   window.publishExternalAPI = publishExternalAPI;
