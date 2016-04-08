@@ -2303,6 +2303,30 @@
           expect(gotControllers[1] instanceof MyOtherController).toBe(true);
         });
       });
+
+
+      it('is passed to link functions if there is no require', function() {
+        function MyController() {}
+        var gotMyController;
+        var injector = createInjector(['ng', function($compileProvider) {
+          $compileProvider.directive('myDirective', function() {
+            return {
+              scope: {},
+              controller: MyController,
+              link: function(scope, element, attrs, myController) {
+                gotMyController = myController;
+              }
+            };
+          });
+        }]);
+
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el)($rootScope);
+          expect(gotMyController).toBeDefined();
+          expect(gotMyController instanceof MyController).toBe(true);
+        });
+      });
     }); // describe("controllers")
   }); // describe("$compile")
 })();

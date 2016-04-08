@@ -162,6 +162,7 @@
               directive.restrict = directive.restrict || "EA";
               directive.priority = directive.priority || 0;
               directive.$$bindings = parseDirectiveBindings(directive);
+              directive.require = directive.require || (directive.controller && name);
               directive.name = directive.name || name;
               directive.index = i;
               if (directive.link && !directive.compile) {
