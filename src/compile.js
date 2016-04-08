@@ -497,16 +497,24 @@
           var controllers = {};
 
 
-          function getControllers(require){
-            var value;
-            if(controllers[require]){
-              value = controllers[require].instance;
-            }
-            if(!value){
-              throw "Controller " + require + " required by directive, cannot be found!";
+          function getControllers(require) {
+            // array
+            if (_.isArray(require)) {
+              return require.map(getControllers);
             }
 
-            return value;
+            // not array
+            else {
+              var value;
+              if (controllers[require]) {
+                value = controllers[require].instance;
+              }
+              if (!value) {
+                throw "Controller " + require + " required by directive, cannot be found!";
+              }
+
+              return value;
+            }
           } // end getControllers
 
 
@@ -524,7 +532,7 @@
                 postLinkFn = groupElementsLinkFnWrapper(postLinkFn, attrStart, attrEnd);
               }
               postLinkFn.isolateScope = isolateScope;
-              postLinkFn.require= require;
+              postLinkFn.require = require;
               postLinkFns.push(postLinkFn);
             }
           } // end addLinkfns
@@ -583,7 +591,7 @@
                   break;
               }
             });
-          }// end initializeDirectiveBindings
+          } // end initializeDirectiveBindings
 
 
           function nodeLinkFn(childLinkFn, scope, linkNode) {
@@ -643,11 +651,11 @@
 
             _.forEach(preLinkFns, function(linkFn) {
               linkFn(
-                linkFn.isolateScope ? isolateScope : scope, 
-                $element, 
+                linkFn.isolateScope ? isolateScope : scope,
+                $element,
                 attrs,
                 linkFn.require && getControllers(linkFn.require)
-                );
+              );
             });
 
             if (childLinkFn) {
@@ -657,8 +665,8 @@
             //start from the end
             _.forEachRight(postLinkFns, function(linkFn) {
               linkFn(
-                linkFn.isolateScope ? isolateScope : scope, 
-                $element, 
+                linkFn.isolateScope ? isolateScope : scope,
+                $element,
                 attrs,
                 linkFn.require && getControllers(linkFn.require)
               );
