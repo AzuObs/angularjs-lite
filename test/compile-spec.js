@@ -2351,6 +2351,62 @@
           expect(gotMyController instanceof MyController).toBe(true);
         });
       });
+
+
+      it('can be required from a parent directive', function() {
+        function MyController() {}
+        var gotMyController;
+        var injector = createInjector(['ng', function($compileProvider) {
+          $compileProvider.directive('myDirective', function() {
+            return {
+              scope: {},
+              controller: MyController
+            };
+          });
+          $compileProvider.directive('myOtherDirective', function() {
+            return {
+              require: '^myDirective',
+              link: function(scope, element, attrs, myController) {
+                gotMyController = myController;
+              }
+            };
+          });
+        }]);
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive><div my-other-directive></div></div>');
+          $compile(el)($rootScope);
+          expect(gotMyController).toBeDefined();
+          expect(gotMyController instanceof MyController).toBe(true);
+        });
+      });
+
+
+      it('finds from sibling directive when requiring with parent prefix', function() {
+        function MyController() {}
+        var gotMyController;
+        var injector = createInjector(['ng', function($compileProvider) {
+          $compileProvider.directive('myDirective', function() {
+            return {
+              scope: {},
+              controller: MyController
+            };
+          });
+          $compileProvider.directive('myOtherDirective', function() {
+            return {
+              require: '^myDirective',
+              link: function(scope, element, attrs, myController) {
+                gotMyController = myController;
+              }
+            };
+          });
+        }]);
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-other-directive></div>');
+          $compile(el)($rootScope);
+          expect(gotMyController).toBeDefined();
+          expect(gotMyController instanceof MyController).toBe(true);
+        });
+      });
     }); // describe("controllers")
   }); // describe("$compile")
 })();

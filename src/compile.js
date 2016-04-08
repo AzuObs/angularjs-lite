@@ -498,18 +498,36 @@
           var controllers = {};
 
 
-          function getControllers(require) {
+          function getControllers(require, $element) {
             // array
             if (_.isArray(require)) {
               return require.map(getControllers);
             }
 
-            // not array
+            // string OR wrong input
             else {
               var value;
-              if (controllers[require]) {
-                value = controllers[require].instance;
+              // does it start with a "^" character
+              var match = require.match(/^(\^)?/);
+              require = require.substring(match[0].length);
+
+              if (match[1]) {
+                while ($element.length) {
+                  value = $element.data("$" + require + "Controller");
+                  if (value) {
+                    break;
+                  }
+                  else {
+                    $element = $element.parent();
+                  }
+                }
               }
+              else {
+                if (controllers[require]) {
+                  value = controllers[require].instance;
+                }
+              }
+
               if (!value) {
                 throw "Controller " + require + " required by directive, cannot be found!";
               }
@@ -618,7 +636,9 @@
                 controllerName = attrs[directive.name];
               }
 
-              controllers[directive.name] = $controller(controllerName, locals, true, directive.controllerAs);
+              var controller = $controller(controllerName, locals, true, directive.controllerAs);
+              controllers[directive.name] = controller;
+              $element.data("$" + directive.name + "Controller", controller.instance);
             });
 
 
@@ -655,7 +675,7 @@
                 linkFn.isolateScope ? isolateScope : scope,
                 $element,
                 attrs,
-                linkFn.require && getControllers(linkFn.require)
+                linkFn.require && getControllers(linkFn.require, $element)
               );
             });
 
@@ -669,7 +689,7 @@
                 linkFn.isolateScope ? isolateScope : scope,
                 $element,
                 attrs,
-                linkFn.require && getControllers(linkFn.require)
+                linkFn.require && getControllers(linkFn.require, $element)
               );
             });
           } // end node LinkFn
