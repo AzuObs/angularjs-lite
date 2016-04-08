@@ -647,7 +647,6 @@
               if (controllerName === "@") {
                 controllerName = attrs[directive.name];
               }
-
               var controller = $controller(controllerName, locals, true, directive.controllerAs);
               controllers[directive.name] = controller;
               $element.data("$" + directive.name + "Controller", controller.instance);
