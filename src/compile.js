@@ -495,6 +495,7 @@
           var terminal = false;
           var terminalPriority = -Number.MAX_VALUE;
           var controllerDirectives;
+          var templateDirective;
           var newScopeDirective, newIsolateScopeDirective;
           var preLinkFns = [];
           var postLinkFns = [];
@@ -762,6 +763,10 @@
 
             // has template
             if (directive.template) {
+              if (templateDirective) {
+                throw "Multiple directives asking for template";
+              }
+              templateDirective = directive;
               $compileNode.html(directive.template);
             }
 
