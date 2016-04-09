@@ -490,9 +490,21 @@
         } // end collectDirectives
 
 
-        function compileTemplateUrl(directive, $compileNode) {
+        function compileTemplateUrl(directives, $compileNode, attrs) {
+          var origAsyncDirective = directives.shift();
+          var derivedAsyncDirective = _.assign({}, origAsyncDirective, {
+            templateUrl: null
+          });
+
           $compileNode.empty();
-          $http.get(directive.templateUrl);
+          $http
+            .get(origAsyncDirective.templateUrl)
+            .success(function(template) {
+              directives.unshift(derivedAsyncDirective);
+              $compileNode.html(template);
+              applyDirectivesToNode(directives, $compileNode, attrs);
+              compileNodes($compileNode[0].childNodes);
+            });
         } // end compileTemplateUrl
 
 
@@ -724,7 +736,7 @@
           } // end node LinkFn
 
 
-          _.forEach(directives, function(directive) {
+          _.forEach(directives, function(directive, i) {
             // is multi-element
             if (directive.$$start) {
               $compileNode = groupScan(compileNode, directive.$$start, directive.$$end);
@@ -771,7 +783,7 @@
 
             // has templateUrl
             if (directive.templateUrl) {
-              compileTemplateUrl(directive, $compileNode);
+              compileTemplateUrl(directives.slice(i), $compileNode, attrs);
               return false;
             }
             // compile
