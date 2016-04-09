@@ -767,7 +767,8 @@
                 throw "Multiple directives asking for template";
               }
               templateDirective = directive;
-              $compileNode.html(directive.template);
+              $compileNode.html(_.isFunction(directive.template) ?
+                directive.template($compileNode, attrs) : directive.template);
             }
 
 
