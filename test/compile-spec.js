@@ -2672,6 +2672,7 @@
         });
         injector.invoke(function($compile) {
           var el = $('<div my-directive my-other-directive></div>');
+          window.debug = true;
           $compile(el);
           expect(otherCompileSpy).not.toHaveBeenCalled();
         });
@@ -2692,6 +2693,22 @@
           var el = $('<div my-directive></div>');
           $compile(el);
           expect(compileSpy).not.toHaveBeenCalled();
+        });
+      });
+
+
+      it('immediately empties out the element', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: '/my_directive.html'
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-directive>Hello</div>');
+          $compile(el);
+          expect(el.is(':empty')).toBe(true);
         });
       });
     }); // describe("templateUrl")

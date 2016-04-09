@@ -490,6 +490,11 @@
         } // end collectDirectives
 
 
+        function compileTemplateUrl($compileNode) {
+          $compileNode.empty();
+        } // end compileTemplateUrl
+
+
         function applyDirectivesToNode(directives, compileNode, attrs) {
           var $compileNode = $(compileNode);
           var terminal = false;
@@ -718,7 +723,7 @@
           } // end node LinkFn
 
 
-          directives.forEach(function(directive) {
+          _.forEach(directives, function(directive) {
             // is multi-element
             if (directive.$$start) {
               $compileNode = groupScan(compileNode, directive.$$start, directive.$$end);
@@ -763,9 +768,9 @@
                 directive.template($compileNode, attrs) : directive.template);
             }
 
-
             // has templateUrl
             if (directive.templateUrl) {
+              compileTemplateUrl($compileNode);
               return false;
             }
             // compile
