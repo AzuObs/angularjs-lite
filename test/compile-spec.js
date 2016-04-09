@@ -2854,6 +2854,28 @@
           expect(templateUrlSpy.calls.first().args[1].myDirective).toBeDefined();
         });
       });
+
+
+      it('does not allow templateUrl directive after template directive', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              template: '<div></div>'
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              templateUrl: '/my_other_directive.html'
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-directive my-other-directive></div>');
+          expect(function() {
+            $compile(el);
+          }).toThrow();
+        });
+      });
     }); // describe("templateUrl")
   }); // describe("$compile")
 })();

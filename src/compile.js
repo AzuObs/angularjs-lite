@@ -785,6 +785,10 @@
 
             // has templateUrl
             if (directive.templateUrl) {
+              if (templateDirective) {
+                throw "Multiple directives asking for template";
+              }
+              templateDirective = directive;
               compileTemplateUrl(directives.slice(i), $compileNode, attrs);
               return false;
             }
