@@ -194,8 +194,8 @@
     ////////////////////////////
     // this.$get aka $compile //
     ////////////////////////////
-    this.$get = ["$injector", "$rootScope", "$parse", "$controller",
-      function($injector, $rootScope, $parse, $controller) {
+    this.$get = ["$injector", "$rootScope", "$parse", "$controller", "$http",
+      function($injector, $rootScope, $parse, $controller, $http) {
 
         function Attributes(element) {
           this.$$element = element;
@@ -490,8 +490,9 @@
         } // end collectDirectives
 
 
-        function compileTemplateUrl($compileNode) {
+        function compileTemplateUrl(directive, $compileNode) {
           $compileNode.empty();
+          $http.get(directive.templateUrl);
         } // end compileTemplateUrl
 
 
@@ -770,7 +771,7 @@
 
             // has templateUrl
             if (directive.templateUrl) {
-              compileTemplateUrl($compileNode);
+              compileTemplateUrl(directive, $compileNode);
               return false;
             }
             // compile
