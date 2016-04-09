@@ -2676,6 +2676,24 @@
           expect(otherCompileSpy).not.toHaveBeenCalled();
         });
       });
+
+
+      it('defers current directive compilation', function() {
+        var compileSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: '/my_directive.html',
+              compile: compileSpy
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-directive></div>');
+          $compile(el);
+          expect(compileSpy).not.toHaveBeenCalled();
+        });
+      });
     }); // describe("templateUrl")
   }); // describe("$compile")
 })();

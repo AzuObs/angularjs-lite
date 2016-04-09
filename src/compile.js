@@ -747,23 +747,6 @@
               }
             }
 
-            // compile
-            if (directive.compile) {
-              var linkFn = directive.compile($compileNode, attrs);
-              var attrEnd = directive.$$end;
-              var attrStart = directive.$$start;
-              var require = directive.require;
-              var isolateScope = (directive === newIsolateScopeDirective);
-
-              if (typeof linkFn === "function") {
-                addLinkFns(null, linkFn, attrStart, attrEnd, isolateScope, require);
-              }
-              else if (linkFn) {
-                addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope, require);
-              }
-            }
-
-
             // has controller
             if (directive.controller) {
               controllerDirectives = controllerDirectives || {};
@@ -784,6 +767,21 @@
             // has templateUrl
             if (directive.templateUrl) {
               return false;
+            }
+            // compile
+            else if (directive.compile) {
+              var linkFn = directive.compile($compileNode, attrs);
+              var attrEnd = directive.$$end;
+              var attrStart = directive.$$start;
+              var require = directive.require;
+              var isolateScope = (directive === newIsolateScopeDirective);
+
+              if (typeof linkFn === "function") {
+                addLinkFns(null, linkFn, attrStart, attrEnd, isolateScope, require);
+              }
+              else if (linkFn) {
+                addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope, require);
+              }
             }
 
 
