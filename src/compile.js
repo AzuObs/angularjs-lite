@@ -781,6 +781,12 @@
             }
 
 
+            // has templateUrl
+            if (directive.templateUrl) {
+              return false;
+            }
+
+
             // is terminal
             if (directive.terminal) {
               terminal = true;

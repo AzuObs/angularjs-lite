@@ -2651,7 +2651,31 @@
           expect(linkSpy.calls.first().args[0].isoValue).toBe(42);
         });
       });
-
     }); // describe("template")
+
+
+    describe('templateUrl', function() {
+
+      it('defers remaining directive compilation', function() {
+        var otherCompileSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: '/my_directive.html'
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              compile: otherCompileSpy
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-directive my-other-directive></div>');
+          $compile(el);
+          expect(otherCompileSpy).not.toHaveBeenCalled();
+        });
+      });
+    }); // describe("templateUrl")
   }); // describe("$compile")
 })();
