@@ -2833,6 +2833,27 @@
           expect(otherCompileSpy).toHaveBeenCalled();
         });
       });
+
+
+      it('supports functions as values', function() {
+        var templateUrlSpy = jasmine.createSpy()
+          .and.returnValue('/my_directive.html');
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: templateUrlSpy
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $compile(el);
+          $rootScope.$apply();
+          expect(requests[0].url).toBe('/my_directive.html');
+          expect(templateUrlSpy.calls.first().args[0][0]).toBe(el[0]);
+          expect(templateUrlSpy.calls.first().args[1].myDirective).toBeDefined();
+        });
+      });
     }); // describe("templateUrl")
   }); // describe("$compile")
 })();

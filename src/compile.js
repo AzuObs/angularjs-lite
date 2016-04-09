@@ -495,10 +495,12 @@
           var derivedAsyncDirective = _.assign({}, origAsyncDirective, {
             templateUrl: null
           });
+          var templateUrl = _.isFunction(origAsyncDirective.templateUrl) ?
+            origAsyncDirective.templateUrl($compileNode, attrs) : origAsyncDirective.templateUrl;
 
           $compileNode.empty();
           $http
-            .get(origAsyncDirective.templateUrl)
+            .get(templateUrl)
             .success(function(template) {
               directives.unshift(derivedAsyncDirective);
               $compileNode.html(template);
