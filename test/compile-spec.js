@@ -2876,6 +2876,29 @@
           }).toThrow();
         });
       });
+
+
+      it('does not allow template directive after templateUrl directive', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: '/my_directive.html'
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              template: '<div></div>'
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-other-directive></div>');
+          $compile(el);
+          $rootScope.$apply();
+          requests[0].respond(200, {}, '<div class="replacement"></div>');
+          expect(el.find('> .replacement').length).toBe(1);
+        });
+      });
     }); // describe("templateUrl")
   }); // describe("$compile")
 })();

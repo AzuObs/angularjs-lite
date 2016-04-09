@@ -490,7 +490,7 @@
         } // end collectDirectives
 
 
-        function compileTemplateUrl(directives, $compileNode, attrs) {
+        function compileTemplateUrl(directives, $compileNode, attrs, previousCompileContext) {
           var origAsyncDirective = directives.shift();
           var derivedAsyncDirective = _.assign({}, origAsyncDirective, {
             templateUrl: null
@@ -504,18 +504,19 @@
             .success(function(template) {
               directives.unshift(derivedAsyncDirective);
               $compileNode.html(template);
-              applyDirectivesToNode(directives, $compileNode, attrs);
+              applyDirectivesToNode(directives, $compileNode, attrs, previousCompileContext);
               compileNodes($compileNode[0].childNodes);
             });
         } // end compileTemplateUrl
 
 
-        function applyDirectivesToNode(directives, compileNode, attrs) {
+        function applyDirectivesToNode(directives, compileNode, attrs, previousCompileContext) {
+          previousCompileContext = previousCompileContext || {};
           var $compileNode = $(compileNode);
           var terminal = false;
           var terminalPriority = -Number.MAX_VALUE;
           var controllerDirectives;
-          var templateDirective;
+          var templateDirective = previousCompileContext.templateDirective;
           var newScopeDirective, newIsolateScopeDirective;
           var preLinkFns = [];
           var postLinkFns = [];
@@ -789,7 +790,9 @@
                 throw "Multiple directives asking for template";
               }
               templateDirective = directive;
-              compileTemplateUrl(directives.slice(i), $compileNode, attrs);
+              compileTemplateUrl(directives.slice(i), $compileNode, attrs, {
+                templateDirective: templateDirective
+              });
               return false;
             }
             // compile
