@@ -680,10 +680,12 @@
               );
             }
 
+            // controller
             _.forEach(controllers, function(controller) {
               controller();
             });
 
+            // pre link
             _.forEach(preLinkFns, function(linkFn) {
               linkFn(
                 linkFn.isolateScope ? isolateScope : scope,
@@ -693,11 +695,18 @@
               );
             });
 
+            // child link
             if (childLinkFn) {
-              childLinkFn(scope, linkNode.childNodes);
+              var scopeToChild = scope;
+              // if the directive has an iso scope AND a template
+              // pass the isolated scope to the "template" aka "child"
+              if (newIsolateScopeDirective && newIsolateScopeDirective.template) {
+                scopeToChild = isolateScope;
+              }
+              childLinkFn(scopeToChild, linkNode.childNodes);
             }
 
-            //start from the end
+            //post link - start from the end
             _.forEachRight(postLinkFns, function(linkFn) {
               linkFn(
                 linkFn.isolateScope ? isolateScope : scope,
