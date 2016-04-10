@@ -539,9 +539,10 @@
           var controllerDirectives;
           var preLinkFns = previousCompileContext.preLinkFns || [];
           var postLinkFns = previousCompileContext.postLinkFns || [];
-          var controllers = {};
           var templateDirective = previousCompileContext.templateDirective;
-          var newScopeDirective, newIsolateScopeDirective;
+          var newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective;
+          var controllers = {};
+          var newScopeDirective;
 
           function getControllers(require, $element) {
             // array
@@ -814,7 +815,8 @@
               nodeLinkFn = compileTemplateUrl(directives.slice(i), $compileNode, attrs, {
                 templateDirective: templateDirective,
                 preLinkFns: preLinkFns,
-                postLinkFns: postLinkFns
+                postLinkFns: postLinkFns,
+                newIsolateScopeDirective: newIsolateScopeDirective
               });
               return false;
             }
