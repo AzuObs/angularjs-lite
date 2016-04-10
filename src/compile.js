@@ -537,11 +537,11 @@
           var terminal = false;
           var terminalPriority = -Number.MAX_VALUE;
           var controllerDirectives;
+          var preLinkFns = previousCompileContext.preLinkFns || [];
+          var postLinkFns = previousCompileContext.postLinkFns || [];
+          var controllers = {};
           var templateDirective = previousCompileContext.templateDirective;
           var newScopeDirective, newIsolateScopeDirective;
-          var preLinkFns = [];
-          var postLinkFns = [];
-          var controllers = {};
 
           function getControllers(require, $element) {
             // array
@@ -812,7 +812,9 @@
               }
               templateDirective = directive;
               nodeLinkFn = compileTemplateUrl(directives.slice(i), $compileNode, attrs, {
-                templateDirective: templateDirective
+                templateDirective: templateDirective,
+                preLinkFns: preLinkFns,
+                postLinkFns: postLinkFns
               });
               return false;
             }
