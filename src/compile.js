@@ -536,9 +536,9 @@
           var $compileNode = $(compileNode);
           var terminal = false;
           var terminalPriority = -Number.MAX_VALUE;
-          var controllerDirectives;
           var preLinkFns = previousCompileContext.preLinkFns || [];
           var postLinkFns = previousCompileContext.postLinkFns || [];
+          var controllerDirectives = previousCompileContext.controllerDirectives;
           var templateDirective = previousCompileContext.templateDirective;
           var newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective;
           var controllers = {};
@@ -816,7 +816,8 @@
                 templateDirective: templateDirective,
                 preLinkFns: preLinkFns,
                 postLinkFns: postLinkFns,
-                newIsolateScopeDirective: newIsolateScopeDirective
+                newIsolateScopeDirective: newIsolateScopeDirective,
+                controllerDirectives: controllerDirectives
               });
               return false;
             }
