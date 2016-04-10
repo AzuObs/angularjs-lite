@@ -2899,6 +2899,58 @@
           expect(el.find('> .replacement').length).toBe(1);
         });
       });
+
+
+      it('links the directive when public link function is invoked', function() {
+        var linkSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: '/my_directive.html',
+              link: linkSpy
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          var linkFunction = $compile(el);
+          $rootScope.$apply();
+          requests[0].respond(200, {}, '<div></div>');
+          linkFunction($rootScope);
+          expect(linkSpy).toHaveBeenCalled();
+          expect(linkSpy.calls.first().args[0]).toBe($rootScope);
+          expect(linkSpy.calls.first().args[1][0]).toBe(el[0]);
+          expect(linkSpy.calls.first().args[2].myDirective).toBeDefined();
+        });
+      });
+
+
+      it('links child elements when public link function is invoked', function() {
+        var linkSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              templateUrl: '/my_directive.html'
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              link: linkSpy
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          var linkFunction = $compile(el);
+          $rootScope.$apply();
+          requests[0].respond(200, {}, '<div my-other-directive></div>');
+          linkFunction($rootScope);
+          expect(linkSpy).toHaveBeenCalled();
+          expect(linkSpy.calls.first().args[0]).toBe($rootScope);
+          expect(linkSpy.calls.first().args[1][0]).toBe(el[0].firstChild);
+          expect(linkSpy.calls.first().args[2].myOtherDirective).toBeDefined();
+        });
+      });
     }); // describe("templateUrl")
   }); // describe("$compile")
 })();

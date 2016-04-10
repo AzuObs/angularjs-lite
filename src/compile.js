@@ -498,15 +498,20 @@
           var templateUrl = _.isFunction(origAsyncDirective.templateUrl) ?
             origAsyncDirective.templateUrl($compileNode, attrs) : origAsyncDirective.templateUrl;
 
+          var afterTemplateNodeLinkFn, afterTemplateChildLinkFn;
           $compileNode.empty();
           $http
             .get(templateUrl)
             .success(function(template) {
               directives.unshift(derivedAsyncDirective);
               $compileNode.html(template);
-              applyDirectivesToNode(directives, $compileNode, attrs, previousCompileContext);
-              compileNodes($compileNode[0].childNodes);
+              afterTemplateNodeLinkFn = applyDirectivesToNode(directives, $compileNode, attrs, previousCompileContext);
+              afterTemplateChildLinkFn = compileNodes($compileNode[0].childNodes);
             });
+
+          return function delayedNodeFn(_ignoreChildLinkFn, scope, linkNode) {
+            afterTemplateNodeLinkFn(afterTemplateChildLinkFn, scope, linkNode);
+          };
         } // end compileTemplateUrl
 
 
@@ -649,7 +654,7 @@
           } // end initializeDirectiveBindings
 
 
-          function nodeLinkFn(childLinkFn, scope, linkNode) {
+          var nodeLinkFn = function(childLinkFn, scope, linkNode) {
             var $element = $(linkNode);
 
             var isolateScope;
@@ -736,7 +741,7 @@
                 linkFn.require && getControllers(linkFn.require, $element)
               );
             });
-          } // end node LinkFn
+          }; // end node LinkFn
 
 
           _.forEach(directives, function(directive, i) {
@@ -790,7 +795,7 @@
                 throw "Multiple directives asking for template";
               }
               templateDirective = directive;
-              compileTemplateUrl(directives.slice(i), $compileNode, attrs, {
+              nodeLinkFn = compileTemplateUrl(directives.slice(i), $compileNode, attrs, {
                 templateDirective: templateDirective
               });
               return false;
