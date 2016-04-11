@@ -804,6 +804,8 @@
 
             // is transcluded
             if (directive.transclude) {
+              var $transcludeNodes = $compileNode.clone().contents();
+              compile($transcludeNodes);
               $compileNode.empty();
             }
 

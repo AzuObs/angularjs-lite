@@ -3081,6 +3081,28 @@
           expect(el.is(':empty')).toBe(true);
         });
       });
+
+
+      it('compiles child elements', function() {
+        var insideCompileSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true
+            };
+          },
+          insideTranscluder: function() {
+            return {
+              compile: insideCompileSpy
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-transcluder><div inside-transcluder></div></div>');
+          $compile(el);
+          expect(insideCompileSpy).toHaveBeenCalled();
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();
