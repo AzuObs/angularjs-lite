@@ -510,20 +510,26 @@
               afterTemplateNodeLinkFn = applyDirectivesToNode(directives, $compileNode, attrs, previousCompileContext);
               afterTemplateChildLinkFn = compileNodes($compileNode[0].childNodes);
 
-              // call nodeLinkFn
+              // call nodeLinkFn, this means that the $http.get resolved after the call to the 
+              // delayedNodeFn got called
               _.forEach(linkQueue, function(linkCall) {
                 afterTemplateNodeLinkFn(afterTemplateChildLinkFn, linkCall.scope, linkCall.linkNode);
               });
               linkQueue = null;
             });
 
+          // we ignore childLinkFn because the HTML for the child is going to be contained
+          // within templateUrl
           return function delayedNodeFn(_ignoreChildLinkFn, scope, linkNode) {
+            // if the $http.get hasn't resolved yet, we want to store the scope and node variables
             if (linkQueue) {
               linkQueue.push({
                 scope: scope,
                 linkNode: linkNode
               });
             }
+
+            // if the $http.get has resolve, then we haven't called this function yet
             else {
               afterTemplateNodeLinkFn(afterTemplateChildLinkFn, scope, linkNode);
             }
@@ -794,6 +800,11 @@
             if (directive.controller) {
               controllerDirectives = controllerDirectives || {};
               controllerDirectives[directive.name] = directive;
+            }
+
+            // is transcluded
+            if (directive.transclude) {
+              $compileNode.empty();
             }
 
             // has template

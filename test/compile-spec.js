@@ -2688,7 +2688,6 @@
         });
         injector.invoke(function($compile) {
           var el = $('<div my-directive my-other-directive></div>');
-          window.debug = true;
           $compile(el);
           expect(otherCompileSpy).not.toHaveBeenCalled();
         });
@@ -3064,5 +3063,24 @@
         });
       });
     }); // describe("templateUrl")
+
+
+    describe('transclude', function() {
+
+      it('removes the children of the element from the DOM', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-transcluder><div>Must go</div></div>');
+          $compile(el);
+          expect(el.is(':empty')).toBe(true);
+        });
+      });
+    }); // describe("transclude")
   }); // describe("$compile")
 })();
