@@ -737,6 +737,12 @@
               controller();
             });
 
+
+            // bind transcludefn to scope
+            function boundTranscludeFn() {
+              return childTranscludeFn(scope);
+            }
+
             // pre link
             _.forEach(preLinkFns, function(linkFn) {
               linkFn(
@@ -744,7 +750,7 @@
                 $element,
                 attrs,
                 linkFn.require && getControllers(linkFn.require, $element),
-                childTranscludeFn
+                boundTranscludeFn
               );
             });
 
@@ -766,7 +772,7 @@
                 $element,
                 attrs,
                 linkFn.require && getControllers(linkFn.require, $element),
-                childTranscludeFn
+                boundTranscludeFn
               );
             });
           }; // end node LinkFn
