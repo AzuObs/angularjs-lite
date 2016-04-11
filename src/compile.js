@@ -331,6 +331,8 @@
           return function publicLinkFn(scope) {
             $compileNodes.data("$scope", scope);
             compositeLinkFn(scope, $compileNodes);
+
+            return $compileNodes;
           };
         }
 
@@ -542,13 +544,14 @@
           var $compileNode = $(compileNode);
           var terminal = false;
           var terminalPriority = -Number.MAX_VALUE;
+          var controllers = {};
+          var newScopeDirective;
           var preLinkFns = previousCompileContext.preLinkFns || [];
           var postLinkFns = previousCompileContext.postLinkFns || [];
           var controllerDirectives = previousCompileContext.controllerDirectives;
           var templateDirective = previousCompileContext.templateDirective;
           var newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective;
-          var controllers = {};
-          var newScopeDirective;
+          var childTranscludeFn;
 
           function getControllers(require, $element) {
             // array
@@ -740,7 +743,8 @@
                 linkFn.isolateScope ? isolateScope : scope,
                 $element,
                 attrs,
-                linkFn.require && getControllers(linkFn.require, $element)
+                linkFn.require && getControllers(linkFn.require, $element),
+                childTranscludeFn
               );
             });
 
@@ -761,7 +765,8 @@
                 linkFn.isolateScope ? isolateScope : scope,
                 $element,
                 attrs,
-                linkFn.require && getControllers(linkFn.require, $element)
+                linkFn.require && getControllers(linkFn.require, $element),
+                childTranscludeFn
               );
             });
           }; // end node LinkFn
@@ -805,7 +810,7 @@
             // is transcluded
             if (directive.transclude) {
               var $transcludeNodes = $compileNode.clone().contents();
-              compile($transcludeNodes);
+              childTranscludeFn = compile($transcludeNodes);
               $compileNode.empty();
             }
 
