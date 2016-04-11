@@ -551,7 +551,7 @@
           var controllerDirectives = previousCompileContext.controllerDirectives;
           var templateDirective = previousCompileContext.templateDirective;
           var newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective;
-          var childTranscludeFn;
+          var childTranscludeFn, hasTranscludeDirective;
 
           function getControllers(require, $element) {
             // array
@@ -809,6 +809,11 @@
 
             // is transcluded
             if (directive.transclude) {
+              if (hasTranscludeDirective) {
+                throw "Multiple directives asking for transclude";
+              }
+              hasTranscludeDirective = true;
+
               var $transcludeNodes = $compileNode.clone().contents();
               childTranscludeFn = compile($transcludeNodes);
               $compileNode.empty();
@@ -854,7 +859,6 @@
                 addLinkFns(linkFn.pre, linkFn.post, attrStart, attrEnd, isolateScope, require);
               }
             }
-
 
             // is terminal
             if (directive.terminal) {

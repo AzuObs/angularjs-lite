@@ -3123,6 +3123,28 @@
           expect(el.find('> [in-template] > [in-transcluder]').length).toBe(1);
         });
       });
+
+
+      it('is only allowed once per element', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true
+            };
+          },
+          mySecondTranscluder: function() {
+            return {
+              transclude: true
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div my-transcluder my-second-transcluder></div>');
+          expect(function() {
+            $compile(el);
+          }).toThrow();
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();
