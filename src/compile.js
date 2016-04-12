@@ -335,15 +335,20 @@
               parentBoundTranscludeFn = parentBoundTranscludeFn.$$boundTransclude;
             }
 
-            $compileNodes.data("$scope", scope);
 
+            var $linkNodes;
             if (cloneAttachFn) {
-              cloneAttachFn($compileNodes, scope);
+              $linkNodes = $compileNodes.clone();
+              cloneAttachFn($linkNodes, scope);
+            }
+            else {
+              $linkNodes = $compileNodes;
             }
 
-            compositeLinkFn(scope, $compileNodes, parentBoundTranscludeFn);
+            $linkNodes.data("$scope", scope);
+            compositeLinkFn(scope, $linkNodes, parentBoundTranscludeFn);
 
-            return $compileNodes;
+            return $linkNodes;
           };
         }
 
