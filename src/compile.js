@@ -395,8 +395,10 @@
                 var boundTranscludeFn;
                 // if node has transclude
                 if (linkFn.nodeLinkFn.transcludeOnThisElement) {
-                  boundTranscludeFn = function(containingScope) {
-                    var transcludedScope = scope.$new(false, containingScope);
+                  boundTranscludeFn = function(transcludedScope, containingScope) {
+                    if (!transcludedScope) {
+                      transcludedScope = scope.$new(false, containingScope);
+                    }
                     return linkFn.nodeLinkFn.transclude(transcludedScope);
                   };
                 }
@@ -753,8 +755,8 @@
               controller();
             });
 
-            function scopeBoundTranscludeFn() {
-              return boundTranscludeFn(scope);
+            function scopeBoundTranscludeFn(transcludedScope) {
+              return boundTranscludeFn(transcludedScope, scope);
             }
 
             // pre link

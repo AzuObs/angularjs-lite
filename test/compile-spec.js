@@ -3238,6 +3238,37 @@
           expect(watchSpy.calls.count()).toBe(3);
         });
       });
+
+
+      it('allows passing another scope to transclusion function', function() {
+        var otherLinkSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true,
+              scope: {},
+              template: '<div></div>',
+              link: function(scope, element, attrs, ctrl, transclude) {
+                var mySpecialScope = scope.$new(true);
+                mySpecialScope.specialAttr = 42;
+                transclude(mySpecialScope);
+              }
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              link: otherLinkSpy
+            };
+          }
+        });
+
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div my-other-directive></div></div>');
+          $compile(el)($rootScope);
+          var transcludedScope = otherLinkSpy.calls.first().args[0];
+          expect(transcludedScope.specialAttr).toBe(42);
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();
