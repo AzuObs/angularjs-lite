@@ -3201,6 +3201,43 @@
           expect(el.find('> [my-inner-directive]').html()).toBe('Hello from root');
         });
       });
+
+
+      it('stops watching when transcluding directive is destroyed', function() {
+        var watchSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true,
+              scope: true,
+              link: function(scope, element, attrs, ctrl, transclude) {
+                element.append(transclude());
+                scope.$on('destroyNow', function() {
+                  scope.$destroy();
+                });
+              }
+            };
+          },
+          myInnerDirective: function() {
+            return {
+              link: function(scope) {
+                scope.$watch(watchSpy);
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div my-inner-directive></div></div>');
+          $compile(el)($rootScope);
+          $rootScope.$apply();
+          expect(watchSpy.calls.count()).toBe(2);
+          $rootScope.$apply();
+          expect(watchSpy.calls.count()).toBe(3);
+          $rootScope.$broadcast('destroyNow');
+          $rootScope.$apply();
+          expect(watchSpy.calls.count()).toBe(3);
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();
