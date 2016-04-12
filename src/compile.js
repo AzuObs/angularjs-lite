@@ -720,21 +720,24 @@
             }
 
             // if controller
-            _.forEach(controllerDirectives, function(directive) {
-              var controllerName = directive.controller;
-              var locals = {
-                $scope: newIsolateScopeDirective ? isolateScope : scope,
-                $element: $element,
-                $attrs: attrs
-              };
+            if (controllerDirectives) {
+              _.forEach(controllerDirectives, function(directive) {
+                var controllerName = directive.controller;
+                var locals = {
+                  $scope: newIsolateScopeDirective ? isolateScope : scope,
+                  $element: $element,
+                  $attrs: attrs,
+                  $transclude: scopeBoundTranscludeFn
+                };
 
-              if (controllerName === "@") {
-                controllerName = attrs[directive.name];
-              }
-              var controller = $controller(controllerName, locals, true, directive.controllerAs);
-              controllers[directive.name] = controller;
-              $element.data("$" + directive.name + "Controller", controller.instance);
-            });
+                if (controllerName === "@") {
+                  controllerName = attrs[directive.name];
+                }
+                var controller = $controller(controllerName, locals, true, directive.controllerAs);
+                controllers[directive.name] = controller;
+                $element.data("$" + directive.name + "Controller", controller.instance);
+              });
+            }
 
 
             var scopeDirective = newIsolateScopeDirective || newScopeDirective;
