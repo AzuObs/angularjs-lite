@@ -420,7 +420,8 @@
                 // call childLinkfn
                 linkFn.childLinkFn(
                   scope,
-                  node.childNodes);
+                  node.childNodes,
+                  parentBoundTranscludeFn);
               }
             });
           } // end compositeLinkFn

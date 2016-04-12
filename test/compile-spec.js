@@ -3293,6 +3293,30 @@
           expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
         });
       });
+
+
+      it('makes contents available to indirect child elements', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true,
+              template: '<div><div in-template></div></div>'
+            };
+          },
+          inTemplate: function() {
+            return {
+              link: function(scope, element, attrs, ctrl, transcludeFn) {
+                element.append(transcludeFn());
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          $compile(el)($rootScope);
+          expect(el.find('> div > [in-template] > [in-transclude]').length).toBe(1);
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();
