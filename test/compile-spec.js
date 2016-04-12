@@ -3327,7 +3327,7 @@
               link: function(scope, element, attrs, ctrl, transclude) {
                 var customTemplate = $('<div in-custom-template></div>');
                 element.append(customTemplate);
-                $compile(customTemplate)(scope, {
+                $compile(customTemplate)(scope, undefined, {
                   parentBoundTranscludeFn: transclude
                 });
               }
@@ -3358,7 +3358,7 @@
               link: function(scope, element, attrs, ctrl, transclude) {
                 var customTemplate = $('<div in-custom-template></div>');
                 element.append(customTemplate);
-                $compile(customTemplate)(scope, {
+                $compile(customTemplate)(scope, undefined, {
                   parentBoundTranscludeFn: transclude
                 });
               }
@@ -3413,6 +3413,24 @@
           var el = $('<div my-transcluder><div in-transclude></div></div>');
           $compile(el)($rootScope);
           expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+        });
+      });
+
+
+      describe('clone attach function', function() {
+        it('can be passed to public link fn', function() {
+          var injector = makeInjectorWithDirectives({});
+          injector.invoke(function($compile, $rootScope) {
+            var el = $('<div>Hello</div>');
+            var myScope = $rootScope.$new();
+            var gotEl, gotScope;
+            $compile(el)(myScope, function cloneAttachFn(el, scope) {
+              gotEl = el;
+              gotScope = scope;
+            });
+            expect(gotEl[0].isEqualNode(el[0])).toBe(true);
+            expect(gotScope).toBe(myScope);
+          });
         });
       });
     }); // describe("transclude")

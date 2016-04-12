@@ -328,7 +328,7 @@
         function compile($compileNodes) {
           var compositeLinkFn = compileNodes($compileNodes);
 
-          return function publicLinkFn(scope, options) {
+          return function publicLinkFn(scope, cloneAttachFn, options) {
             options = options || {};
             var parentBoundTranscludeFn = options.parentBoundTranscludeFn;
             if (parentBoundTranscludeFn && parentBoundTranscludeFn.$$boundTransclude) {
@@ -336,6 +336,11 @@
             }
 
             $compileNodes.data("$scope", scope);
+
+            if (cloneAttachFn) {
+              cloneAttachFn($compileNodes, scope);
+            }
+
             compositeLinkFn(scope, $compileNodes, parentBoundTranscludeFn);
 
             return $compileNodes;
