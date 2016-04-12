@@ -369,7 +369,7 @@
             }
           });
 
-          function compositeLinkFn(scope, linkNodes) {
+          function compositeLinkFn(scope, linkNodes, parentBoundTranscludeFn) {
             var stableNodeList = [];
             _.forEach(linkFns, function(linkFn) {
               stableNodeList[linkFn.idx] = linkNodes[linkFn.idx];
@@ -401,6 +401,10 @@
                     }
                     return linkFn.nodeLinkFn.transclude(transcludedScope);
                   };
+                }
+                // if parent node has a transclude instead
+                else if (parentBoundTranscludeFn) {
+                  boundTranscludeFn = parentBoundTranscludeFn;
                 }
 
                 linkFn.nodeLinkFn(
@@ -778,7 +782,7 @@
               if (newIsolateScopeDirective && newIsolateScopeDirective.template) {
                 scopeToChild = isolateScope;
               }
-              childLinkFn(scopeToChild, linkNode.childNodes);
+              childLinkFn(scopeToChild, linkNode.childNodes, boundTranscludeFn);
             }
 
             //post link - start from the end
