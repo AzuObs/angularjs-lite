@@ -3317,6 +3317,36 @@
           expect(el.find('> div > [in-template] > [in-transclude]').length).toBe(1);
         });
       });
+
+
+      it('supports passing transclusion function to public link function', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function($compile) {
+            return {
+              transclude: true,
+              link: function(scope, element, attrs, ctrl, transclude) {
+                var customTemplate = $('<div in-custom-template></div>');
+                element.append(customTemplate);
+                $compile(customTemplate)(scope, {
+                  parentBoundTranscludeFn: transclude
+                });
+              }
+            };
+          },
+          inCustomTemplate: function() {
+            return {
+              link: function(scope, element, attrs, ctrl, transclude) {
+                element.append(transclude());
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          $compile(el)($rootScope);
+          expect(el.find('> [in-custom-template] > [in-transclude]').length).toBe(1);
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();
