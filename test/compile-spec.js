@@ -3172,6 +3172,35 @@
           expect(el.find('> [my-inner-directive]').html()).toBe('Hello from root');
         });
       });
+
+
+      it('does not use the inherited scope of the directive', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true,
+              scope: true,
+              link: function(scope, element, attrs, ctrl, transclude) {
+                scope.anAttr = 'Shadowed attribute';
+                element.append(transclude());
+              }
+            };
+          },
+          myInnerDirective: function() {
+            return {
+              link: function(scope, element) {
+                element.html(scope.anAttr);
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div my-inner-directive></div></div>');
+          $rootScope.anAttr = 'Hello from root';
+          $compile(el)($rootScope);
+          expect(el.find('> [my-inner-directive]').html()).toBe('Hello from root');
+        });
+      });
     }); // describe("transclude")
   }); // describe("$compile")
 })();

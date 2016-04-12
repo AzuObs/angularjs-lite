@@ -378,24 +378,40 @@
             _.forEach(linkFns, function(linkFn) {
               var node = stableNodeList[linkFn.idx];
 
+              // if node has a link fn
               if (linkFn.nodeLinkFn) {
+                var childScope;
+
                 // if the LINK fn has a scope property, NOT if a DIRECTIVE has one
                 // applyDirective calculates this
                 if (linkFn.nodeLinkFn.scope) {
-                  scope = scope.$new();
-                  $(node).data("$scope", scope);
+                  childScope = scope.$new();
+                  $(node).data("$scope", childScope);
+                }
+                else {
+                  childScope = scope;
                 }
 
-                // if LINK fn doesn't have a scope, it may still be an isolateScope
-                // in which case the linkFn will add this
+                var boundTranscludeFn;
+                // if node has transclude
+                if (linkFn.nodeLinkFn.transcludeOnThisElement) {
+                  boundTranscludeFn = function() {
+                    // linkFn of transclude
+                    return linkFn.nodeLinkFn.transclude(scope);
+                  };
+                }
+
                 linkFn.nodeLinkFn(
                   linkFn.childLinkFn,
-                  scope,
-                  node);
+                  childScope,
+                  node,
+                  boundTranscludeFn
+                );
               }
-              // no directives on current node
+
+              // no linkfn on node
               else {
-                //link fn is the compositeLinkFn of the child
+                // call childLinkfn
                 linkFn.childLinkFn(
                   scope,
                   node.childNodes);
@@ -680,7 +696,7 @@
           } // end initializeDirectiveBindings
 
 
-          var nodeLinkFn = function(childLinkFn, scope, linkNode) {
+          var nodeLinkFn = function(childLinkFn, scope, linkNode, boundTranscludeFn) {
             var $element = $(linkNode);
 
             var isolateScope;
@@ -736,12 +752,6 @@
             _.forEach(controllers, function(controller) {
               controller();
             });
-
-
-            // bind transcludefn to scope
-            function boundTranscludeFn() {
-              return childTranscludeFn(scope);
-            }
 
             // pre link
             _.forEach(preLinkFns, function(linkFn) {
@@ -813,7 +823,7 @@
               controllerDirectives[directive.name] = directive;
             }
 
-            // is transcluded
+            // has transclude
             if (directive.transclude) {
               if (hasTranscludeDirective) {
                 throw "Multiple directives asking for transclude";
@@ -875,6 +885,8 @@
 
           nodeLinkFn.terminal = terminal;
           nodeLinkFn.scope = newScopeDirective && newScopeDirective.scope;
+          nodeLinkFn.transcludeOnThisElement = hasTranscludeDirective;
+          nodeLinkFn.transclude = childTranscludeFn;
           return nodeLinkFn;
         } // applyDirectives
 
