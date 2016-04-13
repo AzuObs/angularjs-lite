@@ -877,7 +877,8 @@
 
               // element transclusion
               if (directive.transclude === "element") {
-                $compileNode.replaceWith($(document.createComment(" " + directive.name + ": ")));
+                $compileNode.replaceWith(
+                  $(document.createComment(" " + directive.name + ": " + attrs[directive.name] + " ")));
               }
               // regular transclusion
               else {

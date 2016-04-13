@@ -3703,6 +3703,20 @@
       });
 
 
+      it('includes directive attribute value in comment', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: 'element'
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div><div my-transcluder=42></div></div>');
+          $compile(el);
+          expect(el.html()).toEqual('<!-- myTranscluder: 42 -->');
+        });
+      });
     }); // describe("element transclusion")
   }); // describe("$compile")
 })();
