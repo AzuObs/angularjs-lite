@@ -881,8 +881,9 @@
               // element transclusion
               if (directive.transclude === "element") {
                 var $originalCompileNode = $compileNode;
-                $compileNode = $(document.createComment(
+                $compileNode = attrs.$$element = $(document.createComment(
                   " " + directive.name + ": " + attrs[directive.name] + " "));
+                // replace the DOM with
                 $originalCompileNode.replaceWith($compileNode);
                 terminalPriority = directive.priority;
                 childTranscludeFn = compile($originalCompileNode, terminalPriority);

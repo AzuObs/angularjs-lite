@@ -3838,6 +3838,26 @@
           expect(el.find('[my-double]').length).toBe(2);
         });
       });
+
+
+      it('sets directive attributes element to comment', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: 'element',
+              link: function(scope, element, attrs, ctrl, transclude) {
+                attrs.$set('testing', '42');
+                element.after(transclude());
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div><div my-transcluder></div></div>');
+          $compile(el)($rootScope);
+          expect(el.find('[my-transcluder]').attr('testing')).toBeUndefined();
+        });
+      });
     }); // describe("element transclusion")
   }); // describe("$compile")
 })();
