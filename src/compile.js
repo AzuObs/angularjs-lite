@@ -297,14 +297,15 @@
         }
 
 
-        function addDirective(directives, name, mode, attrStartName, attrEndName) {
+        function addDirective(directives, name, mode, attrStartName, attrEndName, maxPriority) {
           var match;
 
           if (hasDirectives.hasOwnProperty(name)) {
             // array of directive objects
             var foundDirectives = $injector.get(name + "Directive");
             var applicableDirectives = foundDirectives.filter(function(dir) {
-              return dir.restrict.indexOf(mode) !== -1;
+              return (maxPriority === undefined || maxPriority > dir.priority) &&
+                dir.restrict.indexOf(mode) !== -1;
             });
 
             applicableDirectives.forEach(function(directive) {
@@ -325,8 +326,8 @@
 
 
         // $compileNodes = jqLite wrapped html
-        function compile($compileNodes) {
-          var compositeLinkFn = compileNodes($compileNodes);
+        function compile($compileNodes, maxPriority) {
+          var compositeLinkFn = compileNodes($compileNodes, maxPriority);
 
           return function publicLinkFn(scope, cloneAttachFn, options) {
             options = options || {};
@@ -352,13 +353,13 @@
         }
 
 
-        function compileNodes($compileNodes) {
+        function compileNodes($compileNodes, maxPriority) {
           // linkFns of every node
           var linkFns = [];
 
           _.forEach($compileNodes, function(node, i) {
             var attrs = new Attributes($(node));
-            var directives = collectDirectives(node, attrs);
+            var directives = collectDirectives(node, attrs, maxPriority);
             var nodeLinkFn;
 
             if (directives.length) {
@@ -446,7 +447,7 @@
         } // end compileNodes
 
 
-        function collectDirectives(node, attrs) {
+        function collectDirectives(node, attrs, maxPriority) {
           // holds directive object (not factories!)
           var directives = [];
           var match;
@@ -454,7 +455,7 @@
           // element
           if (node.nodeType === Node.ELEMENT_NODE) {
             var normalizedNodeName = directiveNormalize(nodeName(node).toLowerCase());
-            addDirective(directives, normalizedNodeName, "E");
+            addDirective(directives, normalizedNodeName, "E", maxPriority);
 
             // attr
             _.forEach(node.attributes, function(attr) {
@@ -490,7 +491,7 @@
                 }
               }
 
-              addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName);
+              addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName, maxPriority);
             });
 
             // class 
@@ -500,7 +501,7 @@
               // (?:\:([^;]+))?;? optionally match a ":" that optionally finished with "?"
               while ((match = /([\d\w\-_]+)(?:\:([^;]+))?;?/.exec(className))) {
                 var normalizedClassName = directiveNormalize(match[1]);
-                if (addDirective(directives, normalizedClassName, "C")) {
+                if (addDirective(directives, normalizedClassName, "C", maxPriority)) {
                   attrs[normalizedClassName] = match[2] ? match[2].trim() : undefined;
                 }
 
@@ -517,7 +518,7 @@
 
             if (match) {
               var normalizedName = directiveNormalize(match[1]);
-              if (addDirective(directives, normalizedName, 'M')) {
+              if (addDirective(directives, normalizedName, 'M', maxPriority)) {
                 attrs[normalizedName] = match[2] ? match[2].trim() : undefined;
               }
             }
@@ -881,6 +882,8 @@
                 $compileNode = $(document.createComment(
                   " " + directive.name + ": " + attrs[directive.name] + " "));
                 $originalCompileNode.replaceWith($compileNode);
+                terminalPriority = directive.priority;
+                compile($originalCompileNode, terminalPriority);
               }
               // regular transclusion
               else {

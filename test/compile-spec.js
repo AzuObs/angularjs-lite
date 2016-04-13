@@ -3737,8 +3737,57 @@
         injector.invoke(function($compile, $rootScope) {
           var el = $('<div><div my-transcluder></div></div>');
           $compile(el)($rootScope);
-          expect(gotCompiledEl[0].nodeType).toEqual(Node.COMMENT_NODE);
-          expect(gotLinkedEl[0].nodeType).toEqual(Node.COMMENT_NODE);
+          expect(gotCompiledEl[0].nodeType).toBe(Node.COMMENT_NODE);
+          expect(gotLinkedEl[0].nodeType).toBe(Node.COMMENT_NODE);
+        });
+      });
+
+
+      it('calls lower priority compile with original', function() {
+        var gotCompiledEl;
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              priority: 2,
+              transclude: 'element'
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              priority: 1,
+              compile: function(compiledEl) {
+                gotCompiledEl = compiledEl;
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div><div my-transcluder my-other-directive></div></div>');
+          $compile(el);
+          expect(gotCompiledEl[0].nodeType).toBe(Node.ELEMENT_NODE);
+        });
+      });
+
+
+      it('calls compile on child element directives', function() {
+        var compileSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: 'element'
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              compile: compileSpy
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $(
+            '<div><div my-transcluder><div my-other-directive></div></div></div>');
+          $compile(el);
+          expect(compileSpy).toHaveBeenCalled();
         });
       });
     }); // describe("element transclusion")
