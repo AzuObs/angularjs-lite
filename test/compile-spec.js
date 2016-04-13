@@ -3813,6 +3813,31 @@
           expect(compileSpy.calls.count()).toBe(1);
         });
       });
+
+
+      it('makes original element available for transclusion', function() {
+        var injector = makeInjectorWithDirectives({
+          myDouble: function() {
+            return {
+              transclude: 'element',
+              link: function(scope, el, attrs, ctrl, transclude) {
+                transclude(function(clone) {
+                  el.after(clone);
+                });
+                transclude(function(clone) {
+                  el.after(clone);
+                });
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div><div my-double>Hello</div>');
+
+          $compile(el)($rootScope);
+          expect(el.find('[my-double]').length).toBe(2);
+        });
+      });
     }); // describe("element transclusion")
   }); // describe("$compile")
 })();

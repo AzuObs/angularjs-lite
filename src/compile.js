@@ -885,7 +885,7 @@
                   " " + directive.name + ": " + attrs[directive.name] + " "));
                 $originalCompileNode.replaceWith($compileNode);
                 terminalPriority = directive.priority;
-                compile($originalCompileNode, terminalPriority);
+                childTranscludeFn = compile($originalCompileNode, terminalPriority);
               }
               // regular transclusion
               else {
