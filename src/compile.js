@@ -597,7 +597,8 @@
           var controllerDirectives = previousCompileContext.controllerDirectives;
           var templateDirective = previousCompileContext.templateDirective;
           var newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective;
-          var childTranscludeFn, hasTranscludeDirective;
+          var hasTranscludeDirective = previousCompileContext.hasTranscludeDirective;
+          var childTranscludeFn;
 
           function getControllers(require, $element) {
             // array
@@ -900,7 +901,8 @@
                 preLinkFns: preLinkFns,
                 postLinkFns: postLinkFns,
                 newIsolateScopeDirective: newIsolateScopeDirective,
-                controllerDirectives: controllerDirectives
+                controllerDirectives: controllerDirectives,
+                hasTranscludeDirective: hasTranscludeDirective
               });
               return false;
             }

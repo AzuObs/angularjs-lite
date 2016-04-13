@@ -3613,6 +3613,34 @@
           expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
         });
       });
+
+
+      it('is only allowed once', function() {
+        var otherCompileSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              priority: 1,
+              transclude: true,
+              templateUrl: 'my_template.html'
+            };
+          },
+          mySecondTranscluder: function() {
+            return {
+              priority: 0,
+              transclude: true,
+              compile: otherCompileSpy
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder my-second-transcluder></div>');
+          $compile(el);
+          $rootScope.$apply();
+          requests[0].respond(200, {}, '<div in-template></div>');
+          expect(otherCompileSpy).not.toHaveBeenCalled();
+        });
+      });
     }); // describe("with transclusion")
   }); // describe("$compile")
 })();
