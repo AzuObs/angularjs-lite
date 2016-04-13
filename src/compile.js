@@ -877,7 +877,7 @@
 
               // element transclusion
               if (directive.transclude === "element") {
-                $compileNode.remove();
+                $compileNode.replaceWith($(document.createComment(" " + directive.name + ": ")));
               }
               // regular transclusion
               else {
@@ -913,6 +913,7 @@
               });
               return false;
             }
+
             // compile
             else if (directive.compile) {
               var linkFn = directive.compile($compileNode, attrs);
