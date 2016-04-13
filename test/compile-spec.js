@@ -3065,6 +3065,63 @@
     }); // describe("templateUrl")
 
 
+    describe('clone attach function', function() {
+
+      it('can be passed to public link fn', function() {
+        var injector = makeInjectorWithDirectives({});
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div>Hello</div>');
+          var myScope = $rootScope.$new();
+          var gotEl, gotScope;
+          $compile(el)(myScope, function cloneAttachFn(el, scope) {
+            gotEl = el;
+            gotScope = scope;
+          });
+          expect(gotEl[0].isEqualNode(el[0])).toBe(true);
+          expect(gotScope).toBe(myScope);
+        });
+      });
+
+
+      it('causes compiled elements to be cloned', function() {
+        var injector = makeInjectorWithDirectives({});
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div>Hello</div>');
+          var myScope = $rootScope.$new();
+          var gotClonedEl;
+          $compile(el)(myScope, function(clonedEl) {
+            gotClonedEl = clonedEl;
+          });
+          expect(gotClonedEl[0].isEqualNode(el[0])).toBe(true);
+          expect(gotClonedEl[0]).not.toBe(el[0]);
+        });
+      });
+
+
+      it('causes cloned DOM to be linked', function() {
+        var gotCompileEl, gotLinkEl;
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              compile: function(compileEl) {
+                gotCompileEl = compileEl;
+                return function link(scope, linkEl) {
+                  gotLinkEl = linkEl;
+                };
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          var myScope = $rootScope.$new();
+          $compile(el)(myScope, function() {});
+          expect(gotCompileEl[0]).not.toBe(gotLinkEl[0]);
+        });
+      });
+    }); // decribe("clone attach function")
+
+
     describe('transclude', function() {
 
       it('removes the children of the element from the DOM', function() {
@@ -3415,63 +3472,31 @@
           expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
         });
       });
-    }); // describe("transclude")
 
 
-    describe('clone attach function', function() {
-
-      it('can be passed to public link fn', function() {
-        var injector = makeInjectorWithDirectives({});
-        injector.invoke(function($compile, $rootScope) {
-          var el = $('<div>Hello</div>');
-          var myScope = $rootScope.$new();
-          var gotEl, gotScope;
-          $compile(el)(myScope, function cloneAttachFn(el, scope) {
-            gotEl = el;
-            gotScope = scope;
-          });
-          expect(gotEl[0].isEqualNode(el[0])).toBe(true);
-          expect(gotScope).toBe(myScope);
-        });
-      });
-
-
-      it('causes compiled elements to be cloned', function() {
-        var injector = makeInjectorWithDirectives({});
-        injector.invoke(function($compile, $rootScope) {
-          var el = $('<div>Hello</div>');
-          var myScope = $rootScope.$new();
-          var gotClonedEl;
-          $compile(el)(myScope, function(clonedEl) {
-            gotClonedEl = clonedEl;
-          });
-          expect(gotClonedEl[0].isEqualNode(el[0])).toBe(true);
-          expect(gotClonedEl[0]).not.toBe(el[0]);
-        });
-      });
-
-
-      it('causes cloned DOM to be linked', function() {
-        var gotCompileEl, gotLinkEl;
+      it('allows connecting transcluded content', function() {
         var injector = makeInjectorWithDirectives({
-          myDirective: function() {
+          myTranscluder: function() {
             return {
-              compile: function(compileEl) {
-                gotCompileEl = compileEl;
-                return function link(scope, linkEl) {
-                  gotLinkEl = linkEl;
-                };
+              transclude: true,
+              template: '<div in-template></div>',
+              link: function(scope, element, attrs, ctrl, transcludeFn) {
+                var myScope = scope.$new();
+                transcludeFn(myScope, function(transclNode) {
+                  element.find('[in-template]').append(transclNode);
+                });
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
-          var myScope = $rootScope.$new();
-          $compile(el)(myScope, function() {});
-          expect(gotCompileEl[0]).not.toBe(gotLinkEl[0]);
+          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          $compile(el)($rootScope);
+          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
         });
       });
-    }); // decribe("clone attach function")
+    }); // describe("transclude")
+
+
   }); // describe("$compile")
 })();
