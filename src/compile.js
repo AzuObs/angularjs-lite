@@ -555,7 +555,12 @@
               // call nodeLinkFn, this means that the $http.get resolved after the call to the 
               // delayedNodeFn got called
               _.forEach(linkQueue, function(linkCall) {
-                afterTemplateNodeLinkFn(afterTemplateChildLinkFn, linkCall.scope, linkCall.linkNode);
+                afterTemplateNodeLinkFn(
+                  afterTemplateChildLinkFn,
+                  linkCall.scope,
+                  linkCall.linkNode,
+                  linkCall.boundTranscludeFn
+                );
               });
               linkQueue = null;
             });
@@ -567,7 +572,8 @@
             if (linkQueue) {
               linkQueue.push({
                 scope: scope,
-                linkNode: linkNode
+                linkNode: linkNode,
+                boundTranscludeFn: boundTranscludeFn
               });
             }
 

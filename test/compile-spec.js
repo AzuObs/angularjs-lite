@@ -3590,6 +3590,29 @@
           expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
         });
       });
+
+
+      it('works when template arrives after', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true,
+              templateUrl: 'my_template.html',
+              link: function(scope, element, attrs, ctrl, transclude) {
+                element.find('[in-template]').append(transclude());
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var linkFunction = $compile(el);
+          $rootScope.$apply();
+          linkFunction($rootScope); // link first
+          requests[0].respond(200, {}, '<div in-template></div>'); // then respond
+          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+        });
+      });
     }); // describe("with transclusion")
   }); // describe("$compile")
 })();
