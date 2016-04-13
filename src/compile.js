@@ -875,9 +875,16 @@
               }
               hasTranscludeDirective = true;
 
-              var $transcludeNodes = $compileNode.clone().contents();
-              childTranscludeFn = compile($transcludeNodes);
-              $compileNode.empty();
+              // element transclusion
+              if (directive.transclude === "element") {
+                $compileNode.remove();
+              }
+              // regular transclusion
+              else {
+                var $transcludeNodes = $compileNode.clone().contents();
+                childTranscludeFn = compile($transcludeNodes);
+                $compileNode.empty();
+              }
             }
 
             // has template

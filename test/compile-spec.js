@@ -3667,5 +3667,24 @@
         });
       });
     }); // describe("transclude")
+
+
+    describe('element transclusion', function() {
+
+      it('removes the element from the DOM', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: 'element'
+            };
+          }
+        });
+        injector.invoke(function($compile) {
+          var el = $('<div><div my-transcluder></div></div>');
+          $compile(el);
+          expect(el.is(':empty')).toBe(true);
+        });
+      });
+    }); // describe("element transclusion")
   }); // describe("$compile")
 })();
