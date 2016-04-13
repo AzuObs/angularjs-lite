@@ -3518,6 +3518,37 @@
         });
       });
 
+
+      it('allows passing data to transclusion', function() {
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: true,
+              template: '<div in-template></div>',
+              link: function(scope, element, attrs, ctrl, transcludeFn) {
+                transcludeFn(function(transclNode, transclScope) {
+                  transclScope.dataFromTranscluder = 'Hello from transcluder';
+                  element.find('[in-template]').append(transclNode);
+                });
+              }
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              link: function(scope, element) {
+                element.html(scope.dataFromTranscluder);
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-transcluder><div my-other-directive></div></div>');
+          $compile(el)($rootScope);
+          expect(el.find('> [in-template] > [my-other-directive]').html())
+            .toEqual('Hello from transcluder');
+        });
+      });
+
     }); // describe("transclude")
   }); // describe("$compile")
 })();
