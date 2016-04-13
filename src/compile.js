@@ -357,19 +357,21 @@
           // linkFns of every node
           var linkFns = [];
 
-          _.forEach($compileNodes, function(node, i) {
-            var attrs = new Attributes($(node));
-            var directives = collectDirectives(node, attrs, maxPriority);
+          _.times($compileNodes.length, function(i) {
+            var attrs = new Attributes($($compileNodes[i]));
+            var directives = collectDirectives($compileNodes[i], attrs, maxPriority);
             var nodeLinkFn;
 
             if (directives.length) {
               // directive.compile
-              nodeLinkFn = applyDirectivesToNode(directives, node, attrs);
+              nodeLinkFn = applyDirectivesToNode(directives, $compileNodes[i], attrs);
             }
 
             var childLinkFn;
-            if ((!nodeLinkFn || !nodeLinkFn.terminal) && node.childNodes && node.childNodes.length) {
-              childLinkFn = compileNodes(node.childNodes);
+            if ((!nodeLinkFn || !nodeLinkFn.terminal) &&
+              $compileNodes[i].childNodes &&
+              $compileNodes[i].childNodes.length) {
+              childLinkFn = compileNodes($compileNodes[i].childNodes);
             }
 
             if (nodeLinkFn && nodeLinkFn.scope) {
