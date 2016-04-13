@@ -534,7 +534,8 @@
         function compileTemplateUrl(directives, $compileNode, attrs, previousCompileContext) {
           var origAsyncDirective = directives.shift();
           var derivedAsyncDirective = _.assign({}, origAsyncDirective, {
-            templateUrl: null
+            templateUrl: null,
+            transclude: null
           });
           var templateUrl = _.isFunction(origAsyncDirective.templateUrl) ?
             origAsyncDirective.templateUrl($compileNode, attrs) : origAsyncDirective.templateUrl;
@@ -561,7 +562,7 @@
 
           // we ignore childLinkFn because the HTML for the child is going to be contained
           // within templateUrl
-          return function delayedNodeFn(_ignoreChildLinkFn, scope, linkNode) {
+          return function delayedNodeLinkFn(_ignoreChildLinkFn, scope, linkNode, boundTranscludeFn) {
             // if the $http.get hasn't resolved yet, we want to store the scope and node variables
             if (linkQueue) {
               linkQueue.push({
@@ -572,7 +573,7 @@
 
             // if the $http.get has resolve, then we haven't called this function yet
             else {
-              afterTemplateNodeLinkFn(afterTemplateChildLinkFn, scope, linkNode);
+              afterTemplateNodeLinkFn(afterTemplateChildLinkFn, scope, linkNode, boundTranscludeFn);
             }
           };
         } // end compileTemplateUrl
