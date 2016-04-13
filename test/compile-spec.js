@@ -3698,7 +3698,7 @@
         injector.invoke(function($compile) {
           var el = $('<div><div my-transcluder></div></div>');
           $compile(el);
-          expect(el.html()).toEqual('<!-- myTranscluder: -->');
+          expect(el.html()).toEqual('<!-- myTranscluder:  -->');
         });
       });
 
@@ -3715,6 +3715,30 @@
           var el = $('<div><div my-transcluder=42></div></div>');
           $compile(el);
           expect(el.html()).toEqual('<!-- myTranscluder: 42 -->');
+        });
+      });
+
+
+      it('calls directive compile and link with comment', function() {
+        var gotCompiledEl, gotLinkedEl;
+        var injector = makeInjectorWithDirectives({
+          myTranscluder: function() {
+            return {
+              transclude: 'element',
+              compile: function(compiledEl) {
+                gotCompiledEl = compiledEl;
+                return function(scope, linkedEl) {
+                  gotLinkedEl = linkedEl;
+                };
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div><div my-transcluder></div></div>');
+          $compile(el)($rootScope);
+          expect(gotCompiledEl[0].nodeType).toEqual(Node.COMMENT_NODE);
+          expect(gotLinkedEl[0].nodeType).toEqual(Node.COMMENT_NODE);
         });
       });
     }); // describe("element transclusion")
