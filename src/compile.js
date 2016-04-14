@@ -332,6 +332,8 @@
           return function publicLinkFn(scope, cloneAttachFn, options) {
             options = options || {};
             var parentBoundTranscludeFn = options.parentBoundTranscludeFn;
+            var transcludeControllers = options.transcludeControllers;
+
             if (parentBoundTranscludeFn && parentBoundTranscludeFn.$$boundTransclude) {
               parentBoundTranscludeFn = parentBoundTranscludeFn.$$boundTransclude;
             }
@@ -344,6 +346,10 @@
             else {
               $linkNodes = $compileNodes;
             }
+
+            _.forEach(transcludeControllers, function(controller, name) {
+              $linkNodes.data("$" + name + "Controller", controller.instance);
+            });
 
             $linkNodes.data("$scope", scope);
             compositeLinkFn(scope, $linkNodes, parentBoundTranscludeFn);
@@ -387,7 +393,7 @@
             }
           });
 
-          function compositeLinkFn(scope, linkNodes, parentBoundTranscludeFn) {
+          return function compositeLinkFn(scope, linkNodes, parentBoundTranscludeFn) {
             var stableNodeList = [];
             _.forEach(linkFns, function(linkFn) {
               stableNodeList[linkFn.idx] = linkNodes[linkFn.idx];
@@ -414,11 +420,13 @@
                 var boundTranscludeFn;
                 // if node has transclude
                 if (linkFn.nodeLinkFn.transcludeOnThisElement) {
-                  boundTranscludeFn = function(transcludedScope, cloneAttachFn, containingScope) {
+                  boundTranscludeFn = function(transcludedScope, cloneAttachFn, transcludeControllers, containingScope) {
                     if (!transcludedScope) {
                       transcludedScope = scope.$new(false, containingScope);
                     }
-                    return linkFn.nodeLinkFn.transclude(transcludedScope, cloneAttachFn);
+                    return linkFn.nodeLinkFn.transclude(transcludedScope, cloneAttachFn, {
+                      transcludeControllers: transcludeControllers
+                    });
                   };
                 }
                 // if parent node has a transclude instead
@@ -443,9 +451,7 @@
                   parentBoundTranscludeFn);
               }
             });
-          } // end compositeLinkFn
-
-          return compositeLinkFn;
+          };
         } // end compileNodes
 
 
@@ -602,6 +608,7 @@
           var newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective;
           var hasTranscludeDirective = previousCompileContext.hasTranscludeDirective;
           var childTranscludeFn;
+          var hasElementTranscludeDirective;
 
           function getControllers(require, $element) {
             // array
@@ -791,13 +798,20 @@
             });
 
             function scopeBoundTranscludeFn(transcludedScope, cloneAttachFn) {
-              // if no transcludeScope is passed
+              var transcludeControllers;
+
+              // if transcludeScope is in reality cloneAttachFn
               if (!transcludedScope || !transcludedScope.$watch || !transcludedScope.$evalAsync) {
                 cloneAttachFn = transcludedScope;
                 transcludedScope = undefined;
               }
 
-              return boundTranscludeFn(transcludedScope, cloneAttachFn, scope);
+
+              if (hasElementTranscludeDirective) {
+                transcludeControllers = controllers;
+              }
+
+              return boundTranscludeFn(transcludedScope, cloneAttachFn, transcludeControllers, scope);
             }
             scopeBoundTranscludeFn.$$boundTransclude = boundTranscludeFn;
 
@@ -880,6 +894,8 @@
 
               // element transclusion
               if (directive.transclude === "element") {
+                hasElementTranscludeDirective = true;
+
                 var $originalCompileNode = $compileNode;
                 $compileNode = attrs.$$element = $(document.createComment(
                   " " + directive.name + ": " + attrs[directive.name] + " "));

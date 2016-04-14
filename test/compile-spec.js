@@ -3858,6 +3858,42 @@
           expect(el.find('[my-transcluder]').attr('testing')).toBeUndefined();
         });
       });
+
+
+      it('supports requiring controllers', function() {
+        var MyController = function() {};
+        var gotCtrl;
+        var injector = makeInjectorWithDirectives({
+          myCtrlDirective: function() {
+            return {
+              controller: MyController
+            };
+          },
+          myTranscluder: function() {
+            return {
+              transclude: 'element',
+              link: function(scope, el, attrs, ctrl, transclude) {
+                el.after(transclude());
+              }
+            };
+          },
+          myOtherDirective: function() {
+            return {
+              require: '^myCtrlDirective',
+              link: function(scope, el, attrs, ctrl, transclude) {
+                gotCtrl = ctrl;
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $(
+            '<div><div my-ctrl-directive my-transcluder><div my-other-directive></div></div>');
+          $compile(el)($rootScope);
+          expect(gotCtrl).toBeDefined();
+          expect(gotCtrl instanceof MyController).toBe(true);
+        });
+      });
     }); // describe("element transclusion")
   }); // describe("$compile")
 })();
