@@ -22,5 +22,14 @@
       expect(interp()).toEqual('hello');
     });
 
+
+    it('evaluates a single expression', function() {
+      var injector = createInjector(['ng']);
+      var $interpolate = injector.get('$interpolate');
+      var interp = $interpolate('{{anAttr}}');
+      expect(interp({
+        anAttr: '42'
+      })).toEqual('42');
+    });
   }); // describe("$interpolate")
 })();
