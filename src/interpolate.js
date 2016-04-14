@@ -14,7 +14,9 @@
 
         while (index < text.length) {
           startIndex = text.indexOf("{{", index);
-          endIndex = text.indexOf("}}", index);
+          if (startIndex !== -1) {
+            endIndex = text.indexOf("}}", startIndex + 2);
+          }
 
           // if there is an expression
           if (startIndex !== -1 && endIndex !== -1) {
