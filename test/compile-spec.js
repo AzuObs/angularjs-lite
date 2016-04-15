@@ -3911,6 +3911,16 @@
           expect(el.html()).toEqual("My expression: Hello");
         });
       });
+
+
+      it("adds binding class to text node parents", function() {
+        var injector = makeInjectorWithDirectives({});
+        injector.invoke(function($compile, $rootScope) {
+          var el = $("<div>My expression: {{myExpr}}</div>");
+          $compile(el)($rootScope);
+          expect(el.hasClass("ng-binding")).toBe(true);
+        });
+      });
     }); // describe("interpolation")
   }); // describe("$compile")
 })();

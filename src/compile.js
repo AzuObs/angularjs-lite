@@ -333,6 +333,7 @@
               priority: 0,
               compile: function() {
                 return function link(scope, element) {
+                  element.parent().addClass("ng-binding");
                   scope.$watch(interpolateFn, function(newValue) {
                     element[0].nodeValue = newValue;
                   });
