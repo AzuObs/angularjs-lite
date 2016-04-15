@@ -29,13 +29,14 @@
   function $InterpolateProvider() {
     this.$get = ["$parse", function($parse) {
 
-      function $interpolate(text) {
+      function $interpolate(text, mustHaveExpressions) {
         var index = 0;
 
         // "hello {{name}} I'm {{myName}}"
         // parts = ["hello ", parseFn, " I'm ", parseFn]
         var parts = [];
         var startIndex, endIndex, exp, expFn;
+        var hasExpressions = false;
 
         while (index < text.length) {
           startIndex = text.indexOf("{{", index);
@@ -52,6 +53,7 @@
             exp = text.substring(startIndex + 2, endIndex);
             expFn = $parse(exp);
             parts.push(expFn);
+            hasExpressions = true;
             index = endIndex + 2;
           }
           else {
@@ -61,17 +63,19 @@
         }
 
 
-        // context is usually a Scope
-        return function interpolateFn(context) {
-          return parts.reduce(function(previous, part) {
-            if (typeof part === "function") {
-              return previous + stringify(part(context));
-            }
-            else {
-              return previous + part;
-            }
-          }, "");
-        };
+        if (hasExpressions || !mustHaveExpressions) {
+          // context is usually a Scope
+          return function interpolateFn(context) {
+            return parts.reduce(function(previous, part) {
+              if (typeof part === "function") {
+                return previous + stringify(part(context));
+              }
+              else {
+                return previous + part;
+              }
+            }, "");
+          };
+        }
       }
 
       return $interpolate;

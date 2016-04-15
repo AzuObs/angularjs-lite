@@ -94,36 +94,52 @@
     });
 
 
-    it('turns arrays into JSON strings', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('{{anArray}}');
+    it("turns arrays into JSON strings", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("{{anArray}}");
       expect(interp({
         anArray: [1, 2, [3]]
-      })).toEqual('[1,2,[3]]');
+      })).toEqual("[1,2,[3]]");
     });
 
 
-    it('turns objects into JSON strings', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('{{anObject}}');
+    it("turns objects into JSON strings", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("{{anObject}}");
       expect(interp({
         anObject: {
           a: 1,
-          b: '2'
+          b: "2"
         }
-      })).toEqual('{"a":1,"b":"2"}');
+      })).toEqual("{\"a\":1,\"b\":\"2\"}");
     });
 
 
-    it('unescapes escaped sequences', function() {
+    it("unescapes escaped sequences", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("\\{\\{expr\\}\\} {{expr}} \\{\\{expr\\}\\}");
+      expect(interp({
+        expr: "value"
+      })).toEqual("{{expr}} value {{expr}}");
+    });
+
+
+    it('does not return function when flagged and no expressions', function() {
       var injector = createInjector(['ng']);
       var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('\\{\\{expr\\}\\} {{expr}} \\{\\{expr\\}\\}');
-      expect(interp({
-        expr: 'value'
-      })).toEqual('{{expr}} value {{expr}}');
+      var interp = $interpolate('static content only', true);
+      expect(interp).toBeFalsy();
+    });
+
+
+    it('returns function when flagged and has expressions', function() {
+      var injector = createInjector(['ng']);
+      var $interpolate = injector.get('$interpolate');
+      var interp = $interpolate('has an {{expr}}', true);
+      expect(interp).not.toBeFalsy();
     });
   }); // describe("$interpolate")
 })();
