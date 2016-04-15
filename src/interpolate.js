@@ -1,6 +1,17 @@
 (function() {
   "use strict";
 
+  // sometimes parse()() can return an object, null, undefined, etc in which 
+  // case we don't want JS coersion, we want to transform it into a string ourselves
+  function stringify(value) {
+    if (value === null || value === undefined) {
+      return "";
+    }
+    else {
+      return value;
+    }
+  }
+
   function $InterpolateProvider() {
     this.$get = ["$parse", function($parse) {
 
@@ -40,7 +51,7 @@
         return function interpolateFn(context) {
           return parts.reduce(function(previous, part) {
             if (typeof part === "function") {
-              return previous + part(context);
+              return previous + stringify(part(context));
             }
             else {
               return previous + part;

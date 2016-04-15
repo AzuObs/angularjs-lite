@@ -14,45 +14,62 @@
     });
 
 
-    it('produces an identity function for static content', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('hello');
+    it("produces an identity function for static content", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("hello");
       expect(interp instanceof Function).toBe(true);
-      expect(interp()).toEqual('hello');
+      expect(interp()).toEqual("hello");
     });
 
 
-    it('evaluates a single expression', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
+    it("evaluates a single expression", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
 
-      var interp = $interpolate('{{anAttr}}');
+      var interp = $interpolate("{{anAttr}}");
       interp({
         anAttr: "42"
       });
       expect(interp({
-        anAttr: '42'
-      })).toEqual('42');
+        anAttr: "42"
+      })).toEqual("42");
     });
 
 
-    it('evaluates many expressions', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('First {{anAttr}}, then {{anotherAttr}}!');
+    it("evaluates many expressions", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("First {{anAttr}}, then {{anotherAttr}}!");
       expect(interp({
-        anAttr: '42',
-        anotherAttr: '43'
-      })).toEqual('First 42, then 43!');
+        anAttr: "42",
+        anotherAttr: "43"
+      })).toEqual("First 42, then 43!");
     });
 
 
-    it('passes through ill-defined interpolations', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('why u no }}work{{');
-      expect(interp({})).toEqual('why u no }}work{{');
+    it("passes through ill-defined interpolations", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("why u no }}work{{");
+      expect(interp({})).toEqual("why u no }}work{{");
+    });
+
+
+    it("turns nulls into empty strings", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("{{aNull}}");
+      expect(interp({
+        aNull: null
+      })).toEqual("");
+    });
+
+    it("turns undefineds into empty strings", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("{{anUndefined}}");
+      expect(interp({})).toEqual("");
     });
   }); // describe("$interpolate")
 })();
