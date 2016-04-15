@@ -127,18 +127,18 @@
     });
 
 
-    it('does not return function when flagged and no expressions', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('static content only', true);
+    it("does not return function when flagged and no expressions", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("static content only", true);
       expect(interp).toBeFalsy();
     });
 
 
-    it('returns function when flagged and has expressions', function() {
-      var injector = createInjector(['ng']);
-      var $interpolate = injector.get('$interpolate');
-      var interp = $interpolate('has an {{expr}}', true);
+    it("returns function when flagged and has expressions", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("has an {{expr}}", true);
       expect(interp).not.toBeFalsy();
     });
   }); // describe("$interpolate")

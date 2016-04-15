@@ -6,7 +6,7 @@
     var givenAttrs;
     var injector = makeInjectorWithDirectives(dirName, function() {
       return {
-        restrict: 'EACM',
+        restrict: "EACM",
         compile: function(element, attrs) {
           givenAttrs = attrs;
         }
@@ -90,7 +90,7 @@
     it("compiles element directives from a single element", function() {
       var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
             element.data("hasCompiled", true);
           }
@@ -108,7 +108,7 @@
       var idx = 1;
       var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
             element.data("hasCompiled", idx++);
           }
@@ -127,7 +127,7 @@
       var idx = 1;
       var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
             element.data("hasCompiled", idx++);
           }
@@ -146,7 +146,7 @@
       var idx = 1;
       var injector = makeInjectorWithDirectives("myDir", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
             element.data("hasCompiled", idx++);
           }
@@ -173,7 +173,7 @@
         it("compiles element directives with " + prefix + delim + " prefix", function() {
           var injector = makeInjectorWithDirectives("myDir", function() {
             return {
-              restrict: 'EACM',
+              restrict: "EACM",
               compile: function(element) {
                 element.data("hasCompiled", true);
               }
@@ -189,206 +189,206 @@
     });
 
 
-    it('compiles attribute directives', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("compiles attribute directives", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
-            element.data('hasCompiled', true);
+            element.data("hasCompiled", true);
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div my-directive></div>');
+        var el = $("<div my-directive></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles attribute directives with prefixes', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("compiles attribute directives with prefixes", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
-            element.data('hasCompiled', true);
+            element.data("hasCompiled", true);
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div x:my-directive></div>');
+        var el = $("<div x:my-directive></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles several attribute directives in an element', function() {
+    it("compiles several attribute directives in an element", function() {
       var injector = makeInjectorWithDirectives({
         myDirective: function() {
           return {
-            restrict: 'EACM',
+            restrict: "EACM",
             compile: function(element) {
-              element.data('hasCompiled', true);
+              element.data("hasCompiled", true);
             }
           };
         },
         mySecondDirective: function() {
           return {
-            restrict: 'EACM',
+            restrict: "EACM",
             compile: function(element) {
-              element.data('secondCompiled', true);
+              element.data("secondCompiled", true);
             }
           };
         }
       });
       injector.invoke(function($compile) {
-        var el = $('<div my-directive my-second-directive></div>');
+        var el = $("<div my-directive my-second-directive></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
-        expect(el.data('secondCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
+        expect(el.data("secondCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles both element and attributes directives in an element', function() {
+    it("compiles both element and attributes directives in an element", function() {
       var injector = makeInjectorWithDirectives({
         myDirective: function() {
           return {
-            restrict: 'EACM',
+            restrict: "EACM",
             compile: function(element) {
-              element.data('hasCompiled', true);
+              element.data("hasCompiled", true);
             }
           };
         },
         mySecondDirective: function() {
           return {
-            restrict: 'EACM',
+            restrict: "EACM",
             compile: function(element) {
-              element.data('secondCompiled', true);
+              element.data("secondCompiled", true);
             }
           };
         }
       });
       injector.invoke(function($compile) {
-        var el = $('<my-directive my-second-directive></my-directive>');
+        var el = $("<my-directive my-second-directive></my-directive>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
-        expect(el.data('secondCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
+        expect(el.data("secondCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles attribute directives with ng-attr prefix', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("compiles attribute directives with ng-attr prefix", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
-            element.data('hasCompiled', true);
+            element.data("hasCompiled", true);
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div ng-attr-my-directive></div>');
+        var el = $("<div ng-attr-my-directive></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles attribute directives with data:ng-attr prefix', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("compiles attribute directives with data:ng-attr prefix", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
-            element.data('hasCompiled', true);
+            element.data("hasCompiled", true);
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div data:ng-attr-my-directive></div>');
+        var el = $("<div data:ng-attr-my-directive></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles comment directives', function() {
+    it("compiles comment directives", function() {
       var hasCompiled;
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
             hasCompiled = true;
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<!-- directive: my-directive -->');
+        var el = $("<!-- directive: my-directive -->");
         $compile(el);
         expect(hasCompiled).toBe(true);
       });
     });
 
 
-    it('compiles class directives', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("compiles class directives", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
-            element.data('hasCompiled', true);
+            element.data("hasCompiled", true);
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div class="my-directive"></div>');
+        var el = $("<div class=\"my-directive\"></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles several class directives in an element', function() {
+    it("compiles several class directives in an element", function() {
       var injector = makeInjectorWithDirectives({
         myDirective: function() {
           return {
-            restrict: 'EACM',
+            restrict: "EACM",
             compile: function(element) {
-              element.data('hasCompiled', true);
+              element.data("hasCompiled", true);
             }
           };
         },
         mySecondDirective: function() {
           return {
-            restrict: 'EACM',
+            restrict: "EACM",
             compile: function(element) {
-              element.data('secondCompiled', true);
+              element.data("secondCompiled", true);
             }
           };
         }
       });
       injector.invoke(function($compile) {
-        var el = $('<div class="my-directive my-second-directive"></div>');
+        var el = $("<div class=\"my-directive my-second-directive\"></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
-        expect(el.data('secondCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
+        expect(el.data("secondCompiled")).toBe(true);
       });
     });
 
 
-    it('compiles class directives with prefixes', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("compiles class directives with prefixes", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
-          restrict: 'EACM',
+          restrict: "EACM",
           compile: function(element) {
-            element.data('hasCompiled', true);
+            element.data("hasCompiled", true);
           }
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div class="x-my-directive"></div>');
+        var el = $("<div class=\"x-my-directive\"></div>");
         $compile(el);
-        expect(el.data('hasCompiled')).toBe(true);
+        expect(el.data("hasCompiled")).toBe(true);
       });
     });
 
@@ -444,18 +444,18 @@
         comment: true
       },
     }, function(expected, restrict) {
-      describe('restricted to ' + restrict, function() {
+      describe("restricted to " + restrict, function() {
 
         _.forEach({
-          element: '<my-directive></my-directive>',
-          attribute: '<div my-directive></div>',
-          class: '<div class="my-directive"></div>',
-          comment: '<!-- directive: my-directive -->'
+          element: "<my-directive></my-directive>",
+          attribute: "<div my-directive></div>",
+          class: "<div class=\"my-directive\"></div>",
+          comment: "<!-- directive: my-directive -->"
         }, function(dom, type) {
 
-          it((expected[type] ? 'matches' : 'does not match') + ' on ' + type, function() {
+          it((expected[type] ? "matches" : "does not match") + " on " + type, function() {
             var hasCompiled = false;
-            var injector = makeInjectorWithDirectives('myDirective', function() {
+            var injector = makeInjectorWithDirectives("myDirective", function() {
               return {
                 restrict: restrict,
                 compile: function(element) {
@@ -474,9 +474,9 @@
     }); // end forEach
 
 
-    it('applies to attributes when no restrict given', function() {
+    it("applies to attributes when no restrict given", function() {
       var hasCompiled = false;
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
           compile: function(element) {
             hasCompiled = true;
@@ -484,16 +484,16 @@
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div my-directive></div>');
+        var el = $("<div my-directive></div>");
         $compile(el);
         expect(hasCompiled).toBe(true);
       });
     });
 
 
-    it('applies to elements when no restrict given', function() {
+    it("applies to elements when no restrict given", function() {
       var hasCompiled = false;
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
           compile: function(element) {
             hasCompiled = true;
@@ -501,16 +501,16 @@
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<my-directive></my-directive>');
+        var el = $("<my-directive></my-directive>");
         $compile(el);
         expect(hasCompiled).toBe(true);
       });
     });
 
 
-    it('does not apply to classes when no restrict given', function() {
+    it("does not apply to classes when no restrict given", function() {
       var hasCompiled = false;
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
           compile: function(element) {
             hasCompiled = true;
@@ -518,21 +518,21 @@
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div class="my-directive"></div>');
+        var el = $("<div class=\"my-directive\"></div>");
         $compile(el);
         expect(hasCompiled).toBe(false);
       });
     });
 
 
-    it('applies in priority order', function() {
+    it("applies in priority order", function() {
       var compilations = [];
       var injector = makeInjectorWithDirectives({
         lowerDirective: function() {
           return {
             priority: 1,
             compile: function(element) {
-              compilations.push('lower');
+              compilations.push("lower");
             }
           };
         },
@@ -540,27 +540,27 @@
           return {
             priority: 2,
             compile: function(element) {
-              compilations.push('higher');
+              compilations.push("higher");
             }
           };
         }
       });
       injector.invoke(function($compile) {
-        var el = $('<div lower-directive higher-directive></div>');
+        var el = $("<div lower-directive higher-directive></div>");
         $compile(el);
-        expect(compilations).toEqual(['higher', 'lower']);
+        expect(compilations).toEqual(["higher", "lower"]);
       });
     });
 
 
-    it('applies in name order when priorities are the same', function() {
+    it("applies in name order when priorities are the same", function() {
       var compilations = [];
       var injector = makeInjectorWithDirectives({
         secondDirective: function() {
           return {
             priority: 1,
             compile: function(element) {
-              compilations.push('second');
+              compilations.push("second");
             }
           };
         },
@@ -568,162 +568,162 @@
           return {
             priority: 1,
             compile: function(element) {
-              compilations.push('first');
+              compilations.push("first");
             }
           };
         }
       });
       injector.invoke(function($compile) {
-        var el = $('<div second-directive first-directive></div>');
+        var el = $("<div second-directive first-directive></div>");
         $compile(el);
-        expect(compilations).toEqual(['first', 'second']);
+        expect(compilations).toEqual(["first", "second"]);
       });
     });
 
 
-    it('applies in registration order when names are the same', function() {
+    it("applies in registration order when names are the same", function() {
       var compilations = [];
-      var myModule = window.angular.module('myModule', []);
-      myModule.directive('aDirective', function() {
+      var myModule = window.angular.module("myModule", []);
+      myModule.directive("aDirective", function() {
         return {
           priority: 1,
           compile: function(element) {
-            compilations.push('first');
+            compilations.push("first");
           }
         };
       });
-      myModule.directive('aDirective', function() {
+      myModule.directive("aDirective", function() {
         return {
           priority: 1,
           compile: function(element) {
-            compilations.push('second');
+            compilations.push("second");
           }
         };
       });
-      var injector = createInjector(['ng', 'myModule']);
+      var injector = createInjector(["ng", "myModule"]);
       injector.invoke(function($compile) {
-        var el = $('<div a-directive></div>');
+        var el = $("<div a-directive></div>");
         $compile(el);
-        expect(compilations).toEqual(['first', 'second']);
+        expect(compilations).toEqual(["first", "second"]);
       });
     });
 
 
-    it('uses default priority when one not given', function() {
+    it("uses default priority when one not given", function() {
       var compilations = [];
-      var myModule = window.angular.module('myModule', []);
-      myModule.directive('firstDirective', function() {
+      var myModule = window.angular.module("myModule", []);
+      myModule.directive("firstDirective", function() {
         return {
           priority: 1,
           compile: function(element) {
-            compilations.push('first');
+            compilations.push("first");
           }
         };
       });
-      myModule.directive('secondDirective', function() {
+      myModule.directive("secondDirective", function() {
         return {
           compile: function(element) {
-            compilations.push('second');
+            compilations.push("second");
           }
         };
       });
-      var injector = createInjector(['ng', 'myModule']);
+      var injector = createInjector(["ng", "myModule"]);
       injector.invoke(function($compile) {
-        var el = $('<div second-directive first-directive></div>');
+        var el = $("<div second-directive first-directive></div>");
         $compile(el);
-        expect(compilations).toEqual(['first', 'second']);
+        expect(compilations).toEqual(["first", "second"]);
       });
     });
 
 
-    it('stops compiling at a terminal directive', function() {
+    it("stops compiling at a terminal directive", function() {
       var compilations = [];
-      var myModule = window.angular.module('myModule', []);
-      myModule.directive('firstDirective', function() {
+      var myModule = window.angular.module("myModule", []);
+      myModule.directive("firstDirective", function() {
         return {
           priority: 1,
           terminal: true,
           compile: function(element) {
-            compilations.push('first');
+            compilations.push("first");
           }
         };
       });
-      myModule.directive('secondDirective', function() {
+      myModule.directive("secondDirective", function() {
         return {
           priority: 0,
           compile: function(element) {
-            compilations.push('second');
+            compilations.push("second");
           }
         };
       });
-      var injector = createInjector(['ng', 'myModule']);
+      var injector = createInjector(["ng", "myModule"]);
       injector.invoke(function($compile) {
-        var el = $('<div first-directive second-directive></div>');
+        var el = $("<div first-directive second-directive></div>");
         $compile(el);
-        expect(compilations).toEqual(['first']);
+        expect(compilations).toEqual(["first"]);
       });
     });
 
 
-    it('still compiles directives with same priority after terminal', function() {
+    it("still compiles directives with same priority after terminal", function() {
       var compilations = [];
-      var myModule = window.angular.module('myModule', []);
-      myModule.directive('firstDirective', function() {
+      var myModule = window.angular.module("myModule", []);
+      myModule.directive("firstDirective", function() {
         return {
           priority: 1,
           terminal: true,
           compile: function(element) {
-            compilations.push('first');
+            compilations.push("first");
           }
         };
       });
-      myModule.directive('secondDirective', function() {
+      myModule.directive("secondDirective", function() {
         return {
           priority: 1,
           compile: function(element) {
-            compilations.push('second');
+            compilations.push("second");
           }
         };
       });
-      var injector = createInjector(['ng', 'myModule']);
+      var injector = createInjector(["ng", "myModule"]);
       injector.invoke(function($compile) {
-        var el = $('<div first-directive second-directive></div>');
+        var el = $("<div first-directive second-directive></div>");
         $compile(el);
-        expect(compilations).toEqual(['first', 'second']);
+        expect(compilations).toEqual(["first", "second"]);
       });
     });
 
 
-    it('stops child compilation after a terminal directive', function() {
+    it("stops child compilation after a terminal directive", function() {
       var compilations = [];
-      var myModule = window.angular.module('myModule', []);
-      myModule.directive('parentDirective', function() {
+      var myModule = window.angular.module("myModule", []);
+      myModule.directive("parentDirective", function() {
         return {
           terminal: true,
           compile: function(element) {
-            compilations.push('parent');
+            compilations.push("parent");
           }
         };
       });
-      myModule.directive('childDirective', function() {
+      myModule.directive("childDirective", function() {
         return {
           compile: function(element) {
-            compilations.push('child');
+            compilations.push("child");
           }
         };
       });
-      var injector = createInjector(['ng', 'myModule']);
+      var injector = createInjector(["ng", "myModule"]);
       injector.invoke(function($compile) {
-        var el = $('<div parent-directive><div child-directive></div></div>');
+        var el = $("<div parent-directive><div child-directive></div></div>");
         $compile(el);
-        expect(compilations).toEqual(['parent']);
+        expect(compilations).toEqual(["parent"]);
       });
     });
 
 
-    it('allows applying a directive to multiple elements', function() {
+    it("allows applying a directive to multiple elements", function() {
       var compileEl = false;
-      var injector = makeInjectorWithDirectives('myDir', function() {
+      var injector = makeInjectorWithDirectives("myDir", function() {
         return {
           multiElement: true,
           compile: function(element) {
@@ -732,19 +732,19 @@
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div my-dir-start></div><span></span><div my-dir-end></div>');
+        var el = $("<div my-dir-start></div><span></span><div my-dir-end></div>");
         $compile(el);
         expect(compileEl.length).toBe(3);
       });
     });
 
 
-    describe('attributes', function() {
+    describe("attributes", function() {
 
-      it('passes the element attributes to the compile function', function() {
+      it("passes the element attributes to the compile function", function() {
         registerAndCompile(
           "myDirective",
-          "<my-directive my-attr='1' my-other-attr='two'></my-directive>",
+          "<my-directive my-attr=\"1\" my-other-attr=\"two\"></my-directive>",
           function(element, attrs) {
             expect(attrs.myAttr).toBe("1");
             expect(attrs.myOtherAttr).toBe("two");
@@ -752,21 +752,21 @@
       });
 
 
-      it('trims attribute values', function() {
+      it("trims attribute values", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive my-attr=" val "></my-directive>',
+          "myDirective",
+          "<my-directive my-attr=\"val\"></my-directive>",
           function(element, attrs) {
-            expect(attrs.myAttr).toEqual('val');
+            expect(attrs.myAttr).toEqual("val");
           }
         );
       });
 
 
-      it('sets the value of boolean attributes to true', function() {
+      it("sets the value of boolean attributes to true", function() {
         registerAndCompile(
-          'myDirective',
-          '<input my-directive disabled>',
+          "myDirective",
+          "<input my-directive disabled>",
           function(element, attrs) {
             expect(attrs.disabled).toBe(true);
           }
@@ -774,65 +774,65 @@
       });
 
 
-      it('does not set the value of custom boolean attributes to true', function() {
+      it("does not set the value of custom boolean attributes to true", function() {
         registerAndCompile(
-          'myDirective',
-          '<input my-directive whatever>',
+          "myDirective",
+          "<input my-directive whatever>",
           function(element, attrs) {
-            expect(attrs.whatever).toEqual('');
+            expect(attrs.whatever).toEqual("");
           }
         );
       });
 
 
-      it('overrides attributes with ng-attr- versions', function() {
+      it("overrides attributes with ng-attr- versions", function() {
         registerAndCompile(
-          'myDirective',
-          '<input my-directive ng-attr-whatever="42" whatever="41">',
+          "myDirective",
+          "<input my-directive ng-attr-whatever=\"42\" whatever=\"41\">",
           function(element, attrs) {
-            expect(attrs.whatever).toEqual('42');
+            expect(attrs.whatever).toEqual("42");
           }
         );
       });
 
 
-      it('allows setting attributes', function() {
+      it("allows setting attributes", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive attr="true"></my-directive>',
+          "myDirective",
+          "<my-directive attr=\"true\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('attr', 'false');
-            expect(attrs.attr).toEqual('false');
+            attrs.$set("attr", "false");
+            expect(attrs.attr).toEqual("false");
           }
         );
       });
 
 
-      it('sets attributes to DOM', function() {
+      it("sets attributes to DOM", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive attr="true"></my-directive>',
+          "myDirective",
+          "<my-directive attr=\"true\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('attr', 'false');
-            expect(element.attr('attr')).toEqual('false');
+            attrs.$set("attr", "false");
+            expect(element.attr("attr")).toEqual("false");
           }
         );
       });
 
 
-      it('does not set attributes to DOM when flag is false', function() {
+      it("does not set attributes to DOM when flag is false", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive attr="true"></my-directive>',
+          "myDirective",
+          "<my-directive attr=\"true\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('attr', 'false', false);
-            expect(element.attr('attr')).toEqual('true');
+            attrs.$set("attr", "false", false);
+            expect(element.attr("attr")).toEqual("true");
           }
         );
       });
 
 
-      it('shares attributes between directives', function() {
+      it("shares attributes between directives", function() {
         var attrs1, attrs2;
         var injector = makeInjectorWithDirectives({
           myDir: function() {
@@ -851,254 +851,254 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-dir my-other-dir></div>');
+          var el = $("<div my-dir my-other-dir></div>");
           $compile(el);
           expect(attrs1).toBe(attrs2);
         });
       });
 
 
-      it('sets prop for boolean attributes', function() {
+      it("sets prop for boolean attributes", function() {
         registerAndCompile(
-          'myDirective',
-          '<input my-directive>',
+          "myDirective",
+          "<input my-directive>",
           function(element, attrs) {
-            attrs.$set('disabled', true);
-            expect(element.prop('disabled')).toBe(true);
+            attrs.$set("disabled", true);
+            expect(element.prop("disabled")).toBe(true);
           }
         );
       });
 
 
-      it('sets prop for boolean attributes even when not flushing', function() {
+      it("sets prop for boolean attributes even when not flushing", function() {
         registerAndCompile(
-          'myDirective',
-          '<input my-directive>',
+          "myDirective",
+          "<input my-directive>",
           function(element, attrs) {
-            attrs.$set('disabled', true, false);
-            expect(element.prop('disabled')).toBe(true);
+            attrs.$set("disabled", true, false);
+            expect(element.prop("disabled")).toBe(true);
           }
         );
       });
 
 
-      it('denormalizes attribute name when explicitly given', function() {
+      it("denormalizes attribute name when explicitly given", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('someAttribute', 43, true, 'some-attribute');
-            expect(element.attr('some-attribute')).toEqual('43');
+            attrs.$set("someAttribute", 43, true, "some-attribute");
+            expect(element.attr("some-attribute")).toEqual("43");
           }
         );
       });
 
 
-      it('denormalizes attribute by kebab-casing', function() {
+      it("denormalizes attribute by kebab-casing", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('someAttribute', 43);
-            expect(element.attr('some-attribute')).toEqual('43');
+            attrs.$set("someAttribute", 43);
+            expect(element.attr("some-attribute")).toEqual("43");
           }
         );
       });
 
 
-      it('denormalizes attribute by using original attribute name', function() {
+      it("denormalizes attribute by using original attribute name", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive x-some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive x-some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('someAttribute', '43');
-            expect(element.attr('x-some-attribute')).toEqual('43');
+            attrs.$set("someAttribute", "43");
+            expect(element.attr("x-some-attribute")).toEqual("43");
           }
         );
       });
 
 
-      it('does not use ng-attr- prefix in denormalized names', function() {
+      it("does not use ng-attr- prefix in denormalized names", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive ng-attr-some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive ng-attr-some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('someAttribute', 43);
-            expect(element.attr('some-attribute')).toEqual('43');
+            attrs.$set("someAttribute", 43);
+            expect(element.attr("some-attribute")).toEqual("43");
           }
         );
       });
 
 
-      it('uses new attribute name after once given', function() {
+      it("uses new attribute name after once given", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive x-some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive x-some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
-            attrs.$set('someAttribute', 43, true, 'some-attribute');
-            attrs.$set('someAttribute', 44);
-            expect(element.attr('some-attribute')).toEqual('44');
-            expect(element.attr('x-some-attribute')).toEqual('42');
+            attrs.$set("someAttribute", 43, true, "some-attribute");
+            attrs.$set("someAttribute", 44);
+            expect(element.attr("some-attribute")).toEqual("44");
+            expect(element.attr("x-some-attribute")).toEqual("42");
           }
         );
       });
 
 
-      it('calls observer immediately when attribute is $set', function() {
+      it("calls observer immediately when attribute is $set", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
             var gotValue;
-            attrs.$observe('someAttribute', function(value) {
+            attrs.$observe("someAttribute", function(value) {
               gotValue = value;
             });
-            attrs.$set('someAttribute', '43');
-            expect(gotValue).toEqual('43');
+            attrs.$set("someAttribute", "43");
+            expect(gotValue).toEqual("43");
           }
         );
       });
 
 
-      it('calls observer on next $digest after registration', function() {
+      it("calls observer on next $digest after registration", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive some-attribute=\"42\"></my-directive>",
           function(element, attrs, $rootScope) {
             var gotValue;
-            attrs.$observe('someAttribute', function(value) {
+            attrs.$observe("someAttribute", function(value) {
               gotValue = value;
             });
             $rootScope.$digest();
-            expect(gotValue).toEqual('42');
+            expect(gotValue).toEqual("42");
           }
         );
       });
 
 
-      it('lets observers be deregistered', function() {
+      it("lets observers be deregistered", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive some-attribute="42"></my-directive>',
+          "myDirective",
+          "<my-directive some-attribute=\"42\"></my-directive>",
           function(element, attrs) {
             var gotValue;
-            var remove = attrs.$observe('someAttribute', function(value) {
+            var remove = attrs.$observe("someAttribute", function(value) {
               gotValue = value;
             });
-            attrs.$set('someAttribute', '43');
-            expect(gotValue).toEqual('43');
+            attrs.$set("someAttribute", "43");
+            expect(gotValue).toEqual("43");
             remove();
-            attrs.$set('someAttribute', '44');
-            expect(gotValue).toEqual('43');
+            attrs.$set("someAttribute", "44");
+            expect(gotValue).toEqual("43");
           }
         );
       });
 
 
-      it('adds an attribute from a class directive', function() {
+      it("adds an attribute from a class directive", function() {
         registerAndCompile(
-          'myDirective',
-          '<div class="my-directive"></div>',
+          "myDirective",
+          "<div class=\"my-directive\"></div>",
           function(element, attrs) {
-            expect(attrs.hasOwnProperty('myDirective')).toBe(true);
+            expect(attrs.hasOwnProperty("myDirective")).toBe(true);
           }
         );
       });
 
 
-      it('does not add attribute from class without a directive', function() {
+      it("does not add attribute from class without a directive", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive class="some-class"></my-directive>',
+          "myDirective",
+          "<my-directive class=\"some-class\"></my-directive>",
           function(element, attrs) {
-            expect(attrs.hasOwnProperty('someClass')).toBe(false);
+            expect(attrs.hasOwnProperty("someClass")).toBe(false);
           }
         );
       });
 
 
-      it('supports values for class directive attributes', function() {
+      it("supports values for class directive attributes", function() {
         registerAndCompile(
-          'myDirective',
-          '<div class="my-directive: my attribute value"></div>',
+          "myDirective",
+          "<div class=\"my-directive: my attribute value\"></div>",
           function(element, attrs) {
-            expect(attrs.myDirective).toEqual('my attribute value');
+            expect(attrs.myDirective).toEqual("my attribute value");
           }
         );
       });
 
 
-      it('terminates class directive attribute value at semicolon', function() {
+      it("terminates class directive attribute value at semicolon", function() {
         registerAndCompile(
-          'myDirective',
-          '<div class="my-directive: my attribute value; some-other-class"></div>',
+          "myDirective",
+          "<div class=\"my-directive: my attribute value; some-other-class\"></div>",
           function(element, attrs) {
-            expect(attrs.myDirective).toEqual('my attribute value');
+            expect(attrs.myDirective).toEqual("my attribute value");
           }
         );
       });
 
 
-      it('adds an attribute with a value from a comment directive', function() {
+      it("adds an attribute with a value from a comment directive", function() {
         registerAndCompile(
-          'myDirective',
-          '<!-- directive: my-directive and the attribute value -->',
+          "myDirective",
+          "<!-- directive: my-directive and the attribute value -->",
           function(element, attrs) {
-            expect(attrs.hasOwnProperty('myDirective')).toBe(true);
-            expect(attrs.myDirective).toEqual('and the attribute value');
+            expect(attrs.hasOwnProperty("myDirective")).toBe(true);
+            expect(attrs.myDirective).toEqual("and the attribute value");
           }
         );
       });
 
 
-      it('allows adding classes', function() {
+      it("allows adding classes", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive></my-directive>',
+          "myDirective",
+          "<my-directive></my-directive>",
           function(element, attrs) {
-            attrs.$addClass('some-class');
-            expect(element.hasClass('some-class')).toBe(true);
+            attrs.$addClass("some-class");
+            expect(element.hasClass("some-class")).toBe(true);
           }
         );
       });
 
 
-      it('allows removing classes', function() {
+      it("allows removing classes", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive class="some-class"></my-directive>',
+          "myDirective",
+          "<my-directive class=\"some-class\"></my-directive>",
           function(element, attrs) {
-            attrs.$removeClass('some-class');
-            expect(element.hasClass('some-class')).toBe(false);
+            attrs.$removeClass("some-class");
+            expect(element.hasClass("some-class")).toBe(false);
           }
         );
       });
 
 
-      it('allows updating classes', function() {
+      it("allows updating classes", function() {
         registerAndCompile(
-          'myDirective',
-          '<my-directive class="one three four"></my-directive>',
+          "myDirective",
+          "<my-directive class=\"one three four\"></my-directive>",
           function(element, attrs) {
-            attrs.$updateClass('one two three', 'one three four');
-            expect(element.hasClass('one')).toBe(true);
-            expect(element.hasClass('two')).toBe(true);
-            expect(element.hasClass('three')).toBe(true);
-            expect(element.hasClass('four')).toBe(false);
+            attrs.$updateClass("one two three", "one three four");
+            expect(element.hasClass("one")).toBe(true);
+            expect(element.hasClass("two")).toBe(true);
+            expect(element.hasClass("three")).toBe(true);
+            expect(element.hasClass("four")).toBe(false);
           }
         );
       });
     }); // describe("attributes")
 
 
-    it('returns a public link function from compile', function() {
-      var injector = makeInjectorWithDirectives('myDirective', function() {
+    it("returns a public link function from compile", function() {
+      var injector = makeInjectorWithDirectives("myDirective", function() {
         return {
           compile: _.noop
         };
       });
       injector.invoke(function($compile) {
-        var el = $('<div my-directive></div>');
+        var el = $("<div my-directive></div>");
         var linkFn = $compile(el);
         expect(linkFn).toBeDefined();
         expect(_.isFunction(linkFn)).toBe(true);
@@ -1106,25 +1106,25 @@
     });
 
 
-    describe('linking', function() {
+    describe("linking", function() {
 
-      it('takes a scope and attaches it to elements', function() {
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+      it("takes a scope and attaches it to elements", function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             compile: _.noop
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
-          expect(el.data('$scope')).toBe($rootScope);
+          expect(el.data("$scope")).toBe($rootScope);
         });
       });
 
 
-      it('calls directive link function with scope', function() {
+      it("calls directive link function with scope", function() {
         var givenScope, givenElement, givenAttrs;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             compile: function() {
               return function link(scope, element, attrs) {
@@ -1136,7 +1136,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope).toBe($rootScope);
           expect(givenElement[0]).toBe(el[0]);
@@ -1146,9 +1146,9 @@
       });
 
 
-      it('supports link function in directive definition object', function() {
+      it("supports link function in directive definition object", function() {
         var givenScope, givenElement, givenAttrs;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             link: function(scope, element, attrs) {
               givenScope = scope;
@@ -1158,7 +1158,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope).toBe($rootScope);
           expect(givenElement[0]).toBe(el[0]);
@@ -1168,9 +1168,9 @@
       });
 
 
-      it('links directive on child elements first', function() {
+      it("links directive on child elements first", function() {
         var givenElements = [];
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             link: function(scope, element, attrs) {
               givenElements.push(element);
@@ -1178,7 +1178,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive><div my-directive></div></div>');
+          var el = $("<div my-directive><div my-directive></div></div>");
           $compile(el)($rootScope);
           expect(givenElements.length).toBe(2);
           expect(givenElements[0][0]).toBe(el[0].firstChild);
@@ -1187,9 +1187,9 @@
       });
 
 
-      it('links children when parent has no directives', function() {
+      it("links children when parent has no directives", function() {
         var givenElements = [];
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             link: function(scope, element, attrs) {
               givenElements.push(element);
@@ -1197,7 +1197,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div><div my-directive></div></div>');
+          var el = $("<div><div my-directive></div></div>");
           $compile(el)($rootScope);
           expect(givenElements.length).toBe(1);
           expect(givenElements[0][0]).toBe(el[0].firstChild);
@@ -1205,9 +1205,9 @@
       });
 
 
-      it('supports link function objects', function() {
+      it("supports link function objects", function() {
         var linked;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             link: {
               post: function(scope, element, attrs) {
@@ -1217,40 +1217,40 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div><div my-directive></div></div>');
+          var el = $("<div><div my-directive></div></div>");
           $compile(el)($rootScope);
           expect(linked).toBe(true);
         });
       });
 
 
-      it('supports prelinking and postlinking', function() {
+      it("supports prelinking and postlinking", function() {
         var linkings = [];
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             link: {
               pre: function(scope, element) {
-                linkings.push(['pre', element[0]]);
+                linkings.push(["pre", element[0]]);
               },
               post: function(scope, element) {
-                linkings.push(['post', element[0]]);
+                linkings.push(["post", element[0]]);
               }
             }
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive><div my-directive></div></div>');
+          var el = $("<div my-directive><div my-directive></div></div>");
           $compile(el)($rootScope);
           expect(linkings.length).toBe(4);
-          expect(linkings[0]).toEqual(['pre', el[0]]);
-          expect(linkings[1]).toEqual(['pre', el[0].firstChild]);
-          expect(linkings[2]).toEqual(['post', el[0].firstChild]);
-          expect(linkings[3]).toEqual(['post', el[0]]);
+          expect(linkings[0]).toEqual(["pre", el[0]]);
+          expect(linkings[1]).toEqual(["pre", el[0].firstChild]);
+          expect(linkings[2]).toEqual(["post", el[0].firstChild]);
+          expect(linkings[3]).toEqual(["post", el[0]]);
         });
       });
 
 
-      it('reverses priority for postlink functions', function() {
+      it("reverses priority for postlink functions", function() {
         var linkings = [];
         var injector = makeInjectorWithDirectives({
           firstDirective: function() {
@@ -1258,10 +1258,10 @@
               priority: 2,
               link: {
                 pre: function(scope, element) {
-                  linkings.push('first-pre');
+                  linkings.push("first-pre");
                 },
                 post: function(scope, element) {
-                  linkings.push('first-post');
+                  linkings.push("first-post");
                 }
               }
             };
@@ -1271,40 +1271,40 @@
               priority: 1,
               link: {
                 pre: function(scope, element) {
-                  linkings.push('second-pre');
+                  linkings.push("second-pre");
                 },
                 post: function(scope, element) {
-                  linkings.push('second-post');
+                  linkings.push("second-post");
                 }
               }
             };
           },
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div first-directive second-directive></div>');
+          var el = $("<div first-directive second-directive></div>");
           $compile(el)($rootScope);
           expect(linkings).toEqual([
-            'first-pre',
-            'second-pre',
-            'second-post',
-            'first-post'
+            "first-pre",
+            "second-pre",
+            "second-post",
+            "first-post"
           ]);
         });
       });
 
 
-      it('stabilizes node list during linking', function() {
+      it("stabilizes node list during linking", function() {
         var givenElements = [];
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             link: function(scope, element, attrs) {
               givenElements.push(element[0]);
-              element.after('<div></div>');
+              element.after("<div></div>");
             }
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div><div my-directive></div><div my-directive></div></div>');
+          var el = $("<div><div my-directive></div><div my-directive></div></div>");
           var el1 = el[0].childNodes[0],
             el2 = el[0].childNodes[1];
           $compile(el)($rootScope);
@@ -1315,9 +1315,9 @@
       });
 
 
-      it('invokes multi-element directive link functions with whole group', function() {
+      it("invokes multi-element directive link functions with whole group", function() {
         var givenElements;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             multiElement: true,
             link: function(scope, element, attrs) {
@@ -1327,9 +1327,9 @@
         });
         injector.invoke(function($compile, $rootScope) {
           var el = $(
-            '<div my-directive-start></div>' +
-            '<p></p>' +
-            '<div my-directive-end></div>'
+            "<div my-directive-start></div>" +
+            "<p></p>" +
+            "<div my-directive-end></div>"
           );
           $compile(el)($rootScope);
           expect(givenElements.length).toBe(3);
@@ -1337,9 +1337,9 @@
       });
 
 
-      it('makes new scope for element when directive asks for it', function() {
+      it("makes new scope for element when directive asks for it", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: true,
             link: function(scope) {
@@ -1348,14 +1348,14 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope.$parent).toBe($rootScope);
         });
       });
 
 
-      it('gives inherited scope to all directives on element', function() {
+      it("gives inherited scope to all directives on element", function() {
         var givenScope;
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
@@ -1372,16 +1372,16 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope.$parent).toBe($rootScope);
         });
       });
 
 
-      it('adds scope class and data for element with new scope', function() {
+      it("adds scope class and data for element with new scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: true,
             link: function(scope) {
@@ -1390,17 +1390,17 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
-          expect(el.hasClass('ng-scope')).toBe(true);
-          expect(el.data('$scope')).toBe(givenScope);
+          expect(el.hasClass("ng-scope")).toBe(true);
+          expect(el.data("$scope")).toBe(givenScope);
         });
       });
 
 
-      it('creates an isolate scope when requested', function() {
+      it("creates an isolate scope when requested", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {},
             link: function(scope) {
@@ -1409,7 +1409,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope.$parent).toBe($rootScope);
           expect(Object.getPrototypeOf(givenScope)).not.toBe($rootScope);
@@ -1417,7 +1417,7 @@
       });
 
 
-      it('does not share isolate scope with other directives', function() {
+      it("does not share isolate scope with other directives", function() {
         var givenScope;
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
@@ -1434,14 +1434,14 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope).toBe($rootScope);
         });
       });
 
 
-      it('does not use isolate scope on child elements', function() {
+      it("does not use isolate scope on child elements", function() {
         var givenScope;
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
@@ -1458,14 +1458,14 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive><div my-other-directive></div></div>');
+          var el = $("<div my-directive><div my-other-directive></div></div>");
           $compile(el)($rootScope);
           expect(givenScope).toBe($rootScope);
         });
       });
 
 
-      it('does not allow two isolate scope directives on an element', function() {
+      it("does not allow two isolate scope directives on an element", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
@@ -1479,7 +1479,7 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           expect(function() {
             $compile(el);
           }).toThrow();
@@ -1487,7 +1487,7 @@
       });
 
 
-      it('does not allow both isolate and inherited scopes on an element', function() {
+      it("does not allow both isolate and inherited scopes on an element", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
@@ -1501,7 +1501,7 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           expect(function() {
             $compile(el);
           }).toThrow();
@@ -1509,9 +1509,9 @@
       });
 
 
-      it('adds class and data for element with isolated scope', function() {
+      it("adds class and data for element with isolated scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {},
             link: function(scope) {
@@ -1520,21 +1520,21 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
-          expect(el.hasClass('ng-isolate-scope')).toBe(true);
-          expect(el.hasClass('ng-scope')).toBe(false);
-          expect(el.data('$isolateScope')).toBe(givenScope);
+          expect(el.hasClass("ng-isolate-scope")).toBe(true);
+          expect(el.hasClass("ng-scope")).toBe(false);
+          expect(el.data("$isolateScope")).toBe(givenScope);
         });
       });
 
 
-      it('allows observing attribute to the isolate scope', function() {
+      it("allows observing attribute to the isolate scope", function() {
         var givenScope, givenAttrs;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              anAttr: '@'
+              anAttr: "@"
             },
             link: function(scope, element, attrs) {
               givenScope = scope;
@@ -1543,20 +1543,20 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
-          givenAttrs.$set('anAttr', '42');
-          expect(givenScope.anAttr).toEqual('42');
+          givenAttrs.$set("anAttr", "42");
+          expect(givenScope.anAttr).toEqual("42");
         });
       });
 
 
-      it('sets initial value of observed attr to the isolate scope', function() {
+      it("sets initial value of observed attr to the isolate scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              anAttr: '@'
+              anAttr: "@"
             },
             link: function(scope, element, attrs) {
               givenScope = scope;
@@ -1564,19 +1564,19 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive an-attr="42"></div>');
+          var el = $("<div my-directive an-attr=\"42\"></div>");
           $compile(el)($rootScope);
-          expect(givenScope.anAttr).toEqual('42');
+          expect(givenScope.anAttr).toEqual("42");
         });
       });
 
 
-      it('allows aliasing observed attribute', function() {
+      it("allows aliasing observed attribute", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              aScopeAttr: '@anAttr'
+              aScopeAttr: "@anAttr"
             },
             link: function(scope, element, attrs) {
               givenScope = scope;
@@ -1584,19 +1584,19 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive an-attr="42"></div>');
+          var el = $("<div my-directive an-attr=\"42\"></div>");
           $compile(el)($rootScope);
-          expect(givenScope.aScopeAttr).toEqual('42');
+          expect(givenScope.aScopeAttr).toEqual("42");
         });
       });
 
 
-      it('allows binding expression to isolate scope', function() {
+      it("allows binding expression to isolate scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              anAttr: '='
+              anAttr: "="
             },
             link: function(scope) {
               givenScope = scope;
@@ -1604,19 +1604,19 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive an-attr="42"></div>');
+          var el = $("<div my-directive an-attr=\"42\"></div>");
           $compile(el)($rootScope);
           expect(givenScope.anAttr).toBe(42);
         });
       });
 
 
-      it('allows aliasing expression attribute on isolate scope', function() {
+      it("allows aliasing expression attribute on isolate scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '=theAttr'
+              myAttr: "=theAttr"
             },
             link: function(scope) {
               givenScope = scope;
@@ -1624,19 +1624,19 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive the-attr="42"></div>');
+          var el = $("<div my-directive the-attr=\"42\"></div>");
           $compile(el)($rootScope);
           expect(givenScope.myAttr).toBe(42);
         });
       });
 
 
-      it('evaluates isolate scope expression on parent scope', function() {
+      it("evaluates isolate scope expression on parent scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '='
+              myAttr: "="
             },
             link: function(scope) {
               givenScope = scope;
@@ -1645,19 +1645,19 @@
         });
         injector.invoke(function($compile, $rootScope) {
           $rootScope.parentAttr = 41;
-          var el = $('<div my-directive my-attr="parentAttr + 1"></div>');
+          var el = $("<div my-directive my-attr=\"parentAttr + 1\"></div>");
           $compile(el)($rootScope);
           expect(givenScope.myAttr).toBe(42);
         });
       });
 
 
-      it('watches isolated scope expressions', function() {
+      it("watches isolated scope expressions", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '='
+              myAttr: "="
             },
             link: function(scope) {
               givenScope = scope;
@@ -1665,7 +1665,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-attr="parentAttr + 1"></div>');
+          var el = $("<div my-directive my-attr=\"parentAttr + 1\"></div>");
           $compile(el)($rootScope);
           $rootScope.parentAttr = 41;
           $rootScope.$digest();
@@ -1674,12 +1674,12 @@
       });
 
 
-      it('allows assigning to isolated scope expressions', function() {
+      it("allows assigning to isolated scope expressions", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '='
+              myAttr: "="
             },
             link: function(scope) {
               givenScope = scope;
@@ -1687,7 +1687,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-attr="parentAttr"></div>');
+          var el = $("<div my-directive my-attr=\"parentAttr\"></div>");
           $compile(el)($rootScope);
           givenScope.myAttr = 42;
           $rootScope.$digest();
@@ -1696,12 +1696,12 @@
       });
 
 
-      it('gives parent change precedence when both parent and child change', function() {
+      it("gives parent change precedence when both parent and child change", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '='
+              myAttr: "="
             },
             link: function(scope) {
               givenScope = scope;
@@ -1709,7 +1709,7 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-attr="parentAttr"></div>');
+          var el = $("<div my-directive my-attr=\"parentAttr\"></div>");
           $compile(el)($rootScope);
           $rootScope.parentAttr = 42;
           givenScope.myAttr = 43;
@@ -1720,12 +1720,12 @@
       });
 
 
-      it('throws when isolate scope expression returns new arrays', function() {
+      it("throws when isolate scope expression returns new arrays", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '='
+              myAttr: "="
             },
             link: function(scope) {
               givenScope = scope;
@@ -1736,7 +1736,7 @@
           $rootScope.parentFunction = function() {
             return [1, 2, 3];
           };
-          var el = $('<div my-directive my-attr="parentFunction()"></div>');
+          var el = $("<div my-directive my-attr=\"parentFunction()\"></div>");
           $compile(el)($rootScope);
           expect(function() {
             $rootScope.$digest();
@@ -1745,12 +1745,12 @@
       });
 
 
-      it('can watch isolated scope expressions as collections', function() {
+      it("can watch isolated scope expressions as collections", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '=*'
+              myAttr: "=*"
             },
             link: function(scope) {
               givenScope = scope;
@@ -1761,7 +1761,7 @@
           $rootScope.parentFunction = function() {
             return [1, 2, 3];
           };
-          var el = $('<div my-directive my-attr="parentFunction()"></div>');
+          var el = $("<div my-directive my-attr=\"parentFunction()\"></div>");
           $compile(el)($rootScope);
           $rootScope.$digest();
           expect(givenScope.myAttr).toEqual([1, 2, 3]);
@@ -1769,12 +1769,12 @@
       });
 
 
-      it('does not watch optional missing isolate scope expressions', function() {
+      it("does not watch optional missing isolate scope expressions", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myAttr: '=?'
+              myAttr: "=?"
             },
             link: function(scope) {
               givenScope = scope;
@@ -1782,19 +1782,19 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect($rootScope.$$watchers.length).toBe(0);
         });
       });
 
 
-      it('allows binding an invokable expression on the parent scope', function() {
+      it("allows binding an invokable expression on the parent scope", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myExpr: '&'
+              myExpr: "&"
             },
             link: function(scope) {
               givenScope = scope;
@@ -1805,19 +1805,19 @@
           $rootScope.parentFunction = function() {
             return 42;
           };
-          var el = $('<div my-directive my-expr="parentFunction() + 1"></div>');
+          var el = $("<div my-directive my-expr=\"parentFunction() + 1\"></div>");
           $compile(el)($rootScope);
           expect(givenScope.myExpr()).toBe(43);
         });
       });
 
 
-      it('allows passing arguments to parent scope expression', function() {
+      it("allows passing arguments to parent scope expression", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myExpr: '&'
+              myExpr: "&"
             },
             link: function(scope) {
               givenScope = scope;
@@ -1829,7 +1829,7 @@
           $rootScope.parentFunction = function(arg) {
             gotArg = arg;
           };
-          var el = $('<div my-directive my-expr="parentFunction(argFromChild)"></div>');
+          var el = $("<div my-directive my-expr=\"parentFunction(argFromChild)\"></div>");
           $compile(el)($rootScope);
           givenScope.myExpr({
             argFromChild: 42
@@ -1839,12 +1839,12 @@
       });
 
 
-      it('sets missing optional parent scope expression to undefined', function() {
+      it("sets missing optional parent scope expression to undefined", function() {
         var givenScope;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             scope: {
-              myExpr: '&?'
+              myExpr: "&?"
             },
             link: function(scope) {
               givenScope = scope;
@@ -1856,7 +1856,7 @@
           $rootScope.parentFunction = function(arg) {
             gotArg = arg;
           };
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(givenScope.myExpr).toBeUndefined();
         });
@@ -1864,11 +1864,11 @@
     }); // describe("linking")
 
 
-    describe('controllers', function() {
+    describe("controllers", function() {
 
-      it('can be attached to directives as functions', function() {
+      it("can be attached to directives as functions", function() {
         var controllerInvoked;
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
             controller: function MyController() {
               controllerInvoked = true;
@@ -1876,38 +1876,38 @@
           };
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(controllerInvoked).toBe(true);
         });
       });
 
 
-      it('can be attached to directives as string references', function() {
+      it("can be attached to directives as string references", function() {
         var controllerInvoked;
 
         function MyController() {
           controllerInvoked = true;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(controllerInvoked).toBe(true);
         });
       });
 
 
-      it('can be applied in the same element independent of each other', function() {
+      it("can be applied in the same element independent of each other", function() {
         var controllerInvoked;
         var otherControllerInvoked;
 
@@ -1919,25 +1919,25 @@
           otherControllerInvoked = true;
         }
 
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $controllerProvider.register('MyOtherController', MyOtherController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $controllerProvider.register("MyOtherController", MyOtherController);
+            $compileProvider.directive("myDirective", function() {
               return {
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
-            $compileProvider.directive('myOtherDirective', function() {
+            $compileProvider.directive("myOtherDirective", function() {
               return {
-                controller: 'MyOtherController'
+                controller: "MyOtherController"
               };
             });
           }
         ]);
 
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(controllerInvoked).toBe(true);
           expect(otherControllerInvoked).toBe(true);
@@ -1945,60 +1945,60 @@
       });
 
 
-      it('can be applied to different directives, as different instances', function() {
+      it("can be applied to different directives, as different instances", function() {
         var invocations = 0;
 
         function MyController() {
           invocations++;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
-            $compileProvider.directive('myOtherDirective', function() {
+            $compileProvider.directive("myOtherDirective", function() {
               return {
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(invocations).toBe(2);
         });
       });
 
 
-      it('can be aliased with @ when given in directive attribute', function() {
+      it("can be aliased with @ when given in directive attribute", function() {
         var controllerInvoked;
 
         function MyController() {
           controllerInvoked = true;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
-                controller: '@'
+                controller: "@"
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="MyController"></div>');
+          var el = $("<div my-directive=\"MyController\"></div>");
           $compile(el)($rootScope);
           expect(controllerInvoked).toBe(true);
         });
       });
 
 
-      it('gets scope, element, and attrs through DI', function() {
+      it("gets scope, element, and attrs through DI", function() {
         var gotScope, gotElement, gotAttrs;
 
         function MyController($element, $scope, $attrs) {
@@ -2006,42 +2006,42 @@
           gotScope = $scope;
           gotAttrs = $attrs;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive an-attr="abc"></div>');
+          var el = $("<div my-directive an-attr=\"abc\"></div>");
           $compile(el)($rootScope);
           expect(gotElement[0]).toBe(el[0]);
           expect(gotScope).toBe($rootScope);
           expect(gotAttrs).toBeDefined();
-          expect(gotAttrs.anAttr).toEqual('abc');
+          expect(gotAttrs.anAttr).toEqual("abc");
         });
       });
 
 
-      it('can be attached on the scope', function() {
+      it("can be attached on the scope", function() {
         function MyController() {}
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
-                controller: 'MyController',
-                controllerAs: 'myCtrl'
+                controller: "MyController",
+                controllerAs: "myCtrl"
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect($rootScope.myCtrl).toBeDefined();
           expect($rootScope.myCtrl instanceof MyController).toBe(true);
@@ -2049,91 +2049,91 @@
       });
 
 
-      it('gets isolate scope as injected $scope', function() {
+      it("gets isolate scope as injected $scope", function() {
         var gotScope;
 
         function MyController($scope) {
           gotScope = $scope;
         }
 
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
                 scope: {},
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
           }
         ]);
 
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(gotScope).not.toBe($rootScope);
         });
       });
 
 
-      it('has isolate scope bindings available during construction', function() {
+      it("has isolate scope bindings available during construction", function() {
         var gotMyAttr;
 
         function MyController($scope) {
           gotMyAttr = $scope.myAttr;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
                 scope: {
-                  myAttr: '@myDirective'
+                  myAttr: "@myDirective"
                 },
-                controller: 'MyController'
+                controller: "MyController"
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="abc"></div>');
+          var el = $("<div my-directive=\"abc\"></div>");
           $compile(el)($rootScope);
-          expect(gotMyAttr).toEqual('abc');
+          expect(gotMyAttr).toEqual("abc");
         });
       });
 
 
-      it('can bind isolate scope bindings directly to self', function() {
+      it("can bind isolate scope bindings directly to self", function() {
         var gotMyAttr;
 
         function MyController() {
           gotMyAttr = this.myAttr;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
                 scope: {
-                  myAttr: '@myDirective'
+                  myAttr: "@myDirective"
                 },
-                controller: 'MyController',
+                controller: "MyController",
                 bindToController: true
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="abc"></div>');
+          var el = $("<div my-directive=\"abc\"></div>");
           $compile(el)($rootScope);
-          expect(gotMyAttr).toEqual('abc');
+          expect(gotMyAttr).toEqual("abc");
         });
       });
 
 
-      it('can return a semi-constructed controller', function() {
-        var injector = createInjector(['ng']);
-        var $controller = injector.get('$controller');
+      it("can return a semi-constructed controller", function() {
+        var injector = createInjector(["ng"]);
+        var $controller = injector.get("$controller");
 
         function MyController() {
           this.constructed = true;
@@ -2151,17 +2151,17 @@
       });
 
 
-      it('can return a semi-constructed ctrl when using array injection', function() {
-        var injector = createInjector(['ng', function($provide) {
-          $provide.constant('aDep', 42);
+      it("can return a semi-constructed ctrl when using array injection", function() {
+        var injector = createInjector(["ng", function($provide) {
+          $provide.constant("aDep", 42);
         }]);
-        var $controller = injector.get('$controller');
+        var $controller = injector.get("$controller");
 
         function MyController(aDep) {
           this.aDep = aDep;
           this.constructed = true;
         }
-        var controller = $controller(['aDep', MyController], null, true);
+        var controller = $controller(["aDep", MyController], null, true);
         expect(controller.constructed).toBeUndefined();
         var actualController = controller();
         expect(actualController.constructed).toBeDefined();
@@ -2169,89 +2169,89 @@
       });
 
 
-      it('can bind semi-constructed controller to scope', function() {
-        var injector = createInjector(['ng']);
-        var $controller = injector.get('$controller');
+      it("can bind semi-constructed controller to scope", function() {
+        var injector = createInjector(["ng"]);
+        var $controller = injector.get("$controller");
 
         function MyController() {}
         var scope = {};
         var controller = $controller(MyController, {
           $scope: scope
-        }, true, 'myCtrl');
+        }, true, "myCtrl");
         expect(scope.myCtrl).toBe(controller.instance);
       });
 
 
-      it('can bind iso scope bindings through bindToController', function() {
+      it("can bind iso scope bindings through bindToController", function() {
         var gotMyAttr;
 
         function MyController() {
           gotMyAttr = this.myAttr;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
 
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
                 scope: {},
-                controller: 'MyController',
+                controller: "MyController",
                 bindToController: {
-                  myAttr: '@myDirective'
+                  myAttr: "@myDirective"
                 }
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="abc"></div>');
+          var el = $("<div my-directive=\"abc\"></div>");
           $compile(el)($rootScope);
-          expect(gotMyAttr).toEqual('abc');
+          expect(gotMyAttr).toEqual("abc");
         });
       });
 
 
-      it('can bind through bindToController without iso scope', function() {
+      it("can bind through bindToController without iso scope", function() {
         var gotMyAttr;
 
         function MyController() {
           gotMyAttr = this.myAttr;
         }
-        var injector = createInjector(['ng',
+        var injector = createInjector(["ng",
           function($controllerProvider, $compileProvider) {
-            $controllerProvider.register('MyController', MyController);
-            $compileProvider.directive('myDirective', function() {
+            $controllerProvider.register("MyController", MyController);
+            $compileProvider.directive("myDirective", function() {
               return {
                 scope: true,
-                controller: 'MyController',
+                controller: "MyController",
                 bindToController: {
-                  myAttr: '@myDirective'
+                  myAttr: "@myDirective"
                 }
               };
             });
           }
         ]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="abc"></div>');
+          var el = $("<div my-directive=\"abc\">< /div>");
           $compile(el)($rootScope);
-          expect(gotMyAttr).toEqual('abc');
+          expect(gotMyAttr).toEqual("abc");
         });
       });
 
 
-      it('can be required from a sibling directive', function() {
+      it("can be required from a sibling directive", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
-              require: 'myDirective',
+              require: "myDirective",
               link: function(scope, element, attrs, myController) {
                 gotMyController = myController;
               }
@@ -2259,7 +2259,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2267,28 +2267,28 @@
       });
 
 
-      it('can be required from multiple sibling directives', function() {
+      it("can be required from multiple sibling directives", function() {
         function MyController() {}
 
         function MyOtherController() {}
 
         var gotControllers;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: true,
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
               scope: true,
               controller: MyOtherController
             };
           });
-          $compileProvider.directive('myThirdDirective', function() {
+          $compileProvider.directive("myThirdDirective", function() {
             return {
-              require: ['myDirective', 'myOtherDirective'],
+              require: ["myDirective", "myOtherDirective"],
               link: function(scope, element, attrs, controllers) {
                 gotControllers = controllers;
               }
@@ -2296,7 +2296,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive my-third-directive></div>');
+          var el = $("<div my-directive my-other-directive my-third-directive></div>");
           $compile(el)($rootScope);
           expect(gotControllers).toBeDefined();
           expect(gotControllers.length).toBe(2);
@@ -2306,11 +2306,11 @@
       });
 
 
-      it('is passed to link functions if there is no require', function() {
+      it("is passed to link functions if there is no require", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController,
@@ -2322,7 +2322,7 @@
         }]);
 
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2330,11 +2330,11 @@
       });
 
 
-      it('is passed through grouped link wrapper', function() {
+      it("is passed through grouped link wrapper", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               multiElement: true,
               scope: {},
@@ -2346,7 +2346,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive-start></div><div my-directive-end></div>');
+          var el = $("<div my-directive-start></div><div my-directive-end></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2354,19 +2354,19 @@
       });
 
 
-      it('can be required from a parent directive', function() {
+      it("can be required from a parent directive", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
-              require: '^myDirective',
+              require: "^myDirective",
               link: function(scope, element, attrs, myController) {
                 gotMyController = myController;
               }
@@ -2374,7 +2374,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive><div my-other-directive></div></div>');
+          var el = $("<div my-directive><div my-other-directive></div></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2382,19 +2382,19 @@
       });
 
 
-      it('finds from sibling directive when requiring with parent prefix', function() {
+      it("finds from sibling directive when requiring with parent prefix", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
-              require: '^myDirective',
+              require: "^myDirective",
               link: function(scope, element, attrs, myController) {
                 gotMyController = myController;
               }
@@ -2402,7 +2402,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2410,19 +2410,19 @@
       });
 
 
-      it('can be required from a parent directive with ^^', function() {
+      it("can be required from a parent directive with ^^", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
-              require: '^^myDirective',
+              require: "^^myDirective",
               link: function(scope, element, attrs, myController) {
                 gotMyController = myController;
               }
@@ -2430,7 +2430,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive><div my-other-directive></div></div>');
+          var el = $("<div my-directive><div my-other-directive></div></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2438,24 +2438,24 @@
       });
 
 
-      it('does not find from sibling directive when requiring with ^^', function() {
+      it("does not find from sibling directive when requiring with ^^", function() {
         function MyController() {}
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
-              require: '^^myDirective',
+              require: "^^myDirective",
               link: function(scope, element, attrs, myController) {}
             };
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           expect(function() {
             $compile(el)($rootScope);
           }).toThrow();
@@ -2463,12 +2463,12 @@
       });
 
 
-      it('does not throw on required missing controller when optional', function() {
+      it("does not throw on required missing controller when optional", function() {
         var gotCtrl;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
-              require: '?noSuchDirective',
+              require: "?noSuchDirective",
               link: function(scope, element, attrs, ctrl) {
                 gotCtrl = ctrl;
               }
@@ -2476,19 +2476,19 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(gotCtrl).toBe(null);
         });
       });
 
 
-      it('allows optional marker after parent marker', function() {
+      it("allows optional marker after parent marker", function() {
         var gotCtrl;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
-              require: '^?noSuchDirective',
+              require: "^?noSuchDirective",
               link: function(scope, element, attrs, ctrl) {
                 gotCtrl = ctrl;
               }
@@ -2496,26 +2496,26 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el)($rootScope);
           expect(gotCtrl).toBe(null);
         });
       });
 
 
-      it('allows optional marker before parent marker', function() {
+      it("allows optional marker before parent marker", function() {
         function MyController() {}
         var gotMyController;
-        var injector = createInjector(['ng', function($compileProvider) {
-          $compileProvider.directive('myDirective', function() {
+        var injector = createInjector(["ng", function($compileProvider) {
+          $compileProvider.directive("myDirective", function() {
             return {
               scope: {},
               controller: MyController
             };
           });
-          $compileProvider.directive('myOtherDirective', function() {
+          $compileProvider.directive("myOtherDirective", function() {
             return {
-              require: '?^myDirective',
+              require: "?^myDirective",
               link: function(scope, element, attrs, ctrl) {
                 gotMyController = ctrl;
               }
@@ -2523,7 +2523,7 @@
           });
         }]);
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           expect(gotMyController).toBeDefined();
           expect(gotMyController instanceof MyController).toBe(true);
@@ -2532,42 +2532,42 @@
     }); // describe("controllers")
 
 
-    describe('template', function() {
+    describe("template", function() {
 
-      it('populates an element during compilation', function() {
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+      it("populates an element during compilation", function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
-            template: '<div class="from-template"></div>'
+            template: "<div class=\"from-template\"></div>"
           };
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
-          expect(el.find('> .from-template').length).toBe(1);
+          expect(el.find("> .from-template").length).toBe(1);
         });
       });
 
 
-      it('replaces any existing children', function() {
-        var injector = makeInjectorWithDirectives('myDirective', function() {
+      it("replaces any existing children", function() {
+        var injector = makeInjectorWithDirectives("myDirective", function() {
           return {
-            template: '<div class="from-template"></div>'
+            template: "<div class=\"from-template\"></div>"
           };
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive><div class="existing"></div></div>');
+          var el = $("<div my-directive><div class=\"existing\"></div></div>");
           $compile(el);
-          expect(el.find('> .existing').length).toBe(0);
+          expect(el.find("> .existing").length).toBe(0);
         });
       });
 
 
-      it('compiles template contents also', function() {
+      it("compiles template contents also", function() {
         var compileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              template: '<div my-other-directive></div>'
+              template: "<div my-other-directive></div>"
             };
           },
           myOtherDirective: function() {
@@ -2577,28 +2577,28 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           expect(compileSpy).toHaveBeenCalled();
         });
       });
 
 
-      it('does not allow two directives with templates', function() {
+      it("does not allow two directives with templates", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              template: '<div></div>'
+              template: "<div></div>"
             };
           },
           myOtherDirective: function() {
             return {
-              template: '<div></div>'
+              template: "<div></div>"
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           expect(function() {
             $compile(el);
           }).toThrow();
@@ -2606,9 +2606,9 @@
       });
 
 
-      it('supports functions as template values', function() {
+      it("supports functions as template values", function() {
         var templateSpy = jasmine.createSpy()
-          .and.returnValue('<div class="from-template"></div>');
+          .and.returnValue("<div class=\"from-template\"></div>");
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
@@ -2617,9 +2617,9 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
-          expect(el.find('> .from-template').length).toBe(1);
+          expect(el.find("> .from-template").length).toBe(1);
           // Check that template function was called with element and attrs
           expect(templateSpy.calls.first().args[0][0]).toBe(el[0]);
           expect(templateSpy.calls.first().args[1].myDirective).toBeDefined();
@@ -2627,15 +2627,15 @@
       });
 
 
-      it('uses isolate scope for template contents', function() {
+      it("uses isolate scope for template contents", function() {
         var linkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
               scope: {
-                isoValue: '=myDirective'
+                isoValue: "=myDirective"
               },
-              template: '<div my-other-directive></div>'
+              template: "<div my-other-directive></div>"
             };
           },
           myOtherDirective: function() {
@@ -2645,7 +2645,7 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="42"></div>');
+          var el = $("<div my-directive=\"42\"></div>");
           $compile(el)($rootScope);
           expect(linkSpy.calls.first().args[0]).not.toBe($rootScope);
           expect(linkSpy.calls.first().args[0].isoValue).toBe(42);
@@ -2654,7 +2654,7 @@
     }); // describe("template")
 
 
-    describe('templateUrl', function() {
+    describe("templateUrl", function() {
 
       var xhr, requests;
 
@@ -2672,12 +2672,12 @@
       });
 
 
-      it('defers remaining directive compilation', function() {
+      it("defers remaining directive compilation", function() {
         var otherCompileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           },
           myOtherDirective: function() {
@@ -2687,111 +2687,111 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el);
           expect(otherCompileSpy).not.toHaveBeenCalled();
         });
       });
 
 
-      it('defers current directive compilation', function() {
+      it("defers current directive compilation", function() {
         var compileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html',
+              templateUrl: "/my_directive.html",
               compile: compileSpy
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           expect(compileSpy).not.toHaveBeenCalled();
         });
       });
 
 
-      it('immediately empties out the element', function() {
+      it("immediately empties out the element", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive>Hello</div>');
+          var el = $("<div my-directive>Hello</div>");
           $compile(el);
-          expect(el.is(':empty')).toBe(true);
+          expect(el.is(":empty")).toBe(true);
         });
       });
 
 
-      it('fetches the template', function() {
+      it("fetches the template", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           $rootScope.$apply();
 
           expect(requests.length).toBe(1);
-          expect(requests[0].method).toBe('GET');
-          expect(requests[0].url).toBe('/my_directive.html');
+          expect(requests[0].method).toBe("GET");
+          expect(requests[0].url).toBe("/my_directive.html");
         });
       });
 
 
-      it('populates element with template', function() {
+      it("populates element with template", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div class="from-template"></div>');
-          expect(el.find('> .from-template').length).toBe(1);
+          requests[0].respond(200, {}, "<div class=\"from-template\"></div>");
+          expect(el.find("> .from-template").length).toBe(1);
         });
       });
 
 
-      it('compiles current directive when template received', function() {
+      it("compiles current directive when template received", function() {
         var compileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html',
+              templateUrl: "/my_directive.html",
               compile: compileSpy
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div class="from-template"></div>');
+          requests[0].respond(200, {}, "<div class=\"from-template\"></div>");
           expect(compileSpy).toHaveBeenCalled();
         });
       });
 
 
-      it('resumes compilation when template received', function() {
+      it("resumes compilation when template received", function() {
         var otherCompileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           },
           myOtherDirective: function() {
@@ -2801,21 +2801,21 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div class="from-template"></div>');
+          requests[0].respond(200, {}, "<div class=\"from-template\"></div>");
           expect(otherCompileSpy).toHaveBeenCalled();
         });
       });
 
 
-      it('resumes child compilation after template received', function() {
+      it("resumes child compilation after template received", function() {
         var otherCompileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           },
           myOtherDirective: function() {
@@ -2825,18 +2825,18 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div my-other-directive></div>');
+          requests[0].respond(200, {}, "<div my-other-directive></div>");
           expect(otherCompileSpy).toHaveBeenCalled();
         });
       });
 
 
-      it('supports functions as values', function() {
+      it("supports functions as values", function() {
         var templateUrlSpy = jasmine.createSpy()
-          .and.returnValue('/my_directive.html');
+          .and.returnValue("/my_directive.html");
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
@@ -2845,31 +2845,31 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           $compile(el);
           $rootScope.$apply();
-          expect(requests[0].url).toBe('/my_directive.html');
+          expect(requests[0].url).toBe("/my_directive.html");
           expect(templateUrlSpy.calls.first().args[0][0]).toBe(el[0]);
           expect(templateUrlSpy.calls.first().args[1].myDirective).toBeDefined();
         });
       });
 
 
-      it('does not allow templateUrl directive after template directive', function() {
+      it("does not allow templateUrl directive after template directive", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              template: '<div></div>'
+              template: "<div></div>"
             };
           },
           myOtherDirective: function() {
             return {
-              templateUrl: '/my_other_directive.html'
+              templateUrl: "/my_other_directive.html"
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           expect(function() {
             $compile(el);
           }).toThrow();
@@ -2877,44 +2877,44 @@
       });
 
 
-      it('does not allow template directive after templateUrl directive', function() {
+      it("does not allow template directive after templateUrl directive", function() {
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           },
           myOtherDirective: function() {
             return {
-              template: '<div></div>'
+              template: "<div></div>"
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div class="replacement"></div>');
-          expect(el.find('> .replacement').length).toBe(1);
+          requests[0].respond(200, {}, "<div class=\"replacement\"></div>");
+          expect(el.find("> .replacement").length).toBe(1);
         });
       });
 
 
-      it('links the directive when public link function is invoked', function() {
+      it("links the directive when public link function is invoked", function() {
         var linkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html',
+              templateUrl: "/my_directive.html",
               link: linkSpy
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           var linkFunction = $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div></div>');
+          requests[0].respond(200, {}, "<div></div>");
           linkFunction($rootScope);
           expect(linkSpy).toHaveBeenCalled();
           expect(linkSpy.calls.first().args[0]).toBe($rootScope);
@@ -2924,12 +2924,12 @@
       });
 
 
-      it('links child elements when public link function is invoked', function() {
+      it("links child elements when public link function is invoked", function() {
         var linkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html'
+              templateUrl: "/my_directive.html"
             };
           },
           myOtherDirective: function() {
@@ -2939,10 +2939,10 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           var linkFunction = $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div my-other-directive></div>');
+          requests[0].respond(200, {}, "<div my-other-directive></div>");
           linkFunction($rootScope);
           expect(linkSpy).toHaveBeenCalled();
           expect(linkSpy.calls.first().args[0]).toBe($rootScope);
@@ -2952,21 +2952,21 @@
       });
 
 
-      it('links when template arrives if node link fn was called', function() {
+      it("links when template arrives if node link fn was called", function() {
         var linkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
-              templateUrl: '/my_directive.html',
+              templateUrl: "/my_directive.html",
               link: linkSpy
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           var linkFunction = $compile(el)($rootScope); // link first
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div></div>'); // then receive template
+          requests[0].respond(200, {}, "<div></div>"); // then receive template
           expect(linkSpy).toHaveBeenCalled();
           expect(linkSpy.calls.argsFor(0)[0]).toBe($rootScope);
           expect(linkSpy.calls.argsFor(0)[1][0]).toBe(el[0]);
@@ -2975,7 +2975,7 @@
       });
 
 
-      it('links directives that were compiled earlier', function() {
+      it("links directives that were compiled earlier", function() {
         var linkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
@@ -2985,16 +2985,16 @@
           },
           myOtherDirective: function() {
             return {
-              templateUrl: '/my_other_directive.html'
+              templateUrl: "/my_other_directive.html"
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           var linkFunction = $compile(el);
           $rootScope.$apply();
           linkFunction($rootScope);
-          requests[0].respond(200, {}, '<div></div>');
+          requests[0].respond(200, {}, "<div></div>");
           expect(linkSpy).toHaveBeenCalled();
           expect(linkSpy.calls.argsFor(0)[0]).toBe($rootScope);
           expect(linkSpy.calls.argsFor(0)[1][0]).toBe(el[0]);
@@ -3003,29 +3003,29 @@
       });
 
 
-      it('retains isolate scope directives from earlier', function() {
+      it("retains isolate scope directives from earlier", function() {
         var linkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
             return {
               scope: {
-                val: '=myDirective'
+                val: "=myDirective"
               },
               link: linkSpy
             };
           },
           myOtherDirective: function() {
             return {
-              templateUrl: '/my_other_directive.html'
+              templateUrl: "/my_other_directive.html"
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive="42" my-other-directive></div>');
+          var el = $("<div my-directive=\"42\" my-other-directive></div>");
           var linkFunction = $compile(el);
           $rootScope.$apply();
           linkFunction($rootScope);
-          requests[0].respond(200, {}, '<div></div>');
+          requests[0].respond(200, {}, "<div></div>");
           expect(linkSpy).toHaveBeenCalled();
           expect(linkSpy.calls.first().args[0]).toBeDefined();
           expect(linkSpy.calls.first().args[0]).not.toBe($rootScope);
@@ -3034,7 +3034,7 @@
       });
 
 
-      it('sets up controllers for all controller directives', function() {
+      it("sets up controllers for all controller directives", function() {
         var myDirectiveControllerInstantiated, myOtherDirectiveControllerInstantiated;
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
@@ -3046,7 +3046,7 @@
           },
           myOtherDirective: function() {
             return {
-              templateUrl: '/my_other_directive.html',
+              templateUrl: "/my_other_directive.html",
               controller: function MyOtherDirectiveController() {
                 myOtherDirectiveControllerInstantiated = true;
               }
@@ -3054,10 +3054,10 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive my-other-directive></div>');
+          var el = $("<div my-directive my-other-directive></div>");
           $compile(el)($rootScope);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div></div>');
+          requests[0].respond(200, {}, "<div></div>");
           expect(myDirectiveControllerInstantiated).toBe(true);
           expect(myOtherDirectiveControllerInstantiated).toBe(true);
         });
@@ -3065,12 +3065,12 @@
     }); // describe("templateUrl")
 
 
-    describe('clone attach function', function() {
+    describe("clone attach function", function() {
 
-      it('can be passed to public link fn', function() {
+      it("can be passed to public link fn", function() {
         var injector = makeInjectorWithDirectives({});
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div>Hello</div>');
+          var el = $("<div>Hello</div>");
           var myScope = $rootScope.$new();
           var gotEl, gotScope;
           $compile(el)(myScope, function cloneAttachFn(el, scope) {
@@ -3083,10 +3083,10 @@
       });
 
 
-      it('causes compiled elements to be cloned', function() {
+      it("causes compiled elements to be cloned", function() {
         var injector = makeInjectorWithDirectives({});
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div>Hello</div>');
+          var el = $("<div>Hello</div>");
           var myScope = $rootScope.$new();
           var gotClonedEl;
           $compile(el)(myScope, function(clonedEl) {
@@ -3098,7 +3098,7 @@
       });
 
 
-      it('causes cloned DOM to be linked', function() {
+      it("causes cloned DOM to be linked", function() {
         var gotCompileEl, gotLinkEl;
         var injector = makeInjectorWithDirectives({
           myDirective: function() {
@@ -3113,7 +3113,7 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-directive></div>');
+          var el = $("<div my-directive></div>");
           var myScope = $rootScope.$new();
           $compile(el)(myScope, function() {});
           expect(gotCompileEl[0]).not.toBe(gotLinkEl[0]);
@@ -3122,7 +3122,7 @@
     }); // decribe("clone attach function")
 
 
-    describe('with transclusion', function() {
+    describe("with transclusion", function() {
 
       var xhr, requests;
 
@@ -3140,60 +3140,60 @@
       });
 
 
-      it('works when template arrives first', function() {
+      it("works when template arrives first", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              templateUrl: 'my_template.html',
+              templateUrl: "my_template.html",
               link: function(scope, element, attrs, ctrl, transclude) {
-                element.find('[in-template]').append(transclude());
+                element.find("[in-template]").append(transclude());
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           var linkFunction = $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div in-template></div>'); // respond first
+          requests[0].respond(200, {}, "<div in-template></div>"); // respond first
           linkFunction($rootScope); // then link
-          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+          expect(el.find("> [in-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('works when template arrives after', function() {
+      it("works when template arrives after", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              templateUrl: 'my_template.html',
+              templateUrl: "my_template.html",
               link: function(scope, element, attrs, ctrl, transclude) {
-                element.find('[in-template]').append(transclude());
+                element.find("[in-template]").append(transclude());
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           var linkFunction = $compile(el);
           $rootScope.$apply();
           linkFunction($rootScope); // link first
-          requests[0].respond(200, {}, '<div in-template></div>'); // then respond
-          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+          requests[0].respond(200, {}, "<div in-template></div>"); // then respond
+          expect(el.find("> [in-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('is only allowed once', function() {
+      it("is only allowed once", function() {
         var otherCompileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               priority: 1,
               transclude: true,
-              templateUrl: 'my_template.html'
+              templateUrl: "my_template.html"
             };
           },
           mySecondTranscluder: function() {
@@ -3205,19 +3205,19 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder my-second-transcluder></div>');
+          var el = $("<div my-transcluder my-second-transcluder></div>");
           $compile(el);
           $rootScope.$apply();
-          requests[0].respond(200, {}, '<div in-template></div>');
+          requests[0].respond(200, {}, "<div in-template></div>");
           expect(otherCompileSpy).not.toHaveBeenCalled();
         });
       });
     }); // describe("with transclusion")
 
 
-    describe('transclude', function() {
+    describe("transclude", function() {
 
-      it('removes the children of the element from the DOM', function() {
+      it("removes the children of the element from the DOM", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
@@ -3226,14 +3226,14 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-transcluder><div>Must go</div></div>');
+          var el = $("<div my-transcluder><div>Must go</div></div>");
           $compile(el);
-          expect(el.is(':empty')).toBe(true);
+          expect(el.is(":empty")).toBe(true);
         });
       });
 
 
-      it('compiles child elements', function() {
+      it("compiles child elements", function() {
         var insideCompileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
@@ -3248,34 +3248,34 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-transcluder><div inside-transcluder></div></div>');
+          var el = $("<div my-transcluder><div inside-transcluder></div></div>");
           $compile(el);
           expect(insideCompileSpy).toHaveBeenCalled();
         });
       });
 
 
-      it('makes contents available to directive link function', function() {
+      it("makes contents available to directive link function", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div in-template></div>',
+              template: "<div in-template></div>",
               link: function(scope, element, attrs, ctrl, transclude) {
-                element.find('[in-template]').append(transclude());
+                element.find("[in-template]").append(transclude());
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transcluder></div></div>');
+          var el = $("<div my-transcluder><div in-transcluder></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-template] > [in-transcluder]').length).toBe(1);
+          expect(el.find("> [in-template] > [in-transcluder]").length).toBe(1);
         });
       });
 
 
-      it('is only allowed once per element', function() {
+      it("is only allowed once per element", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
@@ -3289,7 +3289,7 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div my-transcluder my-second-transcluder></div>');
+          var el = $("<div my-transcluder my-second-transcluder></div>");
           expect(function() {
             $compile(el);
           }).toThrow();
@@ -3297,7 +3297,7 @@
       });
 
 
-      it('makes scope available to link functions inside', function() {
+      it("makes scope available to link functions inside", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
@@ -3316,22 +3316,22 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div my-inner-directive></div></div>');
-          $rootScope.anAttr = 'Hello from root';
+          var el = $("<div my-transcluder><div my-inner-directive></div></div>");
+          $rootScope.anAttr = "Hello from root";
           $compile(el)($rootScope);
-          expect(el.find('> [my-inner-directive]').html()).toBe('Hello from root');
+          expect(el.find("> [my-inner-directive]").html()).toBe("Hello from root");
         });
       });
 
 
-      it('does not use the inherited scope of the directive', function() {
+      it("does not use the inherited scope of the directive", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
               scope: true,
               link: function(scope, element, attrs, ctrl, transclude) {
-                scope.anAttr = 'Shadowed attribute';
+                scope.anAttr = "Shadowed attribute";
                 element.append(transclude());
               }
             };
@@ -3345,15 +3345,15 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div my-inner-directive></div></div>');
-          $rootScope.anAttr = 'Hello from root';
+          var el = $("<div my-transcluder><div my-inner-directive></div></div>");
+          $rootScope.anAttr = "Hello from root";
           $compile(el)($rootScope);
-          expect(el.find('> [my-inner-directive]').html()).toBe('Hello from root');
+          expect(el.find("> [my-inner-directive]").html()).toBe("Hello from root");
         });
       });
 
 
-      it('stops watching when transcluding directive is destroyed', function() {
+      it("stops watching when transcluding directive is destroyed", function() {
         var watchSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
@@ -3362,7 +3362,7 @@
               scope: true,
               link: function(scope, element, attrs, ctrl, transclude) {
                 element.append(transclude());
-                scope.$on('destroyNow', function() {
+                scope.$on("destroyNow", function() {
                   scope.$destroy();
                 });
               }
@@ -3377,27 +3377,27 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div my-inner-directive></div></div>');
+          var el = $("<div my-transcluder><div my-inner-directive></div></div>");
           $compile(el)($rootScope);
           $rootScope.$apply();
           expect(watchSpy.calls.count()).toBe(2);
           $rootScope.$apply();
           expect(watchSpy.calls.count()).toBe(3);
-          $rootScope.$broadcast('destroyNow');
+          $rootScope.$broadcast("destroyNow");
           $rootScope.$apply();
           expect(watchSpy.calls.count()).toBe(3);
         });
       });
 
 
-      it('allows passing another scope to transclusion function', function() {
+      it("allows passing another scope to transclusion function", function() {
         var otherLinkSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
               scope: {},
-              template: '<div></div>',
+              template: "<div></div>",
               link: function(scope, element, attrs, ctrl, transclude) {
                 var mySpecialScope = scope.$new(true);
                 mySpecialScope.specialAttr = 42;
@@ -3413,7 +3413,7 @@
         });
 
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div my-other-directive></div></div>');
+          var el = $("<div my-transcluder><div my-other-directive></div></div>");
           $compile(el)($rootScope);
           var transcludedScope = otherLinkSpy.calls.first().args[0];
           expect(transcludedScope.specialAttr).toBe(42);
@@ -3421,12 +3421,12 @@
       });
 
 
-      it('makes contents available to child elements', function() {
+      it("makes contents available to child elements", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div in-template></div>'
+              template: "<div in-template></div>"
             };
           },
           inTemplate: function() {
@@ -3438,19 +3438,19 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+          expect(el.find("> [in-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('makes contents available to indirect child elements', function() {
+      it("makes contents available to indirect child elements", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div><div in-template></div></div>'
+              template: "<div><div in-template></div></div>"
             };
           },
           inTemplate: function() {
@@ -3462,20 +3462,20 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> div > [in-template] > [in-transclude]').length).toBe(1);
+          expect(el.find("> div > [in-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('supports passing transclusion function to public link function', function() {
+      it("supports passing transclusion function to public link function", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function($compile) {
             return {
               transclude: true,
               link: function(scope, element, attrs, ctrl, transclude) {
-                var customTemplate = $('<div in-custom-template></div>');
+                var customTemplate = $("<div in-custom-template></div>");
                 element.append(customTemplate);
                 $compile(customTemplate)(scope, undefined, {
                   parentBoundTranscludeFn: transclude
@@ -3492,21 +3492,21 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-custom-template] > [in-transclude]').length).toBe(1);
+          expect(el.find("> [in-custom-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('destroys scope passed through public link fn at the right time', function() {
+      it("destroys scope passed through public link fn at the right time", function() {
         var watchSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function($compile) {
             return {
               transclude: true,
               link: function(scope, element, attrs, ctrl, transclude) {
-                var customTemplate = $('<div in-custom-template></div>');
+                var customTemplate = $("<div in-custom-template></div>");
                 element.append(customTemplate);
                 $compile(customTemplate)(scope, undefined, {
                   parentBoundTranscludeFn: transclude
@@ -3519,7 +3519,7 @@
               scope: true,
               link: function(scope, element, attrs, ctrl, transclude) {
                 element.append(transclude());
-                scope.$on('destroyNow', function() {
+                scope.$on("destroyNow", function() {
                   scope.$destroy();
                 });
               }
@@ -3534,94 +3534,94 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           $compile(el)($rootScope);
           $rootScope.$apply();
           expect(watchSpy.calls.count()).toBe(2);
           $rootScope.$apply();
           expect(watchSpy.calls.count()).toBe(3);
-          $rootScope.$broadcast('destroyNow');
+          $rootScope.$broadcast("destroyNow");
           $rootScope.$apply();
           expect(watchSpy.calls.count()).toBe(3);
         });
       });
 
 
-      it('makes contents available to controller', function() {
+      it("makes contents available to controller", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div in-template></div>',
+              template: "<div in-template></div>",
               controller: function($element, $transclude) {
-                $element.find('[in-template]').append($transclude());
+                $element.find("[in-template]").append($transclude());
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+          expect(el.find("> [in-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('allows connecting transcluded content', function() {
+      it("allows connecting transcluded content", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div in-template></div>',
+              template: "<div in-template></div>",
               link: function(scope, element, attrs, ctrl, transcludeFn) {
                 var myScope = scope.$new();
                 transcludeFn(myScope, function(transclNode) {
-                  element.find('[in-template]').append(transclNode);
+                  element.find("[in-template]").append(transclNode);
                 });
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclude></div></div>');
+          var el = $("<div my-transcluder><div in-transclude></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-template] > [in-transclude]').length).toBe(1);
+          expect(el.find("> [in-template] > [in-transclude]").length).toBe(1);
         });
       });
 
 
-      it('can be used as the only transclusion function argument', function() {
+      it("can be used as the only transclusion function argument", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div in-template></div>',
+              template: "<div in-template></div>",
               link: function(scope, element, attrs, ctrl, transcludeFn) {
                 transcludeFn(function(transclNode) {
-                  element.find('[in-template]').append(transclNode);
+                  element.find("[in-template]").append(transclNode);
                 });
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div in-transclusion></div></div>');
+          var el = $("<div my-transcluder><div in-transclusion></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-template] > [in-transclusion]').length).toBe(1);
+          expect(el.find("> [in-template] > [in-transclusion]").length).toBe(1);
         });
       });
 
 
-      it('allows passing data to transclusion', function() {
+      it("allows passing data to transclusion", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               transclude: true,
-              template: '<div in-template></div>',
+              template: "<div in-template></div>",
               link: function(scope, element, attrs, ctrl, transcludeFn) {
                 transcludeFn(function(transclNode, transclScope) {
-                  transclScope.dataFromTranscluder = 'Hello from transcluder';
-                  element.find('[in-template]').append(transclNode);
+                  transclScope.dataFromTranscluder = "Hello from transcluder";
+                  element.find("[in-template]").append(transclNode);
                 });
               }
             };
@@ -3635,96 +3635,96 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div my-transcluder><div my-other-directive></div></div>');
+          var el = $("<div my-transcluder><div my-other-directive></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('> [in-template] > [my-other-directive]').html())
-            .toEqual('Hello from transcluder');
+          expect(el.find("> [in-template] > [my-other-directive]").html())
+            .toEqual("Hello from transcluder");
         });
       });
 
 
-      it('can be used with multi-element directives', function() {
+      it("can be used with multi-element directives", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function($compile) {
             return {
               transclude: true,
               multiElement: true,
-              template: '<div in-template></div>',
+              template: "<div in-template></div>",
               link: function(scope, element, attrs, ctrl, transclude) {
-                element.find('[in-template]').append(transclude());
+                element.find("[in-template]").append(transclude());
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
           var el = $(
-            '<div><div my-transcluder-start><div in-transclude></div></div>' +
-            '<div my-transcluder-end></div></div>'
+            "<div><div my-transcluder-start><div in-transclude></div></div>" +
+            "<div my-transcluder-end></div></div>"
           );
           $compile(el)($rootScope);
-          expect(el.find('[my-transcluder-start] [in-template] [in-transclude]').length)
+          expect(el.find("[my-transcluder-start] [in-template] [in-transclude]").length)
             .toBe(1);
         });
       });
     }); // describe("transclude")
 
 
-    describe('element transclusion', function() {
+    describe("element transclusion", function() {
 
-      it('removes the element from the DOM', function() {
+      it("removes the element from the DOM", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element'
+              transclude: "element"
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div><div my-transcluder></div></div>');
+          var el = $("<div><div my-transcluder></div></div>");
           $compile(el);
-          expect(el.is(':empty')).toBe(true);
+          expect(el.is(":empty")).toBe(true);
         });
       });
 
 
-      it('replaces the element with a comment', function() {
+      it("replaces the element with a comment", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element'
+              transclude: "element"
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div><div my-transcluder></div></div>');
+          var el = $("<div><div my-transcluder></div></div>");
           $compile(el);
-          expect(el.html()).toEqual('<!-- myTranscluder:  -->');
+          expect(el.html()).toEqual("<!-- myTranscluder:  -->");
         });
       });
 
 
-      it('includes directive attribute value in comment', function() {
+      it("includes directive attribute value in comment", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element'
+              transclude: "element"
             };
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div><div my-transcluder=42></div></div>');
+          var el = $("<div><div my-transcluder=42></div></div>");
           $compile(el);
-          expect(el.html()).toEqual('<!-- myTranscluder: 42 -->');
+          expect(el.html()).toEqual("<!-- myTranscluder: 42 -->");
         });
       });
 
 
-      it('calls directive compile and link with comment', function() {
+      it("calls directive compile and link with comment", function() {
         var gotCompiledEl, gotLinkedEl;
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element',
+              transclude: "element",
               compile: function(compiledEl) {
                 gotCompiledEl = compiledEl;
                 return function(scope, linkedEl) {
@@ -3735,7 +3735,7 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div><div my-transcluder></div></div>');
+          var el = $("<div><div my-transcluder></div></div>");
           $compile(el)($rootScope);
           expect(gotCompiledEl[0].nodeType).toBe(Node.COMMENT_NODE);
           expect(gotLinkedEl[0].nodeType).toBe(Node.COMMENT_NODE);
@@ -3743,13 +3743,13 @@
       });
 
 
-      it('calls lower priority compile with original', function() {
+      it("calls lower priority compile with original", function() {
         var gotCompiledEl;
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
               priority: 2,
-              transclude: 'element'
+              transclude: "element"
             };
           },
           myOtherDirective: function() {
@@ -3762,19 +3762,19 @@
           }
         });
         injector.invoke(function($compile) {
-          var el = $('<div><div my-transcluder my-other-directive></div></div>');
+          var el = $("<div><div my-transcluder my-other-directive></div></div>");
           $compile(el);
           expect(gotCompiledEl[0].nodeType).toBe(Node.ELEMENT_NODE);
         });
       });
 
 
-      it('calls compile on child element directives', function() {
+      it("calls compile on child element directives", function() {
         var compileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element'
+              transclude: "element"
             };
           },
           myOtherDirective: function() {
@@ -3785,19 +3785,19 @@
         });
         injector.invoke(function($compile) {
           var el = $(
-            '<div><div my-transcluder><div my-other-directive></div></div></div>');
+            "<div><div my-transcluder><div my-other-directive></div></div></div>");
           $compile(el);
           expect(compileSpy).toHaveBeenCalled();
         });
       });
 
 
-      it('compiles original element contents once', function() {
+      it("compiles original element contents once", function() {
         var compileSpy = jasmine.createSpy();
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element'
+              transclude: "element"
             };
           },
           myOtherDirective: function() {
@@ -3808,18 +3808,18 @@
         });
         injector.invoke(function($compile) {
           var el = $(
-            '<div><div my-transcluder><div my-other-directive></div></div></div>');
+            "<div><div my-transcluder><div my-other-directive></div></div></div>");
           $compile(el);
           expect(compileSpy.calls.count()).toBe(1);
         });
       });
 
 
-      it('makes original element available for transclusion', function() {
+      it("makes original element available for transclusion", function() {
         var injector = makeInjectorWithDirectives({
           myDouble: function() {
             return {
-              transclude: 'element',
+              transclude: "element",
               link: function(scope, el, attrs, ctrl, transclude) {
                 transclude(function(clone) {
                   el.after(clone);
@@ -3832,35 +3832,35 @@
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div><div my-double>Hello</div>');
+          var el = $("<div><div my-double>Hello</div>");
 
           $compile(el)($rootScope);
-          expect(el.find('[my-double]').length).toBe(2);
+          expect(el.find("[my-double]").length).toBe(2);
         });
       });
 
 
-      it('sets directive attributes element to comment', function() {
+      it("sets directive attributes element to comment", function() {
         var injector = makeInjectorWithDirectives({
           myTranscluder: function() {
             return {
-              transclude: 'element',
+              transclude: "element",
               link: function(scope, element, attrs, ctrl, transclude) {
-                attrs.$set('testing', '42');
+                attrs.$set("testing", "42");
                 element.after(transclude());
               }
             };
           }
         });
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div><div my-transcluder></div></div>');
+          var el = $("<div><div my-transcluder></div></div>");
           $compile(el)($rootScope);
-          expect(el.find('[my-transcluder]').attr('testing')).toBeUndefined();
+          expect(el.find("[my-transcluder]").attr("testing")).toBeUndefined();
         });
       });
 
 
-      it('supports requiring controllers', function() {
+      it("supports requiring controllers", function() {
         var MyController = function() {};
         var gotCtrl;
         var injector = makeInjectorWithDirectives({
@@ -3871,7 +3871,7 @@
           },
           myTranscluder: function() {
             return {
-              transclude: 'element',
+              transclude: "element",
               link: function(scope, el, attrs, ctrl, transclude) {
                 el.after(transclude());
               }
@@ -3879,7 +3879,7 @@
           },
           myOtherDirective: function() {
             return {
-              require: '^myCtrlDirective',
+              require: "^myCtrlDirective",
               link: function(scope, el, attrs, ctrl, transclude) {
                 gotCtrl = ctrl;
               }
@@ -3888,12 +3888,29 @@
         });
         injector.invoke(function($compile, $rootScope) {
           var el = $(
-            '<div><div my-ctrl-directive my-transcluder><div my-other-directive></div></div>');
+            "<div><div my-ctrl-directive my-transcluder><div my-other-directive></div></div>");
           $compile(el)($rootScope);
           expect(gotCtrl).toBeDefined();
           expect(gotCtrl instanceof MyController).toBe(true);
         });
       });
     }); // describe("element transclusion")
+
+
+    describe("interpolation", function() {
+
+      it("is done for text nodes", function() {
+        var injector = makeInjectorWithDirectives({});
+        injector.invoke(function($compile, $rootScope) {
+          var el = $("<div>My expression: {{myExpr}}</div>");
+          $compile(el)($rootScope);
+          $rootScope.$apply();
+          expect(el.html()).toEqual("My expression: ");
+          $rootScope.myExpr = "Hello";
+          $rootScope.$apply();
+          expect(el.html()).toEqual("My expression: Hello");
+        });
+      });
+    }); // describe("interpolation")
   }); // describe("$compile")
 })();
