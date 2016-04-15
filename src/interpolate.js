@@ -36,7 +36,7 @@
         // parts = ["hello ", parseFn, " I'm ", parseFn]
         var parts = [];
         var startIndex, endIndex, exp, expFn;
-        var hasExpressions = false;
+        var expressions = [];
 
         while (index < text.length) {
           startIndex = text.indexOf("{{", index);
@@ -53,7 +53,7 @@
             exp = text.substring(startIndex + 2, endIndex);
             expFn = $parse(exp);
             parts.push(expFn);
-            hasExpressions = true;
+            expressions.push(exp);
             index = endIndex + 2;
           }
           else {
@@ -63,9 +63,9 @@
         }
 
 
-        if (hasExpressions || !mustHaveExpressions) {
+        if (expressions.length || !mustHaveExpressions) {
           // context is usually a Scope
-          return function interpolateFn(context) {
+          return Object.assign(function interpolateFn(context) {
             return parts.reduce(function(previous, part) {
               if (typeof part === "function") {
                 return previous + stringify(part(context));
@@ -74,7 +74,9 @@
                 return previous + part;
               }
             }, "");
-          };
+          }, {
+            expressions: expressions
+          });
         }
       }
 

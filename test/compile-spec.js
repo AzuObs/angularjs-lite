@@ -3921,6 +3921,16 @@
           expect(el.hasClass("ng-binding")).toBe(true);
         });
       });
+
+
+      it("adds binding data to text node parents", function() {
+        var injector = makeInjectorWithDirectives({});
+        injector.invoke(function($compile, $rootScope) {
+          var el = $("<div>{{myExpr}} and {{myOtherExpr}}</div>");
+          $compile(el)($rootScope);
+          expect(el.data("$binding")).toEqual(["myExpr", "myOtherExpr"]);
+        });
+      });
     }); // describe("interpolation")
   }); // describe("$compile")
 })();
