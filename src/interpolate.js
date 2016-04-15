@@ -7,6 +7,9 @@
     if (value === null || value === undefined) {
       return "";
     }
+    else if (typeof value === "object") {
+      return JSON.stringify(value);
+    }
     else {
       return value;
     }
