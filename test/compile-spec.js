@@ -3933,26 +3933,47 @@
       });
 
 
-      it('adds binding data to parent from multiple text nodes', function() {
+      it("adds binding data to parent from multiple text nodes", function() {
         var injector = makeInjectorWithDirectives({});
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<div>{{myExpr}} <span>and</span> {{myOtherExpr}}</div>');
+          var el = $("<div>{{myExpr}} <span>and</span> {{myOtherExpr}}</div>");
           $compile(el)($rootScope);
-          expect(el.data('$binding')).toEqual(['myExpr', 'myOtherExpr']);
+          expect(el.data("$binding")).toEqual(["myExpr", "myOtherExpr"]);
         });
       });
 
 
-      it('is done for attributes', function() {
+      it("is done for attributes", function() {
         var injector = makeInjectorWithDirectives({});
         injector.invoke(function($compile, $rootScope) {
-          var el = $('<img alt="{{myAltText}}">');
+          var el = $("<img alt=\"{{myAltText}}\">");
           $compile(el)($rootScope);
           $rootScope.$apply();
-          expect(el.attr('alt')).toEqual('');
-          $rootScope.myAltText = 'My favourite photo';
+          expect(el.attr("alt")).toEqual("");
+          $rootScope.myAltText = "My favourite photo";
           $rootScope.$apply();
-          expect(el.attr('alt')).toEqual('My favourite photo');
+          expect(el.attr("alt")).toEqual("My favourite photo");
+        });
+      });
+
+
+      it("fires observers on attribute expression changes", function() {
+        var observerSpy = jasmine.createSpy();
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              link: function(scope, element, attrs) {
+                attrs.$observe("alt", observerSpy);
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $("<img alt=\"{{myAltText}}\" my-directive>");
+          $compile(el)($rootScope);
+          $rootScope.myAltText = "My favourite photo";
+          $rootScope.$apply();
+          expect(observerSpy.calls.mostRecent().args[0]).toEqual("My favourite photo");
         });
       });
     }); // describe("interpolation")

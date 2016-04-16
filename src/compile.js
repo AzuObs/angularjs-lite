@@ -355,9 +355,9 @@
             directives.push({
               priority: 100,
               compile: function() {
-                return function link(scope, element) {
+                return function link(scope, element, attrs) {
                   scope.$watch(interpolateFn, function(newValue) {
-                    element.attr(name, newValue);
+                    attrs.$set(name, newValue);
                   });
                 };
               }
