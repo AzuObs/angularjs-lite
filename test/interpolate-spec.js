@@ -149,5 +149,23 @@
       var interp = $interpolate("has an {{expr}}");
       expect(interp.$$watchDelegate).toBeDefined();
     });
+
+
+    it('correctly returns new and old value when watched', function() {
+      var injector = createInjector(['ng']);
+      var $interpolate = injector.get('$interpolate');
+      var $rootScope = injector.get('$rootScope');
+      var interp = $interpolate('{{expr}}');
+      var listenerSpy = jasmine.createSpy();
+      $rootScope.$watch(interp, listenerSpy);
+      $rootScope.expr = 42;
+      $rootScope.$apply();
+      expect(listenerSpy.calls.mostRecent().args[0]).toEqual('42');
+      expect(listenerSpy.calls.mostRecent().args[1]).toEqual('42');
+      $rootScope.expr++;
+      $rootScope.$apply();
+      expect(listenerSpy.calls.mostRecent().args[0]).toEqual('43');
+      expect(listenerSpy.calls.mostRecent().args[1]).toEqual('42');
+    });
   }); // describe("$interpolate")
 })();

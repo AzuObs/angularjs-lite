@@ -83,8 +83,11 @@
             expressions: expressions,
             // watch delegates are an optimization used by watch function when present
             $$watchDelegate: function(scope, listener) {
-              return scope.$watchGroup(expressionFns, function() {
-                listener(compute(scope));
+              var lastValue;
+              return scope.$watchGroup(expressionFns, function(newValues, oldValues) {
+                var newValue = compute(scope);
+                listener(newValue, newValues === oldValues ? newValue : lastValue, scope);
+                lastValue = newValue;
               });
             }
           });
