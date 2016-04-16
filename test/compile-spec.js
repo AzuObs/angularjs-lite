@@ -4016,6 +4016,29 @@
           expect(gotMyAttr).toEqual('Hello');
         });
       });
+
+
+      it('is done for attributes by the time bound to iso scope', function() {
+        var gotMyAttr;
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              scope: {
+                myAttr: '@'
+              },
+              link: function(scope, element, attrs) {
+                gotMyAttr = scope.myAttr;
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-attr="{{myExpr}}"></div>');
+          $rootScope.myExpr = 'Hello';
+          $compile(el)($rootScope);
+          expect(gotMyAttr).toEqual('Hello');
+        });
+      });
     }); // describe("interpolation")
   }); // describe("$compile")
 })();

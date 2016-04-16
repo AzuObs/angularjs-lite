@@ -135,7 +135,7 @@
 
 
   function $CompileProvider($provide) {
-    // key: "myDirective + 'Directive'"
+    // key: "myDirective + "Directive""
     // value: directiveFactory -> returns: directive object 
     // we keep track of these here, as we cannot get the provider that are held
     // in the providerCache outside of config code
@@ -341,7 +341,7 @@
                   //debug info enabled
                   var bindings = element.parent().data("$binding") || [];
                   bindings = bindings.concat(interpolateFn.expressions);
-                  element.parent().data('$binding', bindings);
+                  element.parent().data("$binding", bindings);
                   element.parent().addClass("ng-binding");
 
                   scope.$watch(interpolateFn, function(newValue) {
@@ -575,7 +575,7 @@
                   attrs[normalizedClassName] = match[2] ? match[2].trim() : undefined;
                 }
 
-                // process className so while loop doesn't go on infinitely
+                // process className so while loop doesn"t go on infinitely
                 className = className.substr(match.index + match[0].length);
               }
             }
@@ -588,7 +588,7 @@
 
             if (match) {
               var normalizedName = directiveNormalize(match[1]);
-              if (addDirective(directives, normalizedName, 'M', maxPriority)) {
+              if (addDirective(directives, normalizedName, "M", maxPriority)) {
                 attrs[normalizedName] = match[2] ? match[2].trim() : undefined;
               }
             }
@@ -645,7 +645,7 @@
           // we ignore childLinkFn because the HTML for the child is going to be contained
           // within templateUrl
           return function delayedNodeLinkFn(_ignoreChildLinkFn, scope, linkNode, boundTranscludeFn) {
-            // if the $http.get hasn't resolved yet, we want to store the scope and node variables
+            // if the $http.get hasn"t resolved yet, we want to store the scope and node variables
             if (linkQueue) {
               linkQueue.push({
                 scope: scope,
@@ -654,7 +654,7 @@
               });
             }
 
-            // if the $http.get has resolve, then we haven't called this function yet
+            // if the $http.get has resolve, then we haven"t called this function yet
             else {
               afterTemplateNodeLinkFn(afterTemplateChildLinkFn, scope, linkNode, boundTranscludeFn);
             }
@@ -754,15 +754,15 @@
             _.forEach(bindings, function(definition, scopeName) {
               var attrName = definition.attrName;
               switch (definition.mode) {
-                case '@':
+                case "@":
                   attrs.$observe(attrName, function(newAttrValue) {
                     destination[scopeName] = newAttrValue;
                   });
                   if (attrs[attrName]) {
-                    destination[scopeName] = attrs[attrName];
+                    destination[scopeName] = $interpolate(attrs[attrName])(scope);
                   }
                   break;
-                case '=':
+                case "=":
                   if (definition.optional && !attrs[attrName]) {
                     break;
                   }
@@ -789,9 +789,9 @@
                   else {
                     unwatch = scope.$watch(parentValueWatch);
                   }
-                  newScope.$on('$destroy', unwatch);
+                  newScope.$on("$destroy", unwatch);
                   break;
-                case '&':
+                case "&":
                   var parentExpr = $parse(attrs[attrName]);
                   if (parentExpr === _.noop && definition.optional) {
                     break;
