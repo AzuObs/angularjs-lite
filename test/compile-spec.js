@@ -4039,6 +4039,47 @@
           expect(gotMyAttr).toEqual('Hello');
         });
       });
+
+
+      it('is done for attributes so that compile-time changes apply', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              compile: function(element, attrs) {
+                attrs.$set('myAttr', '{{myDifferentExpr}}');
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-attr="{{myExpr}}"></div>');
+          $rootScope.myExpr = 'Hello';
+          $rootScope.myDifferentExpr = 'Other Hello';
+          $compile(el)($rootScope);
+          $rootScope.$apply();
+          expect(el.attr('my-attr')).toEqual('Other Hello');
+        });
+      });
+
+
+      it('is done for attributes so that compile-time removals apply', function() {
+        var injector = makeInjectorWithDirectives({
+          myDirective: function() {
+            return {
+              compile: function(element, attrs) {
+                attrs.$set('myAttr', null);
+              }
+            };
+          }
+        });
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive my-attr="{{myExpr}}"></div>');
+          $rootScope.myExpr = 'Hello';
+          $compile(el)($rootScope);
+          $rootScope.$apply();
+          expect(el.attr('my-attr')).toBeFalsy();
+        });
+      });
     }); // describe("interpolation")
   }); // describe("$compile")
 })();

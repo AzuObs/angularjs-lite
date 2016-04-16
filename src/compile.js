@@ -362,6 +362,19 @@
               compile: function() {
                 return {
                   pre: function link(scope, element, attrs) {
+                    // (rare) if the attribute has been reassigned a new value 
+                    // by another directive during the $compile
+                    var newValue = attrs[name];
+                    if (newValue !== value) {
+                      // "newValue &&" checks that the new value of the attr exists
+                      // and that the attr hasn't been deleted
+                      interpolateFn = newValue && $interpolate(newValue, true);
+                    }
+
+                    if (!interpolateFn) {
+                      return;
+                    }
+
                     // we let the observers know that the attribute is interpolate
                     // this will then alter the behavior of the $observeFn
                     attrs.$$observers = attrs.$$observers || {};
