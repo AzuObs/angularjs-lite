@@ -67,9 +67,9 @@
         var startIndex, endIndex, exp, expFn;
 
         while (index < text.length) {
-          startIndex = text.indexOf("{{", index);
+          startIndex = text.indexOf(startSymbol, index);
           if (startIndex !== -1) {
-            endIndex = text.indexOf("}}", startIndex + 2);
+            endIndex = text.indexOf(endSymbol, startIndex + startSymbol.length);
           }
 
           // if there is an expression
@@ -78,13 +78,13 @@
               parts.push(unescapeText(text.substring(index, startIndex)));
             }
 
-            exp = text.substring(startIndex + 2, endIndex);
+            exp = text.substring(startIndex + startSymbol.length, endIndex);
             expFn = $parse(exp);
             expressions.push(exp);
             expressionFns.push(expFn);
             expressionPositions.push(parts.length);
             parts.push(expFn);
-            index = endIndex + 2;
+            index = endIndex + endSymbol.length;
           }
           else {
             parts.push(unescapeText(text.substring(index)));
