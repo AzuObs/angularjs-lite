@@ -333,6 +333,7 @@
               priority: 0,
               compile: function() {
                 return function link(scope, element) {
+                  //debug info enabled
                   var bindings = element.parent().data("$binding") || [];
                   bindings = bindings.concat(interpolateFn.expressions);
                   element.parent().data('$binding', bindings);
@@ -340,6 +341,23 @@
 
                   scope.$watch(interpolateFn, function(newValue) {
                     element[0].nodeValue = newValue;
+                  });
+                };
+              }
+            });
+          }
+        }
+
+
+        function addAttrInterpolateDirective(directives, value, name) {
+          var interpolateFn = $interpolate(value, true);
+          if (interpolateFn) {
+            directives.push({
+              priority: 100,
+              compile: function() {
+                return function link(scope, element) {
+                  scope.$watch(interpolateFn, function(newValue) {
+                    element.attr(name, newValue);
                   });
                 };
               }
@@ -522,6 +540,9 @@
                 }
               }
 
+              // attr interpolation
+              addAttrInterpolateDirective(directives, attr.value, normalizedAttrName);
+              // add attr directive
               addDirective(directives, normalizedAttrName, "A", attrStartName, attrEndName, maxPriority);
             });
 
