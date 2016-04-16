@@ -362,6 +362,14 @@
               compile: function() {
                 return {
                   pre: function link(scope, element, attrs) {
+                    // regexp: starts with "on" or is "formaction"
+                    // these are native JS DOM events and we don't want to interpolate those
+                    // because it would register a new event that would not replace the last one
+                    // and could potentially be confusing
+                    if (/^(on[a-z]+|formaction)$/.test(name)) {
+                      throw "Interpolations for HTML DOM event attributes not allowed!";
+                    }
+
                     // (rare) if the attribute has been reassigned a new value 
                     // by another directive during the $compile
                     var newValue = attrs[name];
