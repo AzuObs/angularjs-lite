@@ -27,6 +27,32 @@
 
 
   function $InterpolateProvider() {
+    var startSymbol = "{{";
+    var endSymbol = "}}";
+
+
+    this.startSymbol = function(value) {
+      if (value) {
+        startSymbol = value;
+        return this;
+      }
+      else {
+        return startSymbol;
+      }
+    };
+
+
+    this.endSymbol = function(value) {
+      if (value) {
+        endSymbol = value;
+        return this;
+      }
+      else {
+        return endSymbol;
+      }
+    };
+
+
     this.$get = ["$parse", function($parse) {
 
       function $interpolate(text, mustHaveExpressions) {
@@ -98,6 +124,12 @@
         }
       }
 
+      $interpolate.startSymbol = function() {
+        return startSymbol;
+      };
+      $interpolate.endSymbol = function() {
+        return endSymbol;
+      };
       return $interpolate;
     }];
   }

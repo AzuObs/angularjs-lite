@@ -167,5 +167,15 @@
       expect(listenerSpy.calls.mostRecent().args[0]).toEqual('43');
       expect(listenerSpy.calls.mostRecent().args[1]).toEqual('42');
     });
+
+
+    it('allows configuring start and end symbols', function() {
+      var injector = createInjector(['ng', function($interpolateProvider) {
+        $interpolateProvider.startSymbol('FOO').endSymbol('OOF');
+      }]);
+      var $interpolate = injector.get('$interpolate');
+      expect($interpolate.startSymbol()).toEqual('FOO');
+      expect($interpolate.endSymbol()).toEqual('OOF');
+    });
   }); // describe("$interpolate")
 })();
