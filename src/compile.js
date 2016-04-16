@@ -360,18 +360,23 @@
             directives.push({
               priority: 100,
               compile: function() {
-                return function link(scope, element, attrs) {
-                  // we let the observers know that the attribute is interpolate
-                  // this will then alter the behavior of the $observeFn
-                  attrs.$$observers = attrs.$$observers || {};
-                  attrs.$$observers[name] = attrs.$$observers[name] || [];
-                  attrs.$$observers[name].$$inter = true;
+                return {
+                  pre: function link(scope, element, attrs) {
+                    // we let the observers know that the attribute is interpolate
+                    // this will then alter the behavior of the $observeFn
+                    attrs.$$observers = attrs.$$observers || {};
+                    attrs.$$observers[name] = attrs.$$observers[name] || [];
+                    attrs.$$observers[name].$$inter = true;
 
-                  scope.$watch(interpolateFn, function(newValue) {
-                    // this is called during the next $digest, by that time
-                    // the attributes observers from other directives would have been created
-                    attrs.$set(name, newValue);
-                  });
+                    // initialization
+                    attrs[name] = interpolateFn(scope);
+
+                    scope.$watch(interpolateFn, function(newValue) {
+                      // this is called during the next $digest, by that time
+                      // the attributes observers from other directives would have been created
+                      attrs.$set(name, newValue);
+                    });
+                  }
                 };
               }
             });
