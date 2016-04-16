@@ -235,7 +235,6 @@
                 }
               });
             }
-
           },
 
           $observe: function(key, fn) {
@@ -243,8 +242,14 @@
             this.$$observers = this.$$observers || {};
             this.$$observers[key] = this.$$observers[key] || [];
             this.$$observers[key].push(fn);
+
+            // call once initially
+            // unless the value was $set because of interpolation ($$inter)
+            // because in this case, $setting the value will call it
             $rootScope.$evalAsync(function() {
-              fn(self[key]);
+              if (!self.$$observers[key].$$inter) {
+                fn(self[key]);
+              }
             });
 
             //deregisters the observe
@@ -356,7 +361,15 @@
               priority: 100,
               compile: function() {
                 return function link(scope, element, attrs) {
+                  // we let the observers know that the attribute is interpolate
+                  // this will then alter the behavior of the $observeFn
+                  attrs.$$observers = attrs.$$observers || {};
+                  attrs.$$observers[name] = attrs.$$observers[name] || [];
+                  attrs.$$observers[name].$$inter = true;
+
                   scope.$watch(interpolateFn, function(newValue) {
+                    // this is called during the next $digest, by that time
+                    // the attributes observers from other directives would have been created
                     attrs.$set(name, newValue);
                   });
                 };
