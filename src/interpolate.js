@@ -35,9 +35,10 @@
         // "hello {{name}} I'm {{myName}}"
         // parts = ["hello ", parseFn, " I'm ", parseFn]
         var parts = [];
-        var startIndex, endIndex, exp, expFn;
         var expressions = [];
         var expressionFns = [];
+        var expressionPositions = [];
+        var startIndex, endIndex, exp, expFn;
 
         while (index < text.length) {
           startIndex = text.indexOf("{{", index);
@@ -53,9 +54,10 @@
 
             exp = text.substring(startIndex + 2, endIndex);
             expFn = $parse(exp);
-            parts.push(expFn);
             expressions.push(exp);
             expressionFns.push(expFn);
+            expressionPositions.push(parts.length);
+            parts.push(expFn);
             index = endIndex + 2;
           }
           else {
@@ -64,29 +66,31 @@
           }
         }
 
-        function compute(context) {
-          return parts.reduce(function(previous, part) {
-            if (typeof part === "function") {
-              return previous + stringify(part(context));
-            }
-            else {
-              return previous + part;
-            }
-          }, "");
+        function compute(values) {
+          _.forEach(values, function(value, i) {
+            parts[expressionPositions[i]] = stringify(value);
+          });
+          return parts.join('');
         }
 
         // if there are any expressions {{}} or if we don't need to have expressions
         if (expressions.length || !mustHaveExpressions) {
-          return Object.assign(function interpolateFn(context) {
-            return compute(context);
+          return _.extend(function interpolationFn(context) {
+            var values = _.map(expressionFns, function(expressionFn) {
+              return expressionFn(context);
+            });
+            return compute(values);
           }, {
             expressions: expressions,
-            // watch delegates are an optimization used by watch function when present
             $$watchDelegate: function(scope, listener) {
               var lastValue;
               return scope.$watchGroup(expressionFns, function(newValues, oldValues) {
-                var newValue = compute(scope);
-                listener(newValue, newValues === oldValues ? newValue : lastValue, scope);
+                var newValue = compute(newValues);
+                listener(
+                  newValue,
+                  (newValues === oldValues ? newValue : lastValue),
+                  scope
+                );
                 lastValue = newValue;
               });
             }
