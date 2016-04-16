@@ -141,5 +141,13 @@
       var interp = $interpolate("has an {{expr}}", true);
       expect(interp).not.toBeFalsy();
     });
+
+
+    it("uses a watch delegate", function() {
+      var injector = createInjector(["ng"]);
+      var $interpolate = injector.get("$interpolate");
+      var interp = $interpolate("has an {{expr}}");
+      expect(interp.$$watchDelegate).toBeDefined();
+    });
   }); // describe("$interpolate")
 })();

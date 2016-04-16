@@ -37,6 +37,7 @@
         var parts = [];
         var startIndex, endIndex, exp, expFn;
         var expressions = [];
+        var expressionFns = [];
 
         while (index < text.length) {
           startIndex = text.indexOf("{{", index);
@@ -54,6 +55,7 @@
             expFn = $parse(exp);
             parts.push(expFn);
             expressions.push(exp);
+            expressionFns.push(expFn);
             index = endIndex + 2;
           }
           else {
@@ -62,20 +64,29 @@
           }
         }
 
+        function compute(context) {
+          return parts.reduce(function(previous, part) {
+            if (typeof part === "function") {
+              return previous + stringify(part(context));
+            }
+            else {
+              return previous + part;
+            }
+          }, "");
+        }
 
+        // if there are any expressions {{}} or if we don't need to have expressions
         if (expressions.length || !mustHaveExpressions) {
-          // context is usually a Scope
           return Object.assign(function interpolateFn(context) {
-            return parts.reduce(function(previous, part) {
-              if (typeof part === "function") {
-                return previous + stringify(part(context));
-              }
-              else {
-                return previous + part;
-              }
-            }, "");
+            return compute(context);
           }, {
-            expressions: expressions
+            expressions: expressions,
+            // watch delegates are an optimization used by watch function when present
+            $$watchDelegate: function(scope, listener) {
+              return scope.$watchGroup(expressionFns, function() {
+                listener(compute(scope));
+              });
+            }
           });
         }
       }
