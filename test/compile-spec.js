@@ -4092,6 +4092,27 @@
           }).toThrow();
         });
       });
+
+
+      it('denormalizes directive templates', function() {
+        var injector = createInjector(['ng',
+          function($interpolateProvider, $compileProvider) {
+            $interpolateProvider.startSymbol('[[').endSymbol(']]');
+            $compileProvider.directive('myDirective', function() {
+              return {
+                template: 'Value is {{myExpr}}'
+              };
+            });
+          }
+        ]);
+        injector.invoke(function($compile, $rootScope) {
+          var el = $('<div my-directive></div>');
+          $rootScope.myExpr = 42;
+          $compile(el)($rootScope);
+          $rootScope.$apply();
+          expect(el.html()).toEqual('Value is 42');
+        });
+      });
     }); // describe("interpolation")
   }); // describe("$compile")
 })();

@@ -197,6 +197,19 @@
     this.$get = ["$injector", "$rootScope", "$parse", "$controller", "$http", "$interpolate",
       function($injector, $rootScope, $parse, $controller, $http, $interpolate) {
 
+        // denormalizedTemplate is useful when 
+        // 1- the app is using customized $interpolate start and endSymbol
+        // 2- BUT the templates they are downloading/using use the DEFAULT {{ and }} symbols
+        var startSymbol = $interpolate.startSymbol();
+        var endSymbol = $interpolate.endSymbol();
+        var denormalizeTemplate = (startSymbol === "{{" && endSymbol === "}}") ?
+          function(firstArg) {
+            return firstArg;
+          } : function(template) {
+            return template.replace(/\{\{/g, startSymbol).replace(/\}\}/g, endSymbol);
+          };
+
+
         function Attributes(element) {
           this.$$element = element;
           this.$attr = {};
@@ -645,6 +658,7 @@
           $http
             .get(templateUrl)
             .success(function(template) {
+              template = denormalizeTemplate(template);
               directives.unshift(derivedAsyncDirective);
               $compileNode.html(template);
               afterTemplateNodeLinkFn = applyDirectivesToNode(directives, $compileNode, attrs, previousCompileContext);
@@ -1007,8 +1021,11 @@
                 throw "Multiple directives asking for template";
               }
               templateDirective = directive;
-              $compileNode.html(_.isFunction(directive.template) ?
-                directive.template($compileNode, attrs) : directive.template);
+              var template = _.isFunction(directive.template) ?
+                directive.template($compileNode, attrs) : directive.template;
+
+              template = denormalizeTemplate(template);
+              $compileNode.html(template);
             }
 
             // has templateUrl

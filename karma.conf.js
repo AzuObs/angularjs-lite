@@ -24,6 +24,8 @@
         "src/interpolate.js",
         "src/directives/ng-controller.js",
         "src/directives/ng-transclude.js",
+        "src/directives/ng-click.js",
+        "test/directives/ng-click-spec.js",
         "test/interpolate-spec.js",
         "test/directives/ng-controller-spec.js",
         "test/controller-spec.js",
