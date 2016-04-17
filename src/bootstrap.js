@@ -7,7 +7,7 @@
 
   window.angular.bootstrap = function(element) {
     // loads all the modules
-    var injector = createInjector();
+    var injector = createInjector(["ng"]);
 
     var $element = $(element);
     $element.data("$injector", injector);
