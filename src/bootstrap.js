@@ -25,7 +25,7 @@
     // compile element
     injector.invoke(["$compile", "$rootScope", function($compile, $rootScope) {
       $rootScope.$apply(function() {
-        $compile($element, $rootScope);
+        $compile($element)($rootScope);
       });
     }]);
 
@@ -53,7 +53,7 @@
         var attrName = prefix + "strict-di";
         return foundAppElement.hasAttribute(attrName);
       });
-      window.angular.bootstrap(foundAppElement, foundModule ? foundModule : [], strictDi);
+      window.angular.bootstrap(foundAppElement, foundModule ? [foundModule] : [], strictDi);
     }
   });
 

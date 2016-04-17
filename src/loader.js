@@ -28,6 +28,7 @@
       service: invokeLater("$provide", "service"),
       filter: invokeLater("$filterProvider", "register"),
       directive: invokeLater("$compileProvider", "directive"),
+      controller: invokeLater("$controllerProvider", "register"),
       decorator: invokeLater("$provide", "decorator"),
       config: invokeLater("$injector", "invoke", "push", configBlocks),
       run: function(fn) {
