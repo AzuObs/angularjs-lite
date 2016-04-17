@@ -5,6 +5,7 @@
   // angular and users can now register their modules via angular.module
   publishExternalAPI();
 
+  // can be called manually
   window.angular.bootstrap = function(element, modules, config) {
     var $element = $(element);
 
@@ -28,7 +29,33 @@
       });
     }]);
 
-
     return injector;
   };
+
+  // automatic loading of angular
+  // look for "ng-app"
+  var ngAttrPrefixes = ["data-ng-", "ng-", "ng:", "x-ng-"];
+  $(document).ready(function() {
+    var foundAppElement, foundModule;
+
+    ngAttrPrefixes.forEach(function(prefix) {
+      var attrName = prefix + "app";
+      var selector = "[" + attrName.replace(":", "\\:") + "]";
+      var element;
+      if (!foundAppElement && (element = document.querySelector(selector))) {
+        foundAppElement = element;
+        foundModule = element.getAttribute(attrName);
+      }
+    });
+
+    if (foundAppElement) {
+      var strictDi = ngAttrPrefixes.some(function(prefix) {
+        var attrName = prefix + "strict-di";
+        return foundAppElement.hasAttribute(attrName);
+      });
+      window.angular.bootstrap(foundAppElement, foundModule ? foundModule : [], strictDi);
+    }
+  });
+
+
 })();
