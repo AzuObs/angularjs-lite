@@ -21,8 +21,11 @@
 
     // compile element
     injector.invoke(["$compile", "$rootScope", function($compile, $rootScope) {
-      $compile($element, $rootScope);
+      $rootScope.$apply(function() {
+        $compile($element, $rootScope);
+      });
     }]);
+
 
     return injector;
   };

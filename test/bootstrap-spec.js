@@ -84,6 +84,22 @@
         );
       });
 
+
+      it("runs a digest", function() {
+        var element = $("<div><div my-directive>{{expr}}</div></div>");
+        var linkSpy = jasmine.createSpy();
+        window.angular.module("myModule", [])
+          .directive("myDirective", function() {
+            return {
+              link: function(scope) {
+                scope.expr = "42";
+              }
+            };
+          });
+        window.angular.bootstrap(element, ["myModule"]);
+        expect(element.find("div").text()).toBe("42");
+      });
+
     }); //describe("manual")
   }); //describe("bootstrap")
 })();
