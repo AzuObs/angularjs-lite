@@ -1,6 +1,8 @@
 (function() {
   "use strict";
 
+  var $ = require("jquery");
+
 
   describe('ngTransclude', function() {
     beforeEach(function() {

@@ -1,6 +1,10 @@
 (function() {
   "use strict";
 
+
+  var $ = require("jquery");
+
+
   // "x" OR "data" followed by ":" OR "-" OR "_"
   var PREFIX_REGEXP = /(x[\:\-_]|data[\:\-_])/i;
   var BOOLEAN_ELEMENTS = {

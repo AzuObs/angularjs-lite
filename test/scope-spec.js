@@ -1599,20 +1599,24 @@
           length: 42,
           otherKey: "abc"
         };
+
         scope.counter = 0;
 
-        scope.$watchCollection(function(scope) {
-          return scope.obj;
-        }, function(newValue, oldValue, scope) {
-          scope.counter++;
-        });
+        scope.$watchCollection(
+          function(scope) {
+            return scope.obj;
+          },
+          function(newValue, oldValue, scope) {
+            scope.counter++;
+          }
+        );
 
+        window.debug = true;
         scope.$digest();
-        expect(scope.counter).toBe(1);
-
         scope.obj.newKey = "def";
 
         scope.$digest();
+
         expect(scope.counter).toBe(2);
       });
 

@@ -13,7 +13,7 @@
     }
 
     if (Object.prototype.toString.call(actual) === "[object Object]") {
-      if (mixin.isObjectLike(expected) && !inWildcard) {
+      if (_.isObjectLike(expected) && !inWildcard) {
         return Object.keys(_.toPlainObject(expected)).every(function(key) {
           if (expected[key] === undefined) {
             return true;
@@ -40,7 +40,7 @@
 
 
   var createPredicateFn = function(expression, comparator) {
-    var shouldMatchPrimitives = mixin.isObjectLike(expression) && ('$' in expression);
+    var shouldMatchPrimitives = _.isObjectLike(expression) && ('$' in expression);
 
     if (comparator === true) {
       comparator = _.isEqual;
@@ -62,7 +62,7 @@
     }
 
     return function(item) {
-      if (shouldMatchPrimitives && !mixin.isObjectLike(item)) {
+      if (shouldMatchPrimitives && !_.isObjectLike(item)) {
         return deepCompare(item, expression.$, comparator);
       }
       return deepCompare(item, expression, comparator, true);
@@ -83,7 +83,7 @@
         typeof filterExpr === "string" ||
         typeof filterExpr === "number" ||
         typeof filterExpr === "boolean" ||
-        mixin.isObjectLike(filterExpr) ||
+        _.isObjectLike(filterExpr) ||
         filterExpr === null
       ) {
         predicateFn = createPredicateFn(filterExpr, comparator);

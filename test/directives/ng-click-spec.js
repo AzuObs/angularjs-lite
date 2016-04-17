@@ -1,6 +1,9 @@
 (function() {
   "use strict";
 
+  var $ = require("jquery");
+
+
   describe("ngClick", function() {
     var $compile, $rootScope;
 

@@ -2,6 +2,7 @@
   "use strict";
 
   function publishExternalAPI() {
+    var setupModuleLoader = require("../src/loader.js");
     setupModuleLoader(window);
 
     var ngModule = angular.module("ng", []);

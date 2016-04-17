@@ -1,6 +1,7 @@
 (function() {
   "use strict";
 
+  var $ = require("jquery");
 
   function registerAndCompile(dirName, domString, callback) {
     var givenAttrs;

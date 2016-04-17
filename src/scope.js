@@ -407,6 +407,15 @@
         // even if the object changes it will not called the listenerFn
         // unless the properties are different
         $watchCollection: function(watchFn, listenerFn) {
+          function isArrayLike(obj) {
+            if (_.isNull(obj) || _.isUndefined(obj)) {
+              return false;
+            }
+            var length = obj.length;
+            return length === 0 ||
+              (_.isNumber(length) && length > 0 && (length - 1) in obj);
+          }
+
           var self = this;
           var newValue;
           var oldValue;
@@ -422,10 +431,11 @@
           var internalWatchFn = function(scope) {
             var newLength;
             newValue = watchFn(scope);
+            // if (window.debug && typeof newValue === "object") debugger;
 
-            if (mixin.isObjectLike(newValue)) {
-              if (mixin.isArrayLike(newValue)) {
-                if (!Array.isArray(oldValue)) {
+            if (_.isObjectLike(newValue)) {
+              if (isArrayLike(newValue)) {
+                if (!_.isArray(oldValue)) {
                   changeCount++;
                   oldValue = [];
                 }
@@ -443,7 +453,7 @@
                 }
               }
               else {
-                if (!mixin.isObjectLike(oldValue) || mixin.isArrayLike(oldValue)) {
+                if (!_.isObject(oldValue) || isArrayLike(oldValue)) {
                   changeCount++;
                   oldValue = {};
                   oldLength = 0;

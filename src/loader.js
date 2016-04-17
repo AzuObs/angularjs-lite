@@ -83,5 +83,5 @@
   };
 
 
-  window.setupModuleLoader = setupModuleLoader;
+  module.exports = setupModuleLoader;
 })();

@@ -1,6 +1,9 @@
 (function() {
   "use strict";
 
+  var $ = require("jquery");
+
+
   // create global window.angular
   // angular and users can now register their modules via angular.module
   publishExternalAPI();
