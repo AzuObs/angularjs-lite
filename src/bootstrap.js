@@ -6,6 +6,7 @@
 
 
   window.angular.bootstrap = function() {
-
+    var injector = createInjector();
+    return injector;
   };
 })();

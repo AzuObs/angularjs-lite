@@ -194,7 +194,7 @@
 
     // load each module
     var runBlocks = [];
-    modulesToLoad.forEach(function loadModule(module) {
+    _.forEach(modulesToLoad, function loadModule(module) {
       if (!loadedModules.get(module)) {
         loadedModules.put(module, true);
 
