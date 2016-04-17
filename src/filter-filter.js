@@ -93,5 +93,5 @@
     };
   }
 
-  window.filterFilter = filterFilter;
+  module.exports = filterFilter;
 })();

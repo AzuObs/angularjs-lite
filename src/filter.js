@@ -1,6 +1,9 @@
 (function() {
   "use strict";
 
+  var filterFilter = require("../src/filter-filter.js");
+
+
   function $FilterProvider($provide) {
     this.register = function(name, factory) {
       if (name && _.isObjectLike(name)) { // if name is an object
@@ -18,6 +21,7 @@
         return $injector.get(name + "Filter");
       };
     }];
+
 
     this.register("filter", filterFilter);
   }
