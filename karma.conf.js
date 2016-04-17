@@ -44,12 +44,18 @@
         "test/http-spec.js",
         "test/directives/ng-transclude-spec.js",
       ],
-      frameworks: ["jasmine", "sinon"],
-      // browsers: ["PhantomJS"],
+      frameworks: ["jasmine", "sinon", "browserify"],
+      preprocessors: {
+        "src/**/*": ["browserify"],
+        "test/**/*": ["browserify"]
+      },
+      browserify: {
+        debug: true
+      },
       plugins: [
         "karma-jasmine",
-        "karma-sinon"
-        // "karma-phantomjs-launcher"
+        "karma-sinon",
+        "karma-browserify"
       ],
       port: 9876
     });

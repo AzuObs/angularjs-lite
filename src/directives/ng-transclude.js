@@ -15,5 +15,5 @@
   }
 
 
-  window.ngTranscludeDirective = ngTranscludeDirective;
+  module.exports = ngTranscludeDirective;
 })();

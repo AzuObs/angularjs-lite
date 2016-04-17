@@ -79,5 +79,5 @@
   }
 
 
-  window.$ControllerProvider = $ControllerProvider;
+  module.exports = $ControllerProvider;
 })();

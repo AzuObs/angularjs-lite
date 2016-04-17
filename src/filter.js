@@ -24,5 +24,5 @@
   $FilterProvider.$inject = ["$provide"];
 
 
-  window.$FilterProvider = $FilterProvider;
+  module.exports = $FilterProvider;
 })();

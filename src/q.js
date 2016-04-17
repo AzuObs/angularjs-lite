@@ -227,6 +227,8 @@
     }];
   }
 
-  window.$QProvider = $QProvider;
-  window.$$QProvider = $$QProvider;
+  module.exports = {
+    $QProvider: $QProvider,
+    $$QProvider: $$QProvider
+  };
 })();

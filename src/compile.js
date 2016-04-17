@@ -1083,5 +1083,5 @@
   $CompileProvider.$inject = ["$provide"];
 
 
-  window.$CompileProvider = $CompileProvider;
+  module.exports = $CompileProvider;
 })();

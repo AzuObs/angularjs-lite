@@ -1478,5 +1478,5 @@
   };
 
 
-  window.$ParseProvider = $ParseProvider;
+  module.exports = $ParseProvider;
 })();

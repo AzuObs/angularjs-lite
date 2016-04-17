@@ -1,7 +1,6 @@
 (function() {
   "use strict";
 
-
   function $RootScopeProvider() {
     var TTL = 10;
 
@@ -568,5 +567,5 @@
   } //$RootScopeProvider
 
 
-  window.$RootScopeProvider = $RootScopeProvider;
+  module.exports = $RootScopeProvider;
 })();

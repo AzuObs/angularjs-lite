@@ -136,5 +136,5 @@
   }
 
 
-  window.$InterpolateProvider = $InterpolateProvider;
+  module.exports = $InterpolateProvider;
 })();

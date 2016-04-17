@@ -63,5 +63,5 @@
   }
 
 
-  window.$HttpBackendProvider = $HttpBackendProvider;
+  module.exports = $HttpBackendProvider;
 })();

@@ -22,5 +22,6 @@
   }
   ngClickDirective.$inject = ["$parse"];
 
-  window.ngClickDirective = ngClickDirective;
+
+  module.exports = ngClickDirective;
 })();

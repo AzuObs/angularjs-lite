@@ -10,5 +10,5 @@
   }
 
 
-  window.ngControllerDirective = ngControllerDirective;
+  module.exports = ngControllerDirective;
 })();

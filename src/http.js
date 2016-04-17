@@ -463,7 +463,9 @@
   }
 
 
-  window.$HttpParamSerializerJQLikeProvider = $HttpParamSerializerJQLikeProvider;
-  window.$HttpParamSerializerProvider = $HttpParamSerializerProvider;
-  window.$HttpProvider = $HttpProvider;
+  module.exports = {
+    $HttpParamSerializerJQLikeProvider: $HttpParamSerializerJQLikeProvider,
+    $HttpParamSerializerProvider: $HttpParamSerializerProvider,
+    $HttpProvider: $HttpProvider
+  };
 })();
