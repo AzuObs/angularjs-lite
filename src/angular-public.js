@@ -19,6 +19,7 @@
     ngModule.provider("$interpolate", $InterpolateProvider);
     ngModule.directive("ngController", ngControllerDirective);
     ngModule.directive("ngTransclude", ngTranscludeDirective);
+    ngModule.directive("ngClick", ngClickDirective);
   }
 
   window.publishExternalAPI = publishExternalAPI;
