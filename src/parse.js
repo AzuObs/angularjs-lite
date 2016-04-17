@@ -1,6 +1,7 @@
 (function() {
   "use strict";
 
+  var _ = require("lodash");
 
   // constant watch, no need to keep track of this watcher because if the watch is constant
   // it will always be the same and only be executed once, but Angular will still be 

@@ -1,6 +1,8 @@
 (function() {
   "use strict";
 
+  var $ = require("jquery");
+
 
   describe("bootstrap", function() {
 

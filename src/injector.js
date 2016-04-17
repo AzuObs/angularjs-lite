@@ -1,6 +1,8 @@
 (function() {
   "use strict";
 
+  var $ = require("jquery");
+
   // ascii puke from the angularJS source to detect the arguments on function "fn"
   // once fn.toString has been called
   var FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
