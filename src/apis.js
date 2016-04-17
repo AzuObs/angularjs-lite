@@ -43,7 +43,9 @@
     }
   };
 
-  window.hashKey = hashKey;
-  window.HashMap = HashMap;
+  module.exports = {
+    hashKey: hashKey,
+    HashMap: HashMap
+  };
 
 })();

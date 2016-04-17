@@ -1,6 +1,9 @@
 (function() {
   "use strict";
 
+  var hashKey = require("../src/apis.js").hashKey;
+  var HashMap = require("../src/apis.js").HashMap;
+
   describe("apis", function() {
 
     describe("hashKey", function() {
