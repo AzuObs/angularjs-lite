@@ -100,6 +100,21 @@
         expect(element.find("div").text()).toBe("42");
       });
 
+
+      it("supports enabling strictDi mode", function() {
+        var element = $("<div><div my-directive></div></div>");
+        var compileSpy = jasmine.createSpy();
+        window.angular.module("myModule", [])
+          .constant("aValue", 42)
+          .directive("myDirective", function(aValue) {
+            return {};
+          });
+        expect(function() {
+          window.angular.bootstrap(element, ["myModule"], {
+            strictDi: true
+          });
+        }).toThrow();
+      });
     }); //describe("manual")
   }); //describe("bootstrap")
 })();
