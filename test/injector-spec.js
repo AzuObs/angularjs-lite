@@ -1,6 +1,7 @@
 (function() {
   "use strict";
 
+  var createInjector = require("../src/injector.js");
   var setupModuleLoader = require("../src/loader.js");
 
 

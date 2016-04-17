@@ -23,5 +23,5 @@
     ngModule.directive("ngClick", require("../src/directives/ng-click.js"));
   }
 
-  window.publishExternalAPI = publishExternalAPI;
+  module.exports = publishExternalAPI;
 })();

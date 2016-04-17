@@ -1,6 +1,10 @@
 (function() {
   "use strict";
 
+  var publishExternalAPI = require("../src/angular-public.js");
+  var createInjector = require("../src/injector.js");
+
+
   describe("parse", function() {
 
     var parse;

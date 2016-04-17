@@ -1,6 +1,9 @@
 (function() {
   "use strict";
 
+  var publishExternalAPI = require("../src/angular-public.js");
+  var createInjector = require("../src/injector.js");
+
 
   describe("$q", function() {
     var $q, $$q, $rootScope;

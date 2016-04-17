@@ -2,6 +2,9 @@
   "use strict";
 
   var $ = require("jquery");
+  var publishExternalAPI = require("../src/angular-public.js");
+  var createInjector = require("../src/injector.js");
+
 
   function registerAndCompile(dirName, domString, callback) {
     var givenAttrs;

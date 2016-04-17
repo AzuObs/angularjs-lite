@@ -4,6 +4,7 @@
   var $ = require("jquery");
   var HashMap = require("../src/apis.js").HashMap;
 
+
   // ascii puke from the angularJS source to detect the arguments on function "fn"
   // once fn.toString has been called
   var FN_ARGS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
@@ -239,5 +240,5 @@
   }
 
 
-  window.createInjector = createInjector;
+  module.exports = createInjector;
 })();
