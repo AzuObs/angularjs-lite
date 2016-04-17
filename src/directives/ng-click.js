@@ -2,20 +2,25 @@
   "use strict";
 
 
-  function ngClickDirective() {
+  function ngClickDirective($parse) {
     return {
       restrict: "A",
-      link: function(scope, element, attrs) {
-        element.on("click", function(evt) {
-          scope.$eval(attrs.ngClick, {
-            $event: evt
+      compile: function(element, attrs) {
+        var parsedFn = $parse(attrs.ngClick);
+
+        return function link(scope, element, attrs) {
+          element.on("click", function(evt) {
+            scope.$apply(function() {
+              parsedFn(scope, {
+                $event: evt
+              });
+            });
           });
-          scope.$apply();
-        });
+        };
       }
     };
   }
-
+  ngClickDirective.$inject = ["$parse"];
 
   window.ngClickDirective = ngClickDirective;
 })();
