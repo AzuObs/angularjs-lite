@@ -19,6 +19,11 @@
     // add data to root element
     $element.data("$injector", injector);
 
+    // compile element
+    injector.invoke(["$compile", "$rootScope", function($compile, $rootScope) {
+      $compile($element, $rootScope);
+    }]);
+
     return injector;
   };
 })();

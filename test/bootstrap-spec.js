@@ -53,6 +53,37 @@
         expect(injector.get("$rootElement")[0]).toBe(element[0]);
       });
 
+
+      it("compiles the element", function() {
+        var element = $("<div><div my-directive></div></div>");
+        var compileSpy = jasmine.createSpy();
+        window.angular.module("myModule", [])
+          .directive("myDirective", function() {
+            return {
+              compile: compileSpy
+            };
+          });
+        window.angular.bootstrap(element, ["myModule"]);
+        expect(compileSpy).toHaveBeenCalled();
+      });
+
+
+      it("links the element", function() {
+        var element = $("<div><div my-directive></div></div>");
+        var linkSpy = jasmine.createSpy();
+        window.angular.module("myModule", [])
+          .directive("myDirective", function() {
+            return {
+              link: linkSpy
+            };
+          });
+        window.angular.bootstrap(element, ["myModule"]);
+        expect(linkSpy).toHaveBeenCalled();
+        expect(linkSpy.calls.mostRecent().args[0]).toEqual(
+          element.data("$injector").get("$rootScope")
+        );
+      });
+
     }); //describe("manual")
   }); //describe("bootstrap")
 })();
