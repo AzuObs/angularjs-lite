@@ -5,9 +5,9 @@
   function ngClickDirective() {
     return {
       restrict: "A",
-      link: function(scope, element) {
+      link: function(scope, element, attrs) {
         element.on("click", function() {
-          scope.$apply();
+          scope.$apply(attrs.ngClick);
         });
       }
     };

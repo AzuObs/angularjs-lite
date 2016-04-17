@@ -21,5 +21,14 @@
       button.click();
       expect(watchSpy).toHaveBeenCalled();
     });
+
+
+    it("evaluates given expression on click", function() {
+      $rootScope.doSomething = jasmine.createSpy();
+      var button = $("<button ng-click=\"doSomething()\"></button>");
+      $compile(button)($rootScope);
+      button.click();
+      expect($rootScope.doSomething).toHaveBeenCalled();
+    });
   });
 })();
