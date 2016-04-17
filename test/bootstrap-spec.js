@@ -44,6 +44,15 @@
         expect(injector.get("aSecondValue")).toBe(43);
       });
 
+
+      it("makes root element available for injection", function() {
+        var element = $("<div></div>");
+        window.angular.bootstrap(element);
+        var injector = element.data("$injector");
+        expect(injector.has("$rootElement")).toBe(true);
+        expect(injector.get("$rootElement")[0]).toBe(element[0]);
+      });
+
     }); //describe("manual")
   }); //describe("bootstrap")
 })();

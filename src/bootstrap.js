@@ -6,13 +6,17 @@
   publishExternalAPI();
 
   window.angular.bootstrap = function(element, modules) {
+    var $element = $(element);
+
     // loads all the modules
     modules = modules || [];
+    modules.unshift(["$provide", function($provide) {
+      $provide.value("$rootElement", $element);
+    }]);
     modules.unshift("ng");
     var injector = createInjector(modules);
 
     // add data to root element
-    var $element = $(element);
     $element.data("$injector", injector);
 
     return injector;
