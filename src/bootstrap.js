@@ -36,12 +36,13 @@
     return injector;
   };
 
-  // automatic loading of angular
-  // look for "ng-app"
+
+  // look for "ng-app" to try to automatically bootstrap
   var ngAttrPrefixes = ["data-ng-", "ng-", "ng:", "x-ng-"];
   $(document).ready(function() {
     var foundAppElement, foundModule;
 
+    // get foundAppElement and foundModule (element node with ng-app attribute)
     ngAttrPrefixes.forEach(function(prefix) {
       var attrName = prefix + "app";
       var selector = "[" + attrName.replace(":", "\\:") + "]";
@@ -60,6 +61,4 @@
       window.angular.bootstrap(foundAppElement, foundModule ? [foundModule] : [], strictDi);
     }
   });
-
-
 })();
