@@ -347,7 +347,11 @@
         }
 
 
+        // creates a new directive if the text is interpolated
         function addTextInterpolateDirective(directives, text) {
+          // $interpolating with mustHaveExpression set to true 
+          // returns undefined when there is no interpolated content 
+          // returns a function when there is interpolated content
           var interpolateFn = $interpolate(text, true);
 
           if (interpolateFn) {
@@ -371,7 +375,11 @@
         }
 
 
+        // creates a new directive if the attr is interpolated
         function addAttrInterpolateDirective(directives, value, name) {
+          // $interpolating with mustHaveExpression set to true 
+          // returns undefined when there is no interpolated content 
+          // returns a function when there is interpolated content
           var interpolateFn = $interpolate(value, true);
           if (interpolateFn) {
             directives.push({
@@ -437,7 +445,12 @@
 
             var $linkNodes;
             if (cloneAttachFn) {
+              // $linkNodes are the original nodes passed to compile
               $linkNodes = $compileNodes.clone();
+              // you can interact with the $linkNodes now,
+              // but they are not yet linked
+              // you can append them to the DOM, and they'll be linked eventually
+              // this is why attached a clone doesn't work!!
               cloneAttachFn($linkNodes, scope);
             }
             else {
@@ -491,6 +504,7 @@
           });
 
           return function compositeLinkFn(scope, linkNodes, parentBoundTranscludeFn) {
+            //stable nodes because the nodes might change during linking
             var stableNodeList = [];
             _.forEach(linkFns, function(linkFn) {
               stableNodeList[linkFn.idx] = linkNodes[linkFn.idx];
@@ -514,8 +528,8 @@
                   childScope = scope;
                 }
 
-                var boundTranscludeFn;
                 // if node has transclude
+                var boundTranscludeFn;
                 if (linkFn.nodeLinkFn.transcludeOnThisElement) {
                   boundTranscludeFn = function(transcludedScope, cloneAttachFn, transcludeControllers, containingScope) {
                     if (!transcludedScope) {
@@ -717,6 +731,8 @@
           var childTranscludeFn;
           var hasElementTranscludeDirective;
 
+
+          //get "require" controllers
           function getControllers(require, $element) {
             // array
             if (_.isArray(require)) {
@@ -847,6 +863,8 @@
           var nodeLinkFn = function(childLinkFn, scope, linkNode, boundTranscludeFn) {
             var $element = $(linkNode);
 
+            // create scope for the node if it's an isolate one
+            // if not a new "inherited" scope is created by compositeLinkFn
             var isolateScope;
             if (newIsolateScopeDirective) {
               isolateScope = scope.$new(true);
@@ -877,7 +895,7 @@
 
             var scopeDirective = newIsolateScopeDirective || newScopeDirective;
 
-            // if isolate scope, bind directives to isolateScope
+            // if isolate scope, bind isolate scope attributes to isolateScope
             if (newIsolateScopeDirective) {
               initializeDirectiveBindings(
                 scope,
@@ -888,7 +906,7 @@
               );
             }
 
-            // if isolate scope AND controller, bind directives to controller instance
+            // bindToScope bindings
             if (scopeDirective && controllers[scopeDirective.name]) {
               initializeDirectiveBindings(
                 scope,
