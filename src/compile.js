@@ -861,6 +861,23 @@
 
 
           var nodeLinkFn = function(childLinkFn, scope, linkNode, boundTranscludeFn) {
+             function scopeBoundTranscludeFn(transcludedScope, cloneAttachFn) {
+              var transcludeControllers;
+
+              // if transcludeScope is in reality cloneAttachFn
+              if (!transcludedScope || !transcludedScope.$watch || !transcludedScope.$evalAsync) {
+                cloneAttachFn = transcludedScope;
+                transcludedScope = undefined;
+              }
+
+              if (hasElementTranscludeDirective) {
+                transcludeControllers = controllers;
+              }
+
+              return boundTranscludeFn(transcludedScope, cloneAttachFn, transcludeControllers, scope);
+            }
+            scopeBoundTranscludeFn.$$boundTransclude = boundTranscludeFn;
+
             var $element = $(linkNode);
 
             // create scope for the node if it's an isolate one
@@ -922,23 +939,6 @@
               controller();
             });
 
-            function scopeBoundTranscludeFn(transcludedScope, cloneAttachFn) {
-              var transcludeControllers;
-
-              // if transcludeScope is in reality cloneAttachFn
-              if (!transcludedScope || !transcludedScope.$watch || !transcludedScope.$evalAsync) {
-                cloneAttachFn = transcludedScope;
-                transcludedScope = undefined;
-              }
-
-
-              if (hasElementTranscludeDirective) {
-                transcludeControllers = controllers;
-              }
-
-              return boundTranscludeFn(transcludedScope, cloneAttachFn, transcludeControllers, scope);
-            }
-            scopeBoundTranscludeFn.$$boundTransclude = boundTranscludeFn;
 
             // pre link
             _.forEach(preLinkFns, function(linkFn) {
