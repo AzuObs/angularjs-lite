@@ -1,6 +1,6 @@
 <i>Learning how to make a modern day front-end javascript framework from scratch.</i>
 
-</h1>How does Angular work the TOP-DOWN approach.<h1>
+<h1>How does Angular work the TOP-DOWN approach.</h1>
 
 <i>When I was a University I learnt Networking from the bottom-up. That is I started with the physical layer, then link layer, and network layer and finally transport layer. Another way to learn would have been to have started at the top with the transport layer and peel away until we reach the physical layer.</i>
 
