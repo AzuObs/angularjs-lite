@@ -1,1 +1,1 @@
-This project was undertaken to learn the principles of a modern front-end JavaScript framework and to learn JavaScript. The result is a fully functional Angular 1.5 with an almost 1:1 reproduction of Angular's core features, and a very clear understanding of the framework.
+Optimistic and naive implementation of AngularJS, the old school one!
